@@ -13,7 +13,12 @@ namespace Notocol
     {
         protected void Application_Start()
         {
-            AreaRegistration.RegisterAllAreas();
+            //Remove All Engine
+            ViewEngines.Engines.Clear();
+            //Add Razor Engine
+            ViewEngines.Engines.Add(new RazorViewEngine());
+
+           // AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
