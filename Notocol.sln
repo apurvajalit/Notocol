@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notocol", "Notocol\Notocol.csproj", "{B2812D93-489E-4A30-938A-35BA0D4235BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{0AEA8AC7-73DA-4371-8EB1-916939E08209}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B2812D93-489E-4A30-938A-35BA0D4235BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2812D93-489E-4A30-938A-35BA0D4235BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2812D93-489E-4A30-938A-35BA0D4235BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AEA8AC7-73DA-4371-8EB1-916939E08209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AEA8AC7-73DA-4371-8EB1-916939E08209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AEA8AC7-73DA-4371-8EB1-916939E08209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AEA8AC7-73DA-4371-8EB1-916939E08209}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
