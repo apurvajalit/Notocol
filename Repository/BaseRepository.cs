@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Model;
+using System.Configuration;
 
 namespace Repository
 {
@@ -13,13 +14,13 @@ namespace Repository
         protected NotColEntities context;
         protected string connectionString;
 
-        public void CreateDataContext(string conString, bool createContext)
+        public void CreateDataContext(bool createContext = true)
         {
             if (createContext)
             {
                 
             }
-            this.connectionString = conString;
+            this.connectionString = ConfigurationManager.ConnectionStrings["NotColEntities"].ToString();
         }
 
         public void SetDataContext(NotColEntities localContext)
