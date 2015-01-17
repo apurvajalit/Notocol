@@ -14,5 +14,12 @@ namespace Notocol.Controllers
 
             return View();
         }
+        public ActionResult AboutUs()
+        {
+            ViewBag.Title = "Home Page";
+
+            return View();
+        }
+
     }
 }
