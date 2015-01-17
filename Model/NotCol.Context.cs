@@ -13,12 +13,19 @@ namespace Model
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class KnowledgeManagementEntities : DbContext
+    public partial class NotColEntities : DbContext
     {
-        public KnowledgeManagementEntities()
-            : base("name=KnowledgeManagementEntities")
+        static NotColEntities()
         {
-        }
+                var _ = typeof(System.Data.Entity.SqlServer.SqlProviderServices);
+                //var __ = typeof(System.Data.Entity.SqlServerCompact.SqlCeProviderServices);
+    
+            }
+
+        //public NotColEntities()
+        //    : base("name=NotColEntities")
+        //{
+        //}
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

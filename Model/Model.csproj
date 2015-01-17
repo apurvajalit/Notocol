@@ -49,65 +49,67 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-    <Compile Include="NotoCol.Context.cs">
+    <Compile Include="Extended\NotCol.Context.cs" />
+    <Compile Include="NotCol.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>NotoCol.Context.tt</DependentUpon>
+      <DependentUpon>NotCol.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="NotoCol.cs">
+    <Compile Include="NotCol.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>NotoCol.tt</DependentUpon>
+      <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
-    <Compile Include="NotoCol.Designer.cs">
+    <Compile Include="NotCol.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>NotoCol.edmx</DependentUpon>
+      <DependentUpon>NotCol.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source.cs">
-      <DependentUpon>NotoCol.tt</DependentUpon>
+      <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="SourceTag.cs">
-      <DependentUpon>NotoCol.tt</DependentUpon>
+      <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="sysdiagram.cs">
-      <DependentUpon>NotoCol.tt</DependentUpon>
+      <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="Tag.cs">
-      <DependentUpon>NotoCol.tt</DependentUpon>
+      <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="User.cs">
-      <DependentUpon>NotoCol.tt</DependentUpon>
+      <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="UserTag.cs">
-      <DependentUpon>NotoCol.tt</DependentUpon>
+      <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="NotoCol.edmx">
+    <EntityDeploy Include="NotCol.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>NotoCol.Designer.cs</LastGenOutput>
+      <LastGenOutput>NotCol.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="NotoCol.Context.tt">
+    <None Include="NotCol.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>NotoCol.edmx</DependentUpon>
-      <LastGenOutput>NotoCol.Context.cs</LastGenOutput>
+      <DependentUpon>NotCol.edmx</DependentUpon>
+      <LastGenOutput>NotCol.Context.cs</LastGenOutput>
     </None>
-    <None Include="NotoCol.edmx.diagram">
-      <DependentUpon>NotoCol.edmx</DependentUpon>
+    <None Include="NotCol.edmx.diagram">
+      <DependentUpon>NotCol.edmx</DependentUpon>
     </None>
-    <None Include="NotoCol.tt">
+    <None Include="NotCol.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>NotoCol.edmx</DependentUpon>
-      <LastGenOutput>NotoCol.cs</LastGenOutput>
+      <DependentUpon>NotCol.edmx</DependentUpon>
+      <LastGenOutput>NotCol.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

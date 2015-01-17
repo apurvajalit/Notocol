@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="NotoColModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="NotColModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Source">
           <Key>
             <PropertyRef Name="ID" />
@@ -120,7 +120,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="NotoColModelStoreContainer">
+        <EntityContainer Name="NotColModelStoreContainer">
           <EntitySet Name="Source" EntityType="Self.Source" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SourceTags" EntityType="Self.SourceTags" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
@@ -152,7 +152,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="NotoColModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="NotColModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Source">
           <Key>
             <PropertyRef Name="ID" />
@@ -278,7 +278,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="KnowledgeManagementEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="NotColEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Sources" EntityType="Self.Source" />
           <EntitySet Name="SourceTags" EntityType="Self.SourceTag" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
@@ -311,9 +311,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="NotoColModelStoreContainer" CdmEntityContainer="KnowledgeManagementEntities">
+        <EntityContainerMapping StorageEntityContainer="NotColModelStoreContainer" CdmEntityContainer="NotColEntities">
           <EntitySetMapping Name="Sources">
-            <EntityTypeMapping TypeName="NotoColModel.Source">
+            <EntityTypeMapping TypeName="NotColModel.Source">
               <MappingFragment StoreEntitySet="Source">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
@@ -324,7 +324,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SourceTags">
-            <EntityTypeMapping TypeName="NotoColModel.SourceTag">
+            <EntityTypeMapping TypeName="NotColModel.SourceTag">
               <MappingFragment StoreEntitySet="SourceTags">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="SourceID" ColumnName="SourceID" />
@@ -333,7 +333,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="NotoColModel.sysdiagram">
+            <EntityTypeMapping TypeName="NotColModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -344,7 +344,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Tags">
-            <EntityTypeMapping TypeName="NotoColModel.Tag">
+            <EntityTypeMapping TypeName="NotColModel.Tag">
               <MappingFragment StoreEntitySet="Tag">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -353,7 +353,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="NotoColModel.User">
+            <EntityTypeMapping TypeName="NotColModel.User">
               <MappingFragment StoreEntitySet="User">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
@@ -364,7 +364,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserTags">
-            <EntityTypeMapping TypeName="NotoColModel.UserTag">
+            <EntityTypeMapping TypeName="NotColModel.UserTag">
               <MappingFragment StoreEntitySet="UserTags">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
