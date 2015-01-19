@@ -25,5 +25,11 @@ namespace Notocol.Controllers
             return View(objTagRepository.SearchTags("",1));
         }
 
+        public ActionResult HowItWorks()
+        {
+            ViewBag.Title = "How it works";
+            return View();
+        }
+
     }
 }

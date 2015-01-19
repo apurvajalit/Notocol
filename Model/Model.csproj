@@ -48,7 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Extended\NotCol.Context.cs" />
     <Compile Include="NotCol.Context.cs">
       <AutoGen>True</AutoGen>
