@@ -1,0 +1,18 @@
+﻿@using Model;
+
+@model IList<Tag>
+
+@{
+    ViewBag.Title = "My Tags";
+    Layout = "_Layout";
+}
+
+<h2>My Tags</h2>
+<ul>
+    @foreach (Tag objTag in Model)
+    {
+        <li>
+            @objTag.Name;  //string.Format("{0} {1}", objTag.Name, objTag.Description);
+        </li>
+    }
+</ul>

@@ -8,7 +8,6 @@ namespace Repository
 {
     public abstract class DataRepository
     {
-
         //public abstract IConfigurationRepository GetConfigurationRepository(string connString, bool createContext = true);
 
         public abstract SourceRepository GetSourceRepository(bool createContext = true);

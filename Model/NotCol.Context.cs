@@ -15,17 +15,10 @@ namespace Model
     
     public partial class NotColEntities : DbContext
     {
-        static NotColEntities()
+        public NotColEntities()
+            : base("name=NotColEntities")
         {
-                var _ = typeof(System.Data.Entity.SqlServer.SqlProviderServices);
-                //var __ = typeof(System.Data.Entity.SqlServerCompact.SqlCeProviderServices);
-    
-            }
-
-        //public NotColEntities()
-        //    : base("name=NotColEntities")
-        //{
-        //}
+        }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

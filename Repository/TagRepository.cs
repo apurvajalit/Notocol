@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Model;
 
 namespace Repository
@@ -14,16 +11,28 @@ namespace Repository
             CreateDataContext();
         }
 
-        public IList<Tag> SearchTags(string charactersToSearch)
+        public IList<Tag> SearchTags(string charactersToSearch,int userID)
         {
             IList<Tag> lstTags = null;
             try
             {
                 using (GetDataContext())
                 {
-                    lstTags = (from tags in context.Tags
-                                          where tags.Name == charactersToSearch
-                                          select tags).ToList();
+                    if (charactersToSearch=="")
+                    {
+                        lstTags = (from tags in context.Tags
+                                   join userTags in context.UserTags on tags.ID equals userTags.TagID
+                                   where userTags.UserID == userID
+                                   select tags).ToList();
+                    }
+                    else
+                    {
+                        lstTags = (from tags in context.Tags
+                                   join userTags in context.UserTags on tags.ID equals userTags.TagID
+                                   where tags.Name == charactersToSearch && userTags.UserID == userID
+                                   select tags).ToList();
+                    }
+                    
                 }
             }
             catch
