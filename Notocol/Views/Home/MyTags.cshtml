@@ -1,8 +1,18 @@
-﻿@model System.Collections.Generic.IList<Model.Tag>
-
+﻿
+@using Model
+@model IList<Model.Tag>
 @{
-    ViewBag.Title = "title";
-    Layout = "_Layout";
+    ViewBag.Title = "Tags";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>title</h2>
+<h2>Tags</h2>
+<ul>
+    @foreach (Tag objTag in Model)
+    {
+        <li>
+            @objTag.Name 
+        </li>
+        
+    }
+</ul>

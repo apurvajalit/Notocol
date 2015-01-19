@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
+using Model;
 using Repository;
 
 namespace Notocol.Controllers
@@ -21,8 +23,8 @@ namespace Notocol.Controllers
         public ActionResult MyTags()
         {
             TagRepository objTagRepository = new TagRepository();
-
-            return View(objTagRepository.SearchTags("",1));
+            IList<Tag> searchTags = objTagRepository.SearchTags("", 2);
+            return View(searchTags);
         }
 
         public ActionResult HowItWorks()
