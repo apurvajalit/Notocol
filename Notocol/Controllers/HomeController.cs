@@ -21,5 +21,11 @@ namespace Notocol.Controllers
             return View();
         }
 
+        public ActionResult HowItWorks()
+        {
+            ViewBag.Title = "How it works";
+            return View();
+        }
+
     }
 }
