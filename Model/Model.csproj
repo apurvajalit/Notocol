@@ -81,9 +81,6 @@
     <Compile Include="User.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
-    <Compile Include="UserTag.cs">
-      <DependentUpon>NotCol.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

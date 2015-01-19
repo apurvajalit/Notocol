@@ -21,15 +21,13 @@ namespace Repository
                     if (charactersToSearch=="")
                     {
                         lstTags = (from tags in context.Tags
-                                   join userTags in context.UserTags on tags.ID equals userTags.TagID
-                                   where userTags.UserID == userID
+                                   where tags.UserID == userID
                                    select tags).ToList();
                     }
                     else
                     {
                         lstTags = (from tags in context.Tags
-                                   join userTags in context.UserTags on tags.ID equals userTags.TagID
-                                   where tags.Name == charactersToSearch && userTags.UserID == userID
+                                   where tags.Name == charactersToSearch && tags.UserID == userID
                                    select tags).ToList();
                     }
                     
