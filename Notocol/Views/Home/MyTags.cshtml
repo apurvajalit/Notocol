@@ -5,8 +5,18 @@
     ViewBag.Title = "Tags";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $("txtSearchTags").onchange(function() {
+        alert(this.val);
+    });
+    function SearchTags(parameters) {
+        
+    }
 
+</script>
 <h2>Tags</h2>
+Search Tags : <input type="text" id="txtSearchTags" onchange="SearchTags()"/>
 <ul>
     @foreach (Tag objTag in Model)
     {

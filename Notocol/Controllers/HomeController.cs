@@ -33,5 +33,12 @@ namespace Notocol.Controllers
             return View();
         }
 
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public JsonResult SearchTags(string id)
+        {
+            TagRepository objTagRepository = new TagRepository();
+            IList<Tag> searchTags = objTagRepository.SearchTags(id, 2);
+            return Json(searchTags,JsonRequestBehavior.AllowGet);
+        }
     }
 }

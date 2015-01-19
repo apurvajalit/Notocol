@@ -1,4 +1,7 @@
-﻿<div class="jumbotron">
+﻿
+
+
+<div class="jumbotron">
     <h1>NotoCol 0.1</h1>
     <p class="lead">Your Smart Study Assistant </p>
     <p><a href="@Url.Action("AboutUs")" class="btn btn-primary btn-lg">Get started &raquo;</a></p>
@@ -10,7 +13,7 @@
         <p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>
     </div>
 
-     <div class="col-md-4">
+    <div class="col-md-4">
         <h2>Organize</h2>
         <p>Compile and organize the content you find useful by mantaining tags and ratings you associate with it</p>
         <p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>
@@ -22,3 +25,54 @@
         <p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>
     </div>
 </div>
+<div>
+    <form method="POST" id="tags">
+        <h4>Tags</h4>
+        <div id="dvTagSearch"><input type="text" id="txtSearchTags" /></div>
+        <div id="dvTags"></div>
+    </form>
+</div>
+@section scripts
+{
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript">
+        var lastValue = '';
+        $('#txtSearchTags').on('change keyup paste', function() {
+            // Don't count the keys which don't actually change
+            // the text. The four below are the arrow keys, but
+            // there are more that I omitted for brevity.
+            if (event.which != 37 && event.which != 38 &&
+                event.which != 39 && event.which != 40) {
+                // check for last value
+                if ($(this).val() != lastValue) {
+                    lastValue = $(this).val();
+                    if (lastValue.length >= 3) {
+                        //alert(lastValue);
+                        GetTags(lastValue);
+                    }
+                }
+            }
+        });
+
+        function GetTags(strToSearch) {
+            $.ajax({
+                    url: '@Url.Action("SearchTags", "Home")', //+strToSearch,
+                   // url: '/home/searchTags',
+                    type: 'POST',
+                    async: false,
+                    data: { id: strToSearch },
+                success:
+
+            function(data) {
+                $('#dvTags').empty();
+                $('#dvTags').append('<ul>');
+                $.each(data, function(index, tag) {
+
+                    $('#dvTags').append('<li>' + tag.Name + '</li>');
+                });
+            }
+        });
+        }
+    </script>
+
+}

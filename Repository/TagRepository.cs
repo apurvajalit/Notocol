@@ -27,7 +27,7 @@ namespace Repository
                     else
                     {
                         lstTags = (from tags in context.Tags
-                                   where tags.Name == charactersToSearch && tags.UserID == userID
+                                   where tags.Name.StartsWith(charactersToSearch) && tags.UserID == userID
                                    select tags).ToList();
                     }
                     

@@ -1,0 +1,28 @@
+﻿<head>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript">
+        // $('#txtSearchTags').text.val('sdf');
+        $('#txtSearchTags').change(function (event) {
+            alert('called');
+            // Don't count the keys which don't actually change
+            // the text. The four below are the arrow keys, but
+            // there are more that I omitted for brevity.
+            if (event.which != 37 && event.which != 38 &&
+                event.which != 39 && event.which != 40) {
+
+                // Replace the two lines below with whatever you want to
+                // do when the text changes.
+                // var count = parseInt($('#changeCount').text(), 10) + 1;
+                //  $('#changeCount').text(count);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <form method="POST" id="tags">
+            <h4>Tags</h4>
+            <div><input type="text" id="txtSearchTags" /></div>
+        </form>
+    </div>
+</body>
