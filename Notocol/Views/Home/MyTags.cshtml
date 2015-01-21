@@ -52,7 +52,7 @@
 </script>
 
     <script type="text/javascript">
-        var selectedNodeID;
+    var selectedNodeID;
     function SearchTags(parameters) {
 
     }
@@ -66,7 +66,7 @@
         {id: 7, Name: 'Division 4', parentID: 1},
         {id: 8, Name: 'Division 5', parentID: 1},
         {id: 5, Name: 'Sub Division', parentID: 3},
-        
+
     ];
 
     var tagArray = @Html.Raw(Json.Encode(Model).Replace("\"ID\"","\"id\"")); //replace ID with id to support data for tree view
@@ -93,23 +93,42 @@
     });
 
         function deleteTag(tag) {
-            log('Deleted node '+tag.data.id);
-            org_chart.deleteNode(tag.data.id); 
+            var tagToSave = {ID:tag.data.id ,Name:tag.data.Name,ParentID:tag.data.ParentID};
+            $.ajax({
+                url: '@Url.Action("DeleteTag", "Home")',
+                type: 'POST',
+                async: false,
+                data: tagToSave,
+                success: function(data) {
+
+                }
+            });
+            org_chart.deleteNode(tag.data.id);
         }
 
         function addTag(tag) {
-            log('Created new node on node '+tag.data.id);
-            org_chart.newNode(tag.data.id); 
-        }
+            var tagToSave = {Name:' ', ParentID: tag.data.id };
+            $.ajax({
+                url: '@Url.Action("AddTag", "Home")',
+            type: 'POST',
+            async: false,
+            data: tagToSave,
+            success: function(data) {
 
-        function selectNode(tag) {
-            log('Clicked node '+tag.data.id);
-        }
+            }
+        });
 
-        // just for example purpose
-        function log(text) {
-            $('#consoleOutput').append('<p>' + text + '</p>');
-        }
+        org_chart.newNode(tag.data.id);
+    }
+
+    function selectNode(tag) {
+        log('Clicked node '+tag.data.id);
+    }
+
+    // just for example purpose
+    function log(text) {
+        $('#consoleOutput').append('<p>' + text + '</p>');
+    }
     </script>
 }
 <h2>Tags</h2>

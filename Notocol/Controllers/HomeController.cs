@@ -47,8 +47,16 @@ namespace Notocol.Controllers
 
         public Tag AddTag(Tag objTag)
         {
+            objTag.UserID = 2;
             TagRepository objTagRepository = new TagRepository();
             return objTagRepository.SaveTag(objTag);
+        }
+
+        public bool DeleteTag(Tag objTag)
+        {
+            objTag.UserID = 2;
+            TagRepository objTagRepository = new TagRepository();
+            return objTagRepository.DeleteTag(objTag);
         }
 
     }
