@@ -96,7 +96,7 @@
                 nextId++;
             }
 
-            self.addNode({id: nextId, name: '', parent: parentId});
+            self.addNode({id: nextId, Name: '', ParentID: parentId});
         }
 
         this.addNode = function(data){

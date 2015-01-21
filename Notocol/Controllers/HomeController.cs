@@ -45,5 +45,11 @@ namespace Notocol.Controllers
             return searchTags;
         }
 
+        public Tag AddTag(Tag objTag)
+        {
+            TagRepository objTagRepository = new TagRepository();
+            return objTagRepository.SaveTag(objTag);
+        }
+
     }
 }

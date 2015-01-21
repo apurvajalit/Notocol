@@ -27,7 +27,7 @@ namespace Repository
                     else
                     {
                         lstTags = (from tags in context.Tags
-                            where tags.Name.StartsWith(charactersToSearch) && tags.UserID == userID
+                            where tags.Name.Contains(charactersToSearch) && tags.UserID == userID
                             select tags).ToList();
                     }
                     
@@ -44,5 +44,47 @@ namespace Repository
             return lstTags;
         }
 
+        public Tag SaveTag(Tag objTag)
+        {
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.Tags.Add(objTag);
+                    context.SaveChanges();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return objTag;
+        }
+
+        public bool DeleteTag(Tag objTag)
+        {
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.Tags.Remove(objTag);
+                    context.SaveChanges();
+                    return true;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return false;
+        }
     }
 }

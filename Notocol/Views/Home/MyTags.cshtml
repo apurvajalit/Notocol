@@ -15,9 +15,44 @@
 
     <script src="~/Scripts/OrgChart/jquery.orgchart.js"></script>
     <script type="text/javascript">
-    //$("txtSearchTags").onchange(function() {
-    //    alert(this.val);
-    //});
+    var lastValue = '';
+    $('#txtSearchTags').on('change keyup paste', function() {
+        // Don't count the keys which don't actually change
+        // the text. The four below are the arrow keys, but
+        // there are more that I omitted for brevity.
+        if (event.which != 37 && event.which != 38 &&
+            event.which != 39 && event.which != 40) {
+            // check for last value
+            if ($(this).val() != lastValue) {
+                lastValue = $(this).val();
+                if (lastValue.length >= 3) {
+                    //alert(lastValue);
+                    GetTags(lastValue);
+                }
+            }
+        }
+    });
+
+    function GetTags(strToSearch) {
+        $.ajax({
+            url: '@Url.Action("SearchTags", "Home")', //+strToSearch,
+            // url: '/home/searchTags',
+            type: 'POST',
+            async: false,
+            data: { id: strToSearch },
+            success: function(data) {
+            $('#dvTags').empty();
+            $('#dvTags').append('<ul>');
+            $.each(data, function(index, tag) {
+                $('#dvTags').append('<li>' + tag.Name + '</li>');
+            });
+        }
+        });
+    }
+</script>
+
+    <script type="text/javascript">
+        var selectedNodeID;
     function SearchTags(parameters) {
 
     }
@@ -32,10 +67,11 @@
         {id: 8, Name: 'Division 5', parentID: 1},
         {id: 5, Name: 'Sub Division', parentID: 3},
         
-    ];
-    var tagArray = @Html.Raw(Json.Encode(Model).Replace("\"ID\"","\"id\""));
-        console.log(tagArray);
-        console.log(testData);
+    ];
+
+    var tagArray = @Html.Raw(Json.Encode(Model).Replace("\"ID\"","\"id\"")); //replace ID with id to support data for tree view
+        //console.log(tagArray);
+        //console.log(testData);
 
     $(function () {
         //alert('org');
@@ -43,25 +79,45 @@
             data: tagArray, // your data
             showControls: true, // display add or remove node button.
             allowEdit: true, // click the node's title to edit
-            onAddNode: function (node) { },
-            onDeleteNode: function (node) { },
-            onClickNode: function (node) { },
+            onAddNode: function(node) {
+                addTag(node);
+            },
+            onDeleteNode: function(node) {
+                deleteTag(node);
+            },
+            onClickNode: function(node) {
+                selectedNodeID = node.id;
+            },
             newNodeText: 'Add Tag' // text of add button
         });
     });
 
+        function deleteTag(tag) {
+            log('Deleted node '+tag.data.id);
+            org_chart.deleteNode(tag.data.id); 
+        }
+
+        function addTag(tag) {
+            log('Created new node on node '+tag.data.id);
+            org_chart.newNode(tag.data.id); 
+        }
+
+        function selectNode(tag) {
+            log('Clicked node '+tag.data.id);
+        }
+
+        // just for example purpose
+        function log(text) {
+            $('#consoleOutput').append('<p>' + text + '</p>');
+        }
     </script>
 }
 <h2>Tags</h2>
-Search Tags : <input type="text" id="txtSearchTags" onchange="SearchTags()"/>
-<ul>
-    @foreach (Tag objTag in Model)
-    {
-        <li>
-            @objTag.Name 
-        </li>
-        
-    }
-</ul>
-
+<div>
+    <form method="POST" id="tags">
+        <h4>Search Tags : </h4>
+        <div id="dvTagSearch"><input type="text" id="txtSearchTags"/></div>
+        <div id="dvTags"></div>
+    </form>
+</div>
 <div id="orgChart"></div>
