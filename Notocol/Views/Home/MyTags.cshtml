@@ -23,14 +23,14 @@
     }
 
     var testData = [
-        {ID: 1, Name: 'My Organization', parentID: 0},
-        {ID: 2, Name: 'CEO Office', parentID: 1},
-        {ID: 3, Name: 'Division 1', parentID: 1},
-        {ID: 4, Name: 'Division 2', parentID: 1},
-        {ID: 6, Name: 'Division 3', parentID: 1},
-        {ID: 7, Name: 'Division 4', parentID: 1},
-        {ID: 8, Name: 'Division 5', parentID: 1},
-        {ID: 5, Name: 'Sub Division', parentID: 3},
+        {id: 1, Name: 'My Organization', parentID: 0},
+        {id: 2, Name: 'CEO Office', parentID: 1},
+        {id: 3, Name: 'Division 1', parentID: 1},
+        {id: 4, Name: 'Division 2', parentID: 1},
+        {id: 6, Name: 'Division 3', parentID: 1},
+        {id: 7, Name: 'Division 4', parentID: 1},
+        {id: 8, Name: 'Division 5', parentID: 1},
+        {id: 5, Name: 'Sub Division', parentID: 3},
         
     ];
     var tagArray = @Html.Raw(Json.Encode(Model).Replace("\"ID\"","\"id\""));
@@ -40,7 +40,7 @@
     $(function () {
         //alert('org');
         org_chart = $('#orgChart').orgChart({
-            data: testData, // your data
+            data: tagArray, // your data
             showControls: true, // display add or remove node button.
             allowEdit: true, // click the node's title to edit
             onAddNode: function (node) { },

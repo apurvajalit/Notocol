@@ -5,13 +5,13 @@
     }
 
     $.fn.orgChart.defaults = {
-        data: [{id:1, name:'Root', parent: 0}],
+        data: [{id:1, name:'Root', parentID: 0}],
         showControls: false,
         allowEdit: false,
         onAddNode: null,
         onDeleteNode: null,
         onClickNode: null,
-        newNodeText: 'Add Child'
+        newNodeText: 'Add Tag'
     };
 
     function OrgChart($container, opts){
