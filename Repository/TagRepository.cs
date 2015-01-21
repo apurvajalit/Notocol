@@ -18,17 +18,17 @@ namespace Repository
             {
                 using (GetDataContext())
                 {
-                    if (charactersToSearch=="")
+                    if (charactersToSearch == "")
                     {
                         lstTags = (from tags in context.Tags
-                                   where tags.UserID == userID
-                                   select tags).ToList();
+                            where tags.UserID == userID
+                            select tags).ToList();
                     }
                     else
                     {
                         lstTags = (from tags in context.Tags
-                                   where tags.Name.StartsWith(charactersToSearch) && tags.UserID == userID
-                                   select tags).ToList();
+                            where tags.Name.StartsWith(charactersToSearch) && tags.UserID == userID
+                            select tags).ToList();
                     }
                     
                 }

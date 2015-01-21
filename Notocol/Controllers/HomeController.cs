@@ -22,8 +22,7 @@ namespace Notocol.Controllers
 
         public ActionResult MyTags()
         {
-            TagRepository objTagRepository = new TagRepository();
-            IList<Tag> searchTags = objTagRepository.SearchTags("", 2);
+            IList<Tag> searchTags = SearchMyTags("");
             return View(searchTags);
         }
 
@@ -36,9 +35,15 @@ namespace Notocol.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public JsonResult SearchTags(string id)
         {
-            TagRepository objTagRepository = new TagRepository();
-            IList<Tag> searchTags = objTagRepository.SearchTags(id, 2);
-            return Json(searchTags,JsonRequestBehavior.AllowGet);
+            return Json(SearchMyTags(id), JsonRequestBehavior.AllowGet);
         }
+
+        public IList<Tag> SearchMyTags(string strSearch)
+        {
+            TagRepository objTagRepository = new TagRepository();
+            IList<Tag> searchTags = objTagRepository.SearchTags(strSearch, 2);
+            return searchTags;
+        }
+
     }
 }
