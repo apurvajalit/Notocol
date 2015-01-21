@@ -63,23 +63,44 @@
                 e.stopPropagation();
             });
         }
-
-        this.startEdit = function(id){
+        this.update = function (id) {
+            var newTagID = 0;
+            var tagToSave = { id: nodes[id].data.id, Name: nodes[id].data.Name, ParentID: nodes[id].data.ParentID };
+            $.ajax({
+                url: '/Home/AddTag',
+                type: 'POST',
+                async: false,
+                data: tagToSave,
+                success: function (data) {
+                    alert(data);
+                    newTagID = data;
+                }
+            });
+            
+        }
+        this.startEdit = function (id) {
+            var oldValue = nodes[id].data.Name;
             var inputElement = $('<input class="org-input" type="text" value="'+nodes[id].data.Name+'"/>');
             $container.find('div[node-id='+id+'] h2').replaceWith(inputElement);
-            var commitChange = function(){
-                var h2Element = $('<h2>'+nodes[id].data.Name+'</h2>');
+            var commitChange = function () {
+               
+                var h2Element = $('<h2>' + nodes[id].data.Name + '</h2>');
                 if(opts.allowEdit){
                     h2Element.click(function(){
                         self.startEdit(id);
                     })
                 }
                 inputElement.replaceWith(h2Element);
+                if (oldValue != nodes[id].data.Name) {
+                    self.update(id);
+                }
             }  
             inputElement.focus();
             inputElement.keyup(function(event){
-                if(event.which == 13){
+                if (event.which == 13) {
+                    
                     commitChange();
+                    
                 }
                 else{
                     nodes[id].data.Name = inputElement.val();

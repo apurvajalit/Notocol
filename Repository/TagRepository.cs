@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using Model;
 
@@ -50,7 +51,7 @@ namespace Repository
             {
                 using (GetDataContext())
                 {
-                    context.Tags.Add(objTag);
+                    context.Entry(objTag).State = objTag.ID == 0 ? EntityState.Added : EntityState.Modified;
                     context.SaveChanges();
                 }
             }
