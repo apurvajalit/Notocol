@@ -107,18 +107,20 @@
         }
 
         function addTag(tag) {
-            var tagToSave = {Name:' ', ParentID: tag.data.id };
+            var newTagID = 0;
+            var tagToSave = {Name:'New Tag', ParentID: tag.data.id };
             $.ajax({
                 url: '@Url.Action("AddTag", "Home")',
             type: 'POST',
             async: false,
             data: tagToSave,
             success: function(data) {
-
+                alert(data);
+                newTagID = data;
             }
         });
 
-        org_chart.newNode(tag.data.id);
+        org_chart.newNode(tag.data.id,newTagID);
     }
 
     function selectNode(tag) {

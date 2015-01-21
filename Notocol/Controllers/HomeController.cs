@@ -45,11 +45,11 @@ namespace Notocol.Controllers
             return searchTags;
         }
 
-        public Tag AddTag(Tag objTag)
+        public long AddTag(Tag objTag)
         {
             objTag.UserID = 2;
             TagRepository objTagRepository = new TagRepository();
-            return objTagRepository.SaveTag(objTag);
+            return objTagRepository.SaveTag(objTag).ID;
         }
 
         public bool DeleteTag(Tag objTag)

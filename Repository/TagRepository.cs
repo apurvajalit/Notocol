@@ -71,6 +71,7 @@ namespace Repository
             {
                 using (GetDataContext())
                 {
+                    context.Tags.Attach(objTag);
                     context.Tags.Remove(objTag);
                     context.SaveChanges();
                     return true;

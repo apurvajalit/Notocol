@@ -90,20 +90,26 @@
             })
         }
 
-        this.newNode = function(parentId){
-            var nextId = Object.keys(nodes).length;
-            while(nextId in nodes){
-                nextId++;
+        this.newNode = function (parentId, tagID) {
+            var nextId;
+            if (tagID > 0) {
+                nextId = tagID;
+            } else {
+                nextId = Object.keys(nodes).length;
+                while (nextId in nodes) {
+                    nextId++;
+                }
             }
+            
 
-            self.addNode({id: nextId, Name: '', ParentID: parentId});
+            self.addNode({id: nextId, Name: 'New Tag', ParentID: parentId});
         }
 
         this.addNode = function(data){
             var newNode = new Node(data);
             nodes[data.id] = newNode;
             nodes[data.ParentID].addChild(newNode);
-
+            nodes[data.Name] = 'New Tag';
             self.draw();
             self.startEdit(data.id);
         }
