@@ -144,6 +144,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\img\add.png" />
     <Content Include="Content\img\delete.png" />
+    <Content Include="Content\img\downloadIcon.png" />
     <Content Include="Content\jquery.orgchart.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
