@@ -1,8 +1,9 @@
-﻿
+﻿@using System.Configuration
+
 
 
 <div class="jumbotron">
-    <h1>Chimpu</h1>
+    <h1>@ConfigurationManager.AppSettings["proj"]</h1>
     <p class="lead">Your Smart Study Assistant </p>
     <p><a href="@Url.Action("AboutUs")" class="btn btn-primary btn-lg">Get started &raquo;</a></p>
 </div>

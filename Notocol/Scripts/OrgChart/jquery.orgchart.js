@@ -72,7 +72,7 @@
                 async: false,
                 data: tagToSave,
                 success: function (data) {
-                    alert(data);
+                   // alert(data);
                     newTagID = data;
                 }
             });
