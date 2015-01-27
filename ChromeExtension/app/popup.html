@@ -9,7 +9,7 @@
             font-size: 12px;
         }
 
-        input, textarea {
+        .input-text, textarea {
             width: 420px;
         }
 
@@ -17,30 +17,103 @@
                 font-weight: bold;
                 width: auto;
             }
+	
+        annotate-button{
+            width: 10px;
+            height: 10px;                 
+			font-size:xx-small;
+		}
+		
+		ul {
+ 		   list-style-type: none;
+		    margin: 0;
+		    padding: 0;
+		}
+		li {
+ 		   display: inline;
+		}
+	   .right {
+			float: right;
+		}
+		 
+		readLater {
+			margin: 0; 
+			padding-left: -10px;	
+		}
+		
+		.rating-star {
+			width: 15px;
+			height: 15px;
+		}
+		  
     </style>
     <script src="popup.js"></script>
 </head>
 <body>
-    <form id="addbookmark">
-        <p>
-            <label for="title">Title</label><br />
-            <input type="text" id="title" name="title" size="50" value="" />
-        </p>
-        <p>
+
+   
+<ul class="right">
+  <li><a href="">Home</a></li>
+  <li> | </li>
+  <li><a href="">Settings</a></li>
+ <li> | </li>
+  <li><a href="">Logout</a></li>
+
+</ul>
+<button id="pen" class="annotate-button" title="Pen"> P </button>
+<button id="highlight" class="annotate-button" title="Highlight"> H </button>
+<button id="comment" class="annotate-button" title="Comment"> C </button>
+
+
+<form id="addbookmark">
+   
+<h1 align="center"> The Trail Maker </h2>
+    <label for="title">Title</label> 
+    <ul class="right" title="Rating">
+    	<li><img class="rating-star" src="img/star.png"/></li>
+       	<li><img class="rating-star" src="img/star.png"/></li>
+       	<li><img class="rating-star" src="img/star.png"/></li>
+       	<li><img class="rating-star" src="img/star.png"/></li>
+       	<li><img class="rating-star" src="img/star.png"/></li>
+    </ul>
+	
+	<br />
+  	<input class="input-text" type="text" id="title" name="title" size="50" value="" />
+</p>
+            
+        
+        <p hidden="true">
             <label for="url">Url</label><br />
-            <input type="text" id="url" name="url" size="50" value="" />
+            <input class="input-text" type="text" id="url" name="url" size="50" value="" />
         </p>
         <p>
             <label for="summary">Summary</label><br />
-            <textarea id="summary" name="summary" rows="6" cols="35"></textarea>
+            <textarea id="summary" name="summary" rows="2" cols="35"></textarea>
         </p>
+        
+        <p> 
+        	<label for="contexttag"> Current Topic Tag: </label>
+        
+            <a class="right" href=""> Set Current Topic Tag </a>
+        </p>
+        
         <p>
             <label for="tags">Tags</label><br />
-            <input type="text" id="tags" name="tags" size="50" value="" />
+            <input class="input-text" type="text" id="tags" name="tags" size="50" value="" />
         </p>
-        <p>
-            <input id="save" type="submit" value="Save Bookmark" />
-            <span id="status-display"></span>
+		<p>
+            <label for="metatags">Meta Tags</label><br />
+            <input class="input-text" type="text" id="metatags" name="metatags" size="50" value="" />
+        </p>
+
+        
+		<input id="readlater" type="checkbox" name="readLater" value="readLater">Read Later</input>        	
+        <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input> 
+       <p>
+            <div align="center">
+	            <input id="save" type="submit" value="Save" />
+    	        <span id="status-display"></span>
+            </div>
         </p>
     </form>
 </body>
