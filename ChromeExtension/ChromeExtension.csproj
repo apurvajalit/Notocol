@@ -40,10 +40,15 @@
   <ItemGroup>
     <Content Include="app\event.js" />
     <Content Include="app\content.js" />
+    <Content Include="app\icons\bg_jRatingInfos.png" />
+    <Content Include="app\icons\small.png" />
+    <Content Include="app\icons\stars.png" />
     <Content Include="app\img\HighLight.png" />
     <Content Include="app\img\icon.png" />
     <Content Include="app\img\star.png" />
     <Content Include="app\jquery-1.11.1.min.js" />
+    <Content Include="app\jRating.jquery.css" />
+    <Content Include="app\jRating.jquery.js" />
     <Content Include="app\main.html" />
     <Content Include="app\main.js" />
     <Content Include="app\popup.html" />

@@ -1,55 +1,65 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <style>
-        body {
-            min-width: 420px;
-            overflow-x: hidden;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
+    <head>
+        <title></title>
 
-        .input-text, textarea {
-            width: 420px;
-        }
+        <style>
+            body {
+                min-width: 420px;
+                overflow-x: hidden;
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+            }
+
+            .input-text, textarea { width: 420px; }
 
             input#save {
                 font-weight: bold;
                 width: auto;
             }
-	
-        annotate-button{
-            width: 10px;
-            height: 10px;                 
-			font-size:xx-small;
-		}
-		
-		ul {
- 		   list-style-type: none;
-		    margin: 0;
-		    padding: 0;
-		}
-		li {
- 		   display: inline;
-		}
-	   .right {
-			float: right;
-		}
-		 
-		readLater {
-			margin: 0; 
-			padding-left: -10px;	
-		}
-		
-		.rating-star {
-			width: 15px;
-			height: 15px;
-		}
+
+            annotate-button {
+                width: 10px;
+                height: 10px;
+                font-size: xx-small;
+            }
+
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            li { display: inline; }
+
+            .right { float: right; }
+
+            readLater {
+                margin: 0;
+                padding-left: -10px;
+            }
+
+            .rating-star {
+                width: 15px;
+                height: 15px;
+            }
 		  
-    </style>
-    <script src="popup.js"></script>
-</head>
-<body>
+        </style>
+        <link rel="stylesheet" type="text/css" href="jRating.jquery.css" media="screen" />
+        <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="jRating.jquery.js"></script>
+        <script src="popup.js"></script>
+        <!-- JS to add -->
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".basic").jRating({
+                    type: 'big', // type of the rate.. can be set to 'small' or 'big'
+                    decimalLength: 1
+                });
+            });
+        </script>
+    </head>
+    <body>
 
    
 <ul class="right">
@@ -67,21 +77,17 @@
 
 <form id="addbookmark">
    
-<h1 align="center"> The Trail Maker </h2>
+<h1 align="center"> The Trail Maker </h1>
     <label for="title">Title</label> 
-    <ul class="right" title="Rating">
-    	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-    </ul>
-	
-	<br />
-  	<input class="input-text" type="text" id="title" name="title" size="50" value="" />
-</p>
-            
+    <br />
+    <input class="input-text" type="text" id="title" name="title" size="50" value="" />
+    
+    <div class="exemple"> Rate : 
+        <div class="basic" data-average="0" data-id="1"></div>
+    </div>
         
+
+
         <p hidden="true">
             <label for="url">Url</label><br />
             <input class="input-text" type="text" id="url" name="url" size="50" value="" />
@@ -90,32 +96,32 @@
             <label for="summary">Summary</label><br />
             <textarea id="summary" name="summary" rows="2" cols="35"></textarea>
         </p>
-        
-        <p> 
-        	<label for="contexttag"> Current Topic Tag: </label>
-        
+
+        <p>
+            <label for="contexttag"> Current Topic Tag: </label>
+
             <a class="right" href=""> Set Current Topic Tag </a>
         </p>
-        
+
         <p>
             <label for="tags">Tags</label><br />
             <input class="input-text" type="text" id="tags" name="tags" size="50" value="" />
         </p>
-		<p>
+        <p>
             <label for="metatags">Meta Tags</label><br />
             <input class="input-text" type="text" id="metatags" name="metatags" size="50" value="" />
         </p>
 
-        
-		<input id="readlater" type="checkbox" name="readLater" value="readLater">Read Later</input>        	
-        <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input> 
-       <p>
+
+        <input id="readlater" type="checkbox" name="readLater" value="readLater">Read Later</input>
+        <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input>
+        <p>
             <div align="center">
-	            <input id="save" type="submit" value="Save" />
-    	        <span id="status-display"></span>
+                <input id="save" type="submit" value="Save" />
+                <span id="status-display"></span>
             </div>
         </p>
-    </form>
+</form>
 </body>
 </html>
 
