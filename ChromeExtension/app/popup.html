@@ -54,10 +54,22 @@
             border-radius: 25px;
 		}
 		  
-    </style>
-    <script src="popup.js"></script>
-</head>
-<body>
+        </style>
+        <link rel="stylesheet" type="text/css" href="jRating.jquery.css" media="screen" />
+        <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="jRating.jquery.js"></script>
+        <script src="popup.js"></script>
+        <!-- JS to add -->
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".basic").jRating({
+                    type: 'big', // type of the rate.. can be set to 'small' or 'big'
+                    decimalLength: 1
+                });
+            });
+        </script>
+    </head>
+    <body>
 
    
 <ul class="right">
@@ -68,29 +80,23 @@
   <li><a href="">Logout</a></li>
 
 </ul>
-
 <a href="img/pen.png"><img src="img/pen.png" width="15" height="15" border="0" title="Pen"> </a>
 <a href="img/HighLight.png"><img src="img/HighLight.png" width="15" height="15" border="0" title="Highlight"> </a>
 <a href="img/comment.png"><img src="img/comment.png" width="15" height="15" border="0" title="Comment"> </a>
+
 <form id="addbookmark">
-   
-<h1 align="center" > The Trail Maker </h2>
+
+<h1 align="center"> The Trail Maker </h1>
+    <label for="title" hidden="hidden">Title</label> 
+    
+    <input class="input-text" type="text" id="title" name="title" size="50" value="" />
+    
+    <div class="exemple"> Rate : 
+        <div class="basic" data-average="0" data-id="1"></div>
+    </div>
+    <br />    
 
 
-   <label for="title" hidden="hidden">Title</label> 
-    <ul class="right" title="Rating">
-    	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-       	<li><img class="rating-star" src="img/star.png"/></li>
-    </ul>
-	
-	<br />
-  	<input class="input-text" type="text" id="title" name="title" size="50" value="" />
-</p>
-    <hr>            
-        
         <p hidden="true">
             <label for="url">Url</label><br />
             <input class="input-text" type="text" id="url" name="url" size="50" value="" />
@@ -99,38 +105,38 @@
             <label for="summary">Summary</label><br />
             <textarea id="summary" name="summary" rows="2" cols="35"></textarea>
         </p>
-        
-        <p> 
-        	<label for="contexttag"> Current Topic Tag: </label>
-        
+
+        <p>
+            <label for="contexttag"> Current Topic Tag: </label>
+
             <a class="right" href=""> Set Current Topic Tag </a>
         </p>
-        
+
         <p>
             <label for="tags">Tags</label>
-            <a href=""><img src="img/Hierarchy.png" width="15" height="15" border="0" title="Select from tree"> </a>
+			<a href=""><img src="img/Hierarchy.png" width="15" height="15" border="0" title="Select from tree"> </a>
             <br/>
             <input class="input-text" type="text" id="tags" name="tags" size="50" value="" />
-            
-            
-		</p>
-		<p>
+       
+		 </p>
+       	 <p>
             <label for="metatags">Meta Tags</label><br />
             <input class="input-text" type="text" id="metatags" name="metatags" size="50" value="" />
         </p>
 
-        <input id="readLater" type="checkbox" name="readLater" value="readLater">Save Offline Copy</input>        	
+
+        <input id="readlater" type="checkbox" name="readLater" value="readLater">Read Later</input>
 		<input id="offlineCopy" type="checkbox" name="offlineCopy" value="offlineCopy">Save Offline Copy</input>        	
-        <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input> 
-       <p>
+        <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input>
+        <p>
             <div align="center">
-	            <input id="save" type="submit" value="Save" />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="save" type="submit" value="Save" />
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <input id="save" type="submit" value="Cancel" />
-    	        <span id="status-display"></span>
+                <span id="status-display"></span>
             </div>
         </p>
-    </form>
+	</form>
 </body>
 </html>
 
