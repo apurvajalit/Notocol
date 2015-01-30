@@ -1,3 +1,11 @@
+
+            $(document).ready(function () {
+                $(".basic").jRating({
+                    type: 'big', // type of the rate.. can be set to 'small' or 'big'
+                    decimalLength: 1
+                });
+            });
+
 // This callback function is called when the content script has been 
 // injected and returned its results
 function onPageDetailsReceived(pageDetails) {
@@ -61,6 +69,7 @@ function addBookmark() {
 
 // When the popup HTML has loaded
 window.addEventListener('load', function (evt) {
+
     // Cache a reference to the status display SPAN
     statusDisplay = document.getElementById('status-display');
     // Handle the bookmark form submit event with our addBookmark function

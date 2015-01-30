@@ -15,9 +15,9 @@
 
         .input-text, textarea {
             width: 420px;
-			border-color: rgba(129,129,129,0.76);
+			/*border-color: rgba(129,129,129,0.76);*/
 			border-width:thin;
-			border: 1px thin solid;
+			border: 2px thin solid;
 			border-radius: 5px;
         }
 
@@ -59,15 +59,7 @@
         <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
         <script type="text/javascript" src="jRating.jquery.js"></script>
         <script src="popup.js"></script>
-        <!-- JS to add -->
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $(".basic").jRating({
-                    type: 'big', // type of the rate.. can be set to 'small' or 'big'
-                    decimalLength: 1
-                });
-            });
-        </script>
+        
     </head>
     <body>
 
@@ -87,9 +79,10 @@
 <form id="addbookmark">
 
 <h1 align="center"> The Trail Maker </h1>
-    <label for="title" hidden="hidden">Title</label> 
-    
+    <label for="title">Title</label>
+    <br />
     <input class="input-text" type="text" id="title" name="title" size="50" value="" />
+
     
     <div class="exemple"> Rate : 
         <div class="basic" data-average="0" data-id="1"></div>
@@ -97,7 +90,7 @@
     <br />    
 
 
-        <p hidden="true">
+        <p>
             <label for="url">Url</label><br />
             <input class="input-text" type="text" id="url" name="url" size="50" value="" />
         </p>
