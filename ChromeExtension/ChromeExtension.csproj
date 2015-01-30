@@ -40,8 +40,10 @@
   <ItemGroup>
     <Content Include="app\event.js" />
     <Content Include="app\content.js" />
+    <Content Include="app\img\comment.png" />
     <Content Include="app\img\HighLight.png" />
     <Content Include="app\img\icon.png" />
+    <Content Include="app\img\pen.png" />
     <Content Include="app\img\star.png" />
     <Content Include="app\jquery-1.11.1.min.js" />
     <Content Include="app\main.html" />

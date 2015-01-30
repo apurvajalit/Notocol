@@ -7,24 +7,27 @@
             overflow-x: hidden;
             font-family: Arial, sans-serif;
             font-size: 12px;
+			margin:1px;
+			padding:10px;
+			border: 1px groove;
+			border-radius: 5px;
         }
 
         .input-text, textarea {
             width: 420px;
+			border-color: rgba(129,129,129,0.76);
+			border-width:thin;
+			border: 1px thin solid;
+			border-radius: 5px;
         }
 
             input#save {
                 font-weight: bold;
                 width: auto;
             }
+			
 	
-        annotate-button{
-            width: 10px;
-            height: 10px;                 
-			font-size:xx-small;
-		}
-		
-		ul {
+    	ul {
  		   list-style-type: none;
 		    margin: 0;
 		    padding: 0;
@@ -36,7 +39,7 @@
 			float: right;
 		}
 		 
-		readLater {
+		offlineCopy {
 			margin: 0; 
 			padding-left: -10px;	
 		}
@@ -44,6 +47,11 @@
 		.rating-star {
 			width: 15px;
 			height: 15px;
+		}
+	
+		#title{
+			border:hidden;
+            border-radius: 25px;
 		}
 		  
     </style>
@@ -60,15 +68,16 @@
   <li><a href="">Logout</a></li>
 
 </ul>
-<button id="pen" class="annotate-button" title="Pen"> P </button>
-<button id="highlight" class="annotate-button" title="Highlight"> H </button>
-<button id="comment" class="annotate-button" title="Comment"> C </button>
 
-
+<a href="img/pen.png"><img src="img/pen.png" width="15" height="15" border="0" title="Pen"> </a>
+<a href="img/HighLight.png"><img src="img/HighLight.png" width="15" height="15" border="0" title="Highlight"> </a>
+<a href="img/comment.png"><img src="img/comment.png" width="15" height="15" border="0" title="Comment"> </a>
 <form id="addbookmark">
    
-<h1 align="center"> The Trail Maker </h2>
-    <label for="title">Title</label> 
+<h1 align="center" > The Trail Maker </h2>
+
+
+   <label for="title" hidden="hidden">Title</label> 
     <ul class="right" title="Rating">
     	<li><img class="rating-star" src="img/star.png"/></li>
        	<li><img class="rating-star" src="img/star.png"/></li>
@@ -80,7 +89,7 @@
 	<br />
   	<input class="input-text" type="text" id="title" name="title" size="50" value="" />
 </p>
-            
+    <hr>            
         
         <p hidden="true">
             <label for="url">Url</label><br />
@@ -98,20 +107,26 @@
         </p>
         
         <p>
-            <label for="tags">Tags</label><br />
+            <label for="tags">Tags</label>
+            <a href=""><img src="img/Hierarchy.png" width="15" height="15" border="0" title="Select from tree"> </a>
+            <br/>
             <input class="input-text" type="text" id="tags" name="tags" size="50" value="" />
-        </p>
+            
+            
+		</p>
 		<p>
             <label for="metatags">Meta Tags</label><br />
             <input class="input-text" type="text" id="metatags" name="metatags" size="50" value="" />
         </p>
 
-        
-		<input id="readlater" type="checkbox" name="readLater" value="readLater">Read Later</input>        	
+        <input id="readLater" type="checkbox" name="readLater" value="readLater">Save Offline Copy</input>        	
+		<input id="offlineCopy" type="checkbox" name="offlineCopy" value="offlineCopy">Save Offline Copy</input>        	
         <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input> 
        <p>
             <div align="center">
 	            <input id="save" type="submit" value="Save" />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="save" type="submit" value="Cancel" />
     	        <span id="status-display"></span>
             </div>
         </p>

@@ -183,6 +183,7 @@
     <Content Include="Views\Home\HowItWorks.cshtml" />
     <Content Include="Views\Home\MyTags.cshtml" />
     <Content Include="Views\PartialViews\SearchTags.cshtml" />
+    <Content Include="Views\Home\Home.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

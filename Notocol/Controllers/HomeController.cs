@@ -31,6 +31,11 @@ namespace Notocol.Controllers
             ViewBag.Title = "How it works";
             return View();
         }
+        public ActionResult Home()
+        {
+            ViewBag.Title = "Home";
+            return View();
+        }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public JsonResult SearchTags(string id)
