@@ -38,6 +38,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\BootstrapTag\bootstrap-tagsinput-angular.js" />
+    <Content Include="app\BootstrapTag\bootstrap-tagsinput-angular.min.js" />
+    <Content Include="app\BootstrapTag\bootstrap-tagsinput.css" />
+    <Content Include="app\BootstrapTag\bootstrap-tagsinput.js" />
+    <Content Include="app\BootstrapTag\bootstrap-tagsinput.min.js" />
+    <Content Include="app\BootstrapTag\typeahead.js" />
     <Content Include="app\event.js" />
     <Content Include="app\content.js" />
     <Content Include="app\img\comment.png" />
@@ -55,6 +61,8 @@
     <Content Include="app\main.js" />
     <Content Include="app\popup.html" />
     <Content Include="app\popup.js" />
+    <Content Include="app\BootstrapTag\bootstrap.min.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Properties\build\lib\Ionic.Zip.DLL" />
     <Content Include="Properties\build\lib\MSBuild.ExtensionPack.dll" />
     <Content Include="screenshots\screenshot.png" />
@@ -62,6 +70,15 @@
     <Content Include="DebugSettings.template.xml" />
     <Content Include="Properties\build\ligershark.chrome.targets" />
     <Content Include="screenshots\readme.txt" />
+    <Content Include="app\BootstrapTag\bootstrap-tagsinput.less" />
+    <Content Include="app\BootstrapTag\bootstrap-tagsinput.min.js.map" />
+    <Content Include="packages.config" />
+    <Content Include="app\bootstrap.js" />
+    <Content Include="scripts\bootstrap.min.js" />
+    <Content Include="scripts\npm.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="scripts\_references.js" />
     <None Include="scripts\chrome-api-vsdoc.js" />
   </ItemGroup>
