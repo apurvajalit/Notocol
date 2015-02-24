@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extended\NotCol.Context.cs" />
+    <Compile Include="Extended\UserSourceTags.cs" />
     <Compile Include="NotCol.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

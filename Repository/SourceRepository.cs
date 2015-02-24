@@ -13,18 +13,28 @@ namespace Repository
         {
             CreateDataContext();
         }
-        public Source SaveSource(Source objSource)
+        public Source SaveSource(UserSourceTags objUserSourceTags)
         {
             try
             {
+                SourceTag objSourceTag = new SourceTag();
                 using (GetDataContext())
                 {
-                    foreach (SourceTag objSourceTag in objSource.SourceTags) // Loop over the Tags.
+                    context.Sources.Add(objUserSourceTags.Source);
+                    // Save Source in Database
+                    context.SaveChanges();
+
+                    // loop for all the tags assigned
+                    foreach (Tag objTag in objUserSourceTags.Tags) // Loop over the Tags.
                     {
+                        var tag = (from s in context.Tags where s.Name == objTag.Name && s.UserID == objTag.UserID select s)
+                                .FirstOrDefault();
+                        tag = context.Tags.Add(tag);
+
+                        objSourceTag.TagsID = tag.ID;
+                        objSourceTag.SourceID = objUserSourceTags.Source.ID;
                         context.SourceTags.Add(objSourceTag);
                     }
-                    context.Sources.Add(objSource);
-                    // Save Source in Database
                     context.SaveChanges();
                 }
                 //Save all context object changes to database. This will act like bulk insert.
@@ -37,8 +47,8 @@ namespace Repository
             {
                 DisposeContext();
             }
-            
-            return objSource;
+
+            return objUserSourceTags.Source;
         }
     }
 }
