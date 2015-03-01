@@ -33,6 +33,8 @@ namespace Repository
             this.context = new NotColEntities(connectionString);
             this.context.Configuration.LazyLoadingEnabled = false;
             this.context.Configuration.ProxyCreationEnabled = false;
+            this.context.Configuration.AutoDetectChangesEnabled = false;
+            this.context.Configuration.ValidateOnSaveEnabled = false;
 
             return this.context;
 

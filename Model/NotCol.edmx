@@ -20,7 +20,7 @@
           <Property Name="Rating" Type="int" />
           <Property Name="ModifiedAt" Type="datetime" />
         </EntityType>
-        <EntityType Name="SourceTags">
+        <EntityType Name="SourceTag">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -72,24 +72,24 @@
         </Association>
         <Association Name="FK_SourceTags_Source">
           <End Role="Source" Type="Self.Source" Multiplicity="1" />
-          <End Role="SourceTags" Type="Self.SourceTags" Multiplicity="*" />
+          <End Role="SourceTag" Type="Self.SourceTag" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Source">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="SourceTags">
+            <Dependent Role="SourceTag">
               <PropertyRef Name="SourceID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SourceTags_Tag">
           <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
-          <End Role="SourceTags" Type="Self.SourceTags" Multiplicity="*" />
+          <End Role="SourceTag" Type="Self.SourceTag" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Tag">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="SourceTags">
+            <Dependent Role="SourceTag">
               <PropertyRef Name="TagsID" />
             </Dependent>
           </ReferentialConstraint>
@@ -106,6 +106,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="GetTags" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="bigint" Mode="In" />
+          <Parameter Name="strToSearch" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SaveSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tags" Type="varchar(max)" Mode="In" />
           <Parameter Name="UserID" Type="bigint" Mode="In" />
@@ -119,7 +123,7 @@
         </Function>
         <EntityContainer Name="NotColModelStoreContainer">
           <EntitySet Name="Source" EntityType="Self.Source" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="SourceTags" EntityType="Self.SourceTags" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SourceTag" EntityType="Self.SourceTag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
@@ -129,11 +133,11 @@
           </AssociationSet>
           <AssociationSet Name="FK_SourceTags_Source" Association="Self.FK_SourceTags_Source">
             <End Role="Source" EntitySet="Source" />
-            <End Role="SourceTags" EntitySet="SourceTags" />
+            <End Role="SourceTag" EntitySet="SourceTag" />
           </AssociationSet>
           <AssociationSet Name="FK_SourceTags_Tag" Association="Self.FK_SourceTags_Tag">
             <End Role="Tag" EntitySet="Tag" />
-            <End Role="SourceTags" EntitySet="SourceTags" />
+            <End Role="SourceTag" EntitySet="SourceTag" />
           </AssociationSet>
           <AssociationSet Name="FK_Tag_User" Association="Self.FK_Tag_User">
             <End Role="User" EntitySet="User" />
@@ -144,114 +148,7 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="NotColModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Source">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="UserID" Type="Int64" Nullable="false" />
-          <Property Name="Link" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="User" Relationship="Self.FK_Source_User" FromRole="Source" ToRole="User" />
-          <NavigationProperty Name="SourceTags" Relationship="Self.FK_SourceTags_Source" FromRole="Source" ToRole="SourceTags" />
-          <Property Name="Title" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="ReadLater" Type="Boolean" />
-          <Property Name="SaveOffline" Type="Boolean" />
-          <Property Name="Privacy" Type="Boolean" />
-          <Property Name="Rating" Type="Int32" />
-          <Property Name="Summary" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="SourceTag">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="SourceID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Source" Relationship="Self.FK_SourceTags_Source" FromRole="SourceTags" ToRole="Source" />
-          <Property Name="TagsID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Tag" Relationship="NotColModel.FK_SourceTags_Tag" FromRole="SourceTag" ToRole="Tag" />
-        </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
-        <EntityType Name="Tag">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ParentID" Type="Int64" Nullable="false" />
-          <Property Name="UserID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Tag" FromRole="Tag" ToRole="SourceTag" />
-          <NavigationProperty Name="User" Relationship="NotColModel.FK_Tag_User" FromRole="Tag" ToRole="User" />
-        </EntityType>
-        <EntityType Name="User">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="Username" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Sources" Relationship="Self.FK_Source_User" FromRole="User" ToRole="Source" />
-          <NavigationProperty Name="Tags" Relationship="NotColModel.FK_Tag_User" FromRole="User" ToRole="Tag" />
-        </EntityType>
-        <Association Name="FK_Source_User">
-          <End Role="User" Type="Self.User" Multiplicity="1" />
-          <End Role="Source" Type="Self.Source" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="User">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Source">
-              <PropertyRef Name="UserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SourceTags_Source">
-          <End Role="Source" Type="Self.Source" Multiplicity="1" />
-          <End Role="SourceTags" Type="Self.SourceTag" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Source">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="SourceTags">
-              <PropertyRef Name="SourceID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="NotColEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Sources" EntityType="Self.Source" />
-          <EntitySet Name="SourceTags" EntityType="Self.SourceTag" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
-          <EntitySet Name="Tags" EntityType="Self.Tag" />
-          <EntitySet Name="Users" EntityType="Self.User" />
-          <AssociationSet Name="FK_Source_User" Association="Self.FK_Source_User">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Source" EntitySet="Sources" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SourceTags_Source" Association="Self.FK_SourceTags_Source">
-            <End Role="Source" EntitySet="Sources" />
-            <End Role="SourceTags" EntitySet="SourceTags" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SourceTags_Tag" Association="NotColModel.FK_SourceTags_Tag">
-            <End Role="Tag" EntitySet="Tags" />
-            <End Role="SourceTag" EntitySet="SourceTags" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Tag_User" Association="NotColModel.FK_Tag_User">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Tag" EntitySet="Tags" />
-          </AssociationSet>
           <FunctionImport Name="SaveSource">
             <Parameter Name="tags" Mode="In" Type="String" />
             <Parameter Name="UserID" Mode="In" Type="Int64" />
@@ -263,16 +160,92 @@
             <Parameter Name="privacy" Mode="In" Type="Boolean" />
             <Parameter Name="rating" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="Sources" EntityType="NotColModel.Source" />
+          <EntitySet Name="sysdiagrams" EntityType="NotColModel.sysdiagram" />
+          <EntitySet Name="Tags" EntityType="NotColModel.Tag" />
+          <EntitySet Name="Users" EntityType="NotColModel.User" />
+          <AssociationSet Name="FK_Source_User" Association="NotColModel.FK_Source_User">
+            <End EntitySet="Users" Role="User" />
+            <End EntitySet="Sources" Role="Source" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tag_User" Association="NotColModel.FK_Tag_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Tag" EntitySet="Tags" />
+          </AssociationSet>
+          <EntitySet Name="SourceTags" EntityType="NotColModel.SourceTag" />
+          <AssociationSet Name="FK_SourceTags_Source" Association="NotColModel.FK_SourceTags_Source">
+            <End Role="Source" EntitySet="Sources" />
+            <End Role="SourceTag" EntitySet="SourceTags" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SourceTags_Tag" Association="NotColModel.FK_SourceTags_Tag">
+            <End Role="Tag" EntitySet="Tags" />
+            <End Role="SourceTag" EntitySet="SourceTags" />
+          </AssociationSet>
+          <FunctionImport Name="GetTags" ReturnType="Collection(NotColModel.GetTags_Result)">
+            <Parameter Name="userID" Mode="In" Type="Int64" />
+            <Parameter Name="strToSearch" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
-        <Association Name="FK_SourceTags_Tag">
-          <End Type="NotColModel.Tag" Role="Tag" Multiplicity="1" />
-          <End Type="NotColModel.SourceTag" Role="SourceTag" Multiplicity="*" />
+        <EntityType Name="Source">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int64" />
+          <Property Name="UserID" Nullable="false" Type="Int64" />
+          <Property Name="Title" MaxLength="500" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="Link" MaxLength="1000" FixedLength="false" Unicode="true" Type="String" />
+          <Property Name="Summary" MaxLength="2000" FixedLength="false" Unicode="true" Type="String" />
+          <Property Name="ReadLater" Type="Boolean" />
+          <Property Name="SaveOffline" Type="Boolean" />
+          <Property Name="Privacy" Type="Boolean" />
+          <Property Name="Rating" Type="Int32" />
+          <Property Name="ModifiedAt" Precision="3" Type="DateTime" />
+          <NavigationProperty Name="User" Relationship="NotColModel.FK_Source_User" FromRole="Source" ToRole="User" />
+          <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Source" FromRole="Source" ToRole="SourceTag" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ParentID" Type="Int64" Nullable="false" />
+          <Property Name="UserID" Type="Int64" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="NotColModel.FK_Tag_User" FromRole="Tag" ToRole="User" />
+          <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Tag" FromRole="Tag" ToRole="SourceTag" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Sources" Relationship="NotColModel.FK_Source_User" FromRole="User" ToRole="Source" />
+          <NavigationProperty Name="Tags" Relationship="NotColModel.FK_Tag_User" FromRole="User" ToRole="Tag" />
+        </EntityType>
+        <Association Name="FK_Source_User">
+          <End Type="NotColModel.User" Multiplicity="1" Role="User" />
+          <End Type="NotColModel.Source" Multiplicity="*" Role="Source" />
           <ReferentialConstraint>
-            <Principal Role="Tag">
+            <Principal Role="User">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="SourceTag">
-              <PropertyRef Name="TagsID" />
+            <Dependent Role="Source">
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -288,71 +261,121 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <EntityType Name="SourceTag">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SourceID" Type="Int64" Nullable="false" />
+          <Property Name="TagsID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Source" Relationship="NotColModel.FK_SourceTags_Source" FromRole="SourceTag" ToRole="Source" />
+          <NavigationProperty Name="Tag" Relationship="NotColModel.FK_SourceTags_Tag" FromRole="SourceTag" ToRole="Tag" />
+        </EntityType>
+        <Association Name="FK_SourceTags_Source">
+          <End Type="NotColModel.Source" Role="Source" Multiplicity="1" />
+          <End Type="NotColModel.SourceTag" Role="SourceTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SourceTag">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceTags_Tag">
+          <End Type="NotColModel.Tag" Role="Tag" Multiplicity="1" />
+          <End Type="NotColModel.SourceTag" Role="SourceTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SourceTag">
+              <PropertyRef Name="TagsID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="GetTags_Result">
+          <Property Type="Int64" Name="ChildId" Nullable="true" />
+          <Property Type="String" Name="ChildName" Nullable="true" MaxLength="50" />
+          <Property Type="Int64" Name="ParentId" Nullable="true" />
+          <Property Type="String" Name="Parents" Nullable="true" />
+        </ComplexType>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="NotColModelStoreContainer" CdmEntityContainer="NotColEntities">
+          <FunctionImportMapping FunctionImportName="SaveSource" FunctionName="NotColModel.Store.SaveSource" />
           <EntitySetMapping Name="Sources">
             <EntityTypeMapping TypeName="NotColModel.Source">
               <MappingFragment StoreEntitySet="Source">
-                <ScalarProperty Name="Summary" ColumnName="Summary" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
                 <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="Privacy" ColumnName="Privacy" />
                 <ScalarProperty Name="SaveOffline" ColumnName="SaveOffline" />
                 <ScalarProperty Name="ReadLater" ColumnName="ReadLater" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
                 <ScalarProperty Name="Link" ColumnName="Link" />
-                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SourceTags">
-            <EntityTypeMapping TypeName="NotColModel.SourceTag">
-              <MappingFragment StoreEntitySet="SourceTags">
-                <ScalarProperty Name="TagsID" ColumnName="TagsID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="SourceID" ColumnName="SourceID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
             <EntityTypeMapping TypeName="NotColModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
                 <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Tags">
             <EntityTypeMapping TypeName="NotColModel.Tag">
               <MappingFragment StoreEntitySet="Tag">
+                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="ParentID" ColumnName="ParentID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="NotColModel.User">
               <MappingFragment StoreEntitySet="User">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Identifier" ColumnName="Identifier" />
                 <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+                <ScalarProperty Name="Identifier" ColumnName="Identifier" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="SaveSource" FunctionName="NotColModel.Store.SaveSource" />
+          <EntitySetMapping Name="SourceTags">
+            <EntityTypeMapping TypeName="NotColModel.SourceTag">
+              <MappingFragment StoreEntitySet="SourceTag">
+                <ScalarProperty Name="TagsID" ColumnName="TagsID" />
+                <ScalarProperty Name="SourceID" ColumnName="SourceID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetTags" FunctionName="NotColModel.Store.GetTags">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="NotColModel.GetTags_Result">
+                <ScalarProperty Name="ChildId" ColumnName="ChildId" />
+                <ScalarProperty Name="ChildName" ColumnName="ChildName" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Parents" ColumnName="Parents" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

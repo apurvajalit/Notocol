@@ -2,7 +2,8 @@
 using System.Data.Entity;
 using System.Linq;
 using Model;
-
+using EntityFramework.BulkInsert.Extensions;
+using System.Transactions;
 namespace Repository
 {
     public class TagRepository : BaseRepository
@@ -11,7 +12,12 @@ namespace Repository
         {
             CreateDataContext();
         }
-
+        /// <summary>
+        /// Method to search Tags. Used for autocomplete.
+        /// </summary>
+        /// <param name="charactersToSearch"></param>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         public IList<Tag> SearchTags(string charactersToSearch,int userID)
         {
             IList<Tag> lstTags = null;
@@ -44,7 +50,11 @@ namespace Repository
             }
             return lstTags;
         }
-
+        /// <summary>
+        /// Method used to Save Tags
+        /// </summary>
+        /// <param name="objTag"></param>
+        /// <returns></returns>
         public Tag SaveTag(Tag objTag)
         {
             try
@@ -66,13 +76,45 @@ namespace Repository
             return objTag;
         }
 
+        /// <summary>
+        /// Save collection of tags with bulkinsert
+        /// </summary>
+        /// <param name="lstTag"></param>
+        /// <returns></returns>
+        public IList<Tag> SaveTags(IList<Tag> lstTag)
+        {
+            using (GetDataContext())
+            {
+                foreach (Tag objTag in lstTag)
+                {
+                    context.Entry(objTag).State = objTag.ID == 0 ? EntityState.Added : EntityState.Modified;
+                    
+                }
+                context.SaveChanges();
+
+                // By implementing Bulkinsert plugin
+                //using (var transactionScope = new TransactionScope())
+                //{
+                //    context.BulkInsert(lstTag);
+                //    context.SaveChanges();
+                //    transactionScope.Complete();
+                //}
+            }
+            return lstTag;
+        }
+
+        /// <summary>
+        /// Method used to Delete Tags
+        /// </summary>
+        /// <param name="objTag"></param>
+        /// <returns></returns>
         public bool DeleteTag(Tag objTag)
         {
             try
             {
                 using (GetDataContext())
                 {
-                    context.Tags.Attach(objTag);
+                    context.Tags.Attach(objTag); // connect to tag to delete
                     context.Tags.Remove(objTag);
                     context.SaveChanges();
                     return true;
@@ -88,5 +130,6 @@ namespace Repository
             }
             return false;
         }
+
     }
 }

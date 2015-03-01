@@ -28,10 +28,10 @@ namespace Model
         }
     
         public virtual DbSet<Source> Sources { get; set; }
-        public virtual DbSet<SourceTag> SourceTags { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<SourceTag> SourceTags { get; set; }
     
         public virtual int SaveSource(string tags, Nullable<long> userID, string title, string link, string summary, Nullable<bool> readLater, Nullable<bool> saveOffline, Nullable<bool> privacy, Nullable<int> rating)
         {
@@ -72,6 +72,19 @@ namespace Model
                 new ObjectParameter("rating", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SaveSource", tagsParameter, userIDParameter, titleParameter, linkParameter, summaryParameter, readLaterParameter, saveOfflineParameter, privacyParameter, ratingParameter);
+        }
+    
+        public virtual ObjectResult<GetTags_Result> GetTags(Nullable<long> userID, string strToSearch)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("userID", userID) :
+                new ObjectParameter("userID", typeof(long));
+    
+            var strToSearchParameter = strToSearch != null ?
+                new ObjectParameter("strToSearch", strToSearch) :
+                new ObjectParameter("strToSearch", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTags_Result>("GetTags", userIDParameter, strToSearchParameter);
         }
     }
 }

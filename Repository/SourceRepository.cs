@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
+using EntityFramework.BulkInsert.Extensions;
 using Model;
 
 namespace Repository
@@ -13,31 +17,50 @@ namespace Repository
         {
             CreateDataContext();
         }
-        public Source SaveSource(UserSourceTags objUserSourceTags)
+      /// <summary>
+        /// Use to save Source
+      /// </summary>
+      /// <param name="objSource"></param>
+      /// <param name="lstTags"></param>
+      /// <returns></returns>
+
+        public Source SaveSource(Source objSource, IList<Tag> lstTags)
         {
             try
             {
-                SourceTag objSourceTag = new SourceTag();
+                long sourceID = 0;
+                // Save Source
                 using (GetDataContext())
                 {
-                    context.Sources.Add(objUserSourceTags.Source);
-                    // Save Source in Database
+                    context.Entry(objSource).State = objSource.ID == 0 ? EntityState.Added : EntityState.Modified;
                     context.SaveChanges();
+                   sourceID = objSource.ID;
+                }
+                // save data to Tag table
+                TagRepository objTagRepository = new TagRepository();
+                objTagRepository.SaveTags(lstTags);
+                
+                // save data to sourceTag table
+                using (GetDataContext())
+                {
+                    IList<SourceTag> lstSourceTags = new List<SourceTag>();
 
-                    // loop for all the tags assigned
-                    foreach (Tag objTag in objUserSourceTags.Tags) // Loop over the Tags.
+                    foreach (Tag objTag in lstTags)
                     {
-                        var tag = (from s in context.Tags where s.Name == objTag.Name && s.UserID == objTag.UserID select s)
-                                .FirstOrDefault();
-                        tag = context.Tags.Add(tag);
-
-                        objSourceTag.TagsID = tag.ID;
-                        objSourceTag.SourceID = objUserSourceTags.Source.ID;
+                        SourceTag objSourceTag = new SourceTag();
+                        objSourceTag.SourceID = sourceID;
+                        objSourceTag.TagsID = objTag.ID;
                         context.SourceTags.Add(objSourceTag);
+                        objSourceTag = null;
                     }
                     context.SaveChanges();
+                    //using (var transactionScope = new TransactionScope())
+                    //{
+                    //    context.BulkInsert(lstSourceTags);
+                    //    context.SaveChanges();
+                    //    transactionScope.Complete();
+                    //}
                 }
-                //Save all context object changes to database. This will act like bulk insert.
             }
             catch
             {
@@ -48,7 +71,7 @@ namespace Repository
                 DisposeContext();
             }
 
-            return objUserSourceTags.Source;
+            return objSource;
         }
     }
 }

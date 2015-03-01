@@ -10,8 +10,9 @@ namespace Notocol.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
-
+           // SaveSource(null, null);
             return View();
+
         }
         public ActionResult AboutUs()
         {
@@ -64,9 +65,32 @@ namespace Notocol.Controllers
             return objTagRepository.DeleteTag(objTag);
         }
 
-        public long SaveSource(Source objSource)
+        public long SaveSource(Source objSource, IList<Tag> lstTags)
         {
-            
+            Source objSourceTemp = new Source();
+            IList<Tag> lstTagsTemp = new List<Tag>();
+            objSourceTemp.Title = "abcd123";
+            objSourceTemp.UserID = 2;
+
+            Tag objTag = new Tag();
+            objTag.ID = 5;
+            objTag.Name = "Project Management";
+            objTag.ParentID = 1;
+            objTag.UserID = 2;
+            lstTagsTemp.Add(objTag);
+
+            Tag objTag1 = new Tag();
+            objTag1.ID = 7;
+            objTag1.Name = "Javascript";
+            objTag1.ParentID = 1;
+            objTag1.UserID = 2;
+            lstTagsTemp.Add(objTag1);
+
+            SourceRepository obSourceRepository = new SourceRepository();
+            obSourceRepository.SaveSource(objSourceTemp, lstTagsTemp);
+
+
+            return 0;
         }
     }
 }
