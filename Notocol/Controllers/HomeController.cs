@@ -10,7 +10,7 @@ namespace Notocol.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
-           // SaveSource(null, null);
+           SaveSource(null, null);
             return View();
 
         }
@@ -64,7 +64,12 @@ namespace Notocol.Controllers
             TagRepository objTagRepository = new TagRepository();
             return objTagRepository.DeleteTag(objTag);
         }
-
+        /// <summary>
+        /// Controller Method to save Source Data
+        /// </summary>
+        /// <param name="objSource"></param>
+        /// <param name="lstTags"></param>
+        /// <returns></returns>
         public long SaveSource(Source objSource, IList<Tag> lstTags)
         {
             Source objSourceTemp = new Source();
@@ -85,6 +90,13 @@ namespace Notocol.Controllers
             objTag1.ParentID = 1;
             objTag1.UserID = 2;
             lstTagsTemp.Add(objTag1);
+
+            Tag objTag2 = new Tag();
+            objTag2.ID = 0;
+            objTag2.Name = "Widgets";
+            objTag2.ParentID = 7;
+            objTag2.UserID = 2;
+            lstTagsTemp.Add(objTag2);
 
             SourceRepository obSourceRepository = new SourceRepository();
             obSourceRepository.SaveSource(objSourceTemp, lstTagsTemp);
