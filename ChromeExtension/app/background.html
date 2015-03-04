@@ -1,0 +1,14 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script>
+        chrome.browserAction.onClicked.addListener(function (tab) {
+            console.log("Hello from popup"); // This does not show up either
+            alert("Hello from popup");
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

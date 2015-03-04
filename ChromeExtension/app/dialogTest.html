@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Dialog Test</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+</head>
+<body>
+    
+    <h2>Checking stuff!</h2>
+     <div id="dialog" title="Alert">
+        <p>
+            Hello this is my first dialog using
+        </p>
+        
+    </div> 
+    <input type="button" id="opener" value="show Alert" />
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            $("#dialog").dialog({
+
+                autoOpen: false,
+                modal: true,
+                show: {
+                    effect: "blind",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                }
+            });
+        });
+    });
+    $("#opener").click(function () {
+        $("#dialog").dialog("open");
+    });
+
+    
+    </script>
+</body>
+</html>
