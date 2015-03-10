@@ -2,135 +2,127 @@
 <html>
 <head>
     <style>
-        body {
-            min-width: 420px;
-            overflow-x: hidden;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-			margin:1px;
-			padding:10px;
-			border: 1px groove;
-			border-radius: 5px;
-        }
-
-        .input-text, textarea {
-            width: 420px;
-			/*border-color: rgba(129,129,129,0.76);*/
-			border-width:thin;
-			border: 2px thin solid;
-			border-radius: 5px;
-        }
-
-            input#save {
-                font-weight: bold;
-                width: auto;
+            body {
+                min-width: 420px;
+                overflow-x: hidden;
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                margin:1px;
+                padding:10px;
+                border: 1px groove;
+                border-radius: 5px;
             }
-			
-	
-    	ul {
- 		   list-style-type: none;
-		    margin: 0;
-		    padding: 0;
-		}
-		li {
- 		   display: inline;
-		}
-	   .right {
-			float: right;
-		}
-		 
-		offlineCopy {
-			margin: 0; 
-			padding-left: -10px;	
-		}
-		
-		.rating-star {
-			width: 15px;
-			height: 15px;
-		}
-	
-		#title{
-			border:hidden;
-            border-radius: 25px;
-		}
-		  
-        </style>
-        <link rel="stylesheet" type="text/css" href="jRating.jquery.css" media="screen" />
-        <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
-        <script type="text/javascript" src="jRating.jquery.js"></script>
-        <script src="popup.js"></script>
-                
-</head>
-<body>
 
-   
-<ul class="right">
-  <li><a href="">Home</a></li>
-  <li> | </li>
-  <li><a href="">Settings</a></li>
- <li> | </li>
-  <li><a href="">Logout</a></li>
+            .input-text, textarea {
+                width: 420px;
+                /*border-color: rgba(129,129,129,0.76);*/
+                border-width:thin;
+                border: 2px thin solid;
+                border-radius: 5px;
+            }
 
-</ul>
-<a href="img/pen.png"><img src="img/pen.png" width="15" height="15" border="0" title="Pen"> </a>
-<a href="img/HighLight.png"><img src="img/HighLight.png" width="15" height="15" border="0" title="Highlight"> </a>
-<a href="img/comment.png"><img src="img/comment.png" width="15" height="15" border="0" title="Comment"> </a>
+                input#save {
+                    font-weight: bold;
+                    width: auto;
+                }
 
-<form id="addbookmark">
+
+            ul {
+               list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            li {
+               display: inline;
+            }
+           .right {
+                float: right;
+            }
+
+            offlineCopy {
+                margin: 0;
+                padding-left: -10px;
+            }
+                <link rel="stylesheet" type="text/css" href="jRating.jquery.css" media="screen" />
+        <link href="BootstrapTag/bootstrap.min.css" rel="stylesheet" />
+        <link href="BootstrapTag/bootstrap-tagsinput.css" rel="stylesheet" />
+
+            <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+            <script type="text/javascript" src="bootstrap.js"></script>
+            <script type="text/javascript" src="jRating.jquery.js"></script>
+            <script src="popup.js"></script>
+    <script type="text/javascript" src="BootstrapTag/bootstrap-tagsinput.min.js"></script>
+    <script type="text/javascript" src="BootstrapTag/typeahead.js"></script>
+        </head>
+
+        <body>
+
+
+    <ul class="right">
+      <li><a href="">Home</a></li>
+      <li> | </li>
+      <li><a href="">Settings</a></li>
+     <li> | </li>
+      <li><a href="">Logout</a></li>
+
+    </ul>
+    <a href="img/pen.png"><img src="img/pen.png" width="15" height="15" border="0" title="Pen"> </a>
+    <a href="img/HighLight.png"><img src="img/HighLight.png" width="15" height="15" border="0" title="Highlight"> </a>
+    <a href="img/comment.png"><img src="img/comment.png" width="15" height="15" border="0" title="Comment"> </a>
+
+    <form id="addbookmark">
 
 <h1 align="center"> The Trail Maker </h1>
-    <label for="title">Title</label>
-    <br />
+        <label for="title">Title</label>
+        <br />
     <input class="input-text" type="text" id="title" name="title" size="50" value="" />
 
     
-    <div class="exemple"> Rate : 
-        <div class="basic" data-average="0" data-id="1"></div>
-    </div>
-    <br />    
-
-
-        <p>
+        <div class="exemple"> Rate :
+            <div class="basic" data-average="0" data-id="1"></div>
+        </div>
+        <br />
+            <p>
             <label for="url">Url</label><br />
             <input class="input-text" type="text" id="url" name="url" size="50" value="" />
-        </p>
-        <p>
-            <label for="summary">Summary</label><br />
-            <textarea id="summary" name="summary" rows="2" cols="35"></textarea>
-        </p>
+            </p>
+            <p>
+            <label>Summary</label><br />
+                <textarea id="summary" name="summary" rows="2" cols="35"></textarea>
+            </p>
 
-        <p>
-            <label for="contexttag"> Current Topic Tag: </label>
+            <p>
+                <label> Current Topic Tag: </label>
 
-            <a class="right" href=""> Set Current Topic Tag </a>
-        </p>
+                <a href=""> Set Current Topic Tag </a>
+            </p>
 
-        <p>
-            <label for="tags">Tags</label>
-            <a href=""><img src="img/Hierarchy.png" width="15" height="15" border="0" title="Select from tree"> </a>
-            <br/>
-            <input class="input-text" type="text" id="tags" name="tags" size="50" value="" />
-       
-		 </p>
-        
-       	 <p hidden="hidden">
-            <label for="metatags">Meta Tags</label><br />
-            <input class="input-text" type="text" id="metatags" name="metatags" size="50" value="" />
-        </p>
+            <p>
+                <label>Tags</label>
+                <a href=""><img src="img/Hierarchy.png" width="15" height="15" border="0" title="Select from tree"> </a>
+                <br/>
+                <input type="text" id="txtTags" name="txtTags" size="50" value="" data-role="tagsinput" />
+
+             </p>
+
+             <p hidden="hidden">
+                <label for="metatags">Meta Tags</label><br />
+                <input type="text" id="metatags" name="metatags" size="50" value="" />
+            </p>
 
 
-        <input id="readlater" type="checkbox" name="readLater" value="readLater">Read Later</input>
-		<input id="offlineCopy" type="checkbox" name="offlineCopy" value="offlineCopy">Save Offline Copy</input>        	
-        <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input>
-        <p>
-            <div align="center">
-                <input id="save" type="submit" value="Save" />
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input id="save" type="submit" value="Cancel" />
-                <span id="status-display"></span>
-            </div>
-        </p>
-	</form>   
- </body>
-</html>
+            <input id="readlater" type="checkbox" name="readLater" value="readLater">Read Later</input>
+            <input id="offlineCopy" type="checkbox" name="offlineCopy" value="offlineCopy">Save Offline Copy</input>
+            <input id="privacy" type="checkbox" name="privacy" value="privacy">Private</input>
+            <p>
+                <div align="center">
+                    <input id="save" type="submit" value="Save" />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input id="save" type="submit" value="Cancel" />
+                    <span id="status-display"></span>
+                </div>
+            </p>
+        </form>
+    </body>
+    </html>
 

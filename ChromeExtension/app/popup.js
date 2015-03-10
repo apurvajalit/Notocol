@@ -1,10 +1,41 @@
+$(document).ready(function() {
+    $(".basic").jRating({
+        type: 'big', // type of the rate.. can be set to 'small' or 'big'
+        decimalLength: 1
+    });
+    $("#txtTags").on('change keyup paste', function() {
+        if (event.which == 188)// check for ',' on key press
+        {
+            FilterTags($(this).val());
+        }
+    });
 
-            $(document).ready(function () {
-                $(".basic").jRating({
-                    type: 'big', // type of the rate.. can be set to 'small' or 'big'
-                    decimalLength: 1
-                });
-            });
+    $("#txtTags").on('itemAdded', function (event) {
+        // event.item: contains the item
+        tempTags.tags.push(
+          { id: 0, natagme: event.item }
+      );
+    });
+});
+
+var tagValues = ['Amsterdam', 'Washington', 'Sydney', 'Beijing', 'Cairo'];
+
+var tagVals = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: $.map(tagValues, function (tagValue) { return { value: tagValue }; })
+});
+
+// kicks off the loading/processing of `local` and `prefetch`
+tagVals.initialize();
+$("#txtTags").tagsinput({
+    typeahead: {
+        name: 'tagVals',
+        displayKey: 'value',
+        valueKey: 'value',
+        source: tagVals.ttAdapter()
+    }
+});
 
 // This callback function is called when the content script has been 
 // injected and returned its results
@@ -17,6 +48,9 @@ function onPageDetailsReceived(pageDetails) {
 // Global reference to the status display SPAN
 var statusDisplay = null;
 
+ function SaveBookmark() {
+     
+ }
 // POST the data to the server using XMLHttpRequest
 function addBookmark() {
     // Cancel the form submit
@@ -82,3 +116,31 @@ window.addEventListener('load', function (evt) {
         eventPage.getPageDetails(onPageDetailsReceived);
     });
 });
+
+// global Json Object
+var tempTags = {
+    tags: []
+ };
+// Add tags to Json Array 
+ function AddTempTag(tempID,text) {
+     tempTags.tags.push(
+         { id: tempID, natagme: text }
+     );
+ }
+
+
+// This function is called when user press ',' in tags textbox
+ function FilterTags(text) {
+     var str='';
+     if (text.indexOf(',') > -1) // check for ',' in text
+     {
+         var strArray = text.split(',');
+         str = strArray[strArray.length-2];
+     }
+     tempTags.tags.push(
+         { id: 0, tagname: str }
+     );
+     //alert(str);
+ }
+
+
