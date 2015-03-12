@@ -25,7 +25,7 @@ namespace Model
         public long UserID { get; set; }
         public string Description { get; set; }
     
-        public virtual User User { get; set; }
         public virtual ICollection<SourceTag> SourceTags { get; set; }
+        public virtual User User { get; set; }
     }
 }

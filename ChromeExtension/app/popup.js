@@ -10,11 +10,23 @@ $(document).ready(function() {
         }
     });
 
-    $("#txtTags").on('itemAdded', function (event) {
+    $("#txtTags").on('itemAdded', function(event) {
         // event.item: contains the item
         tempTags.tags.push(
-          { id: 0, natagme: event.item }
-      );
+            { id: 0, natagme: event.item }
+        );
+    });
+    $("#btnSave").on('click', function(event) {
+        var title = $("#txtTitle").val();
+        var rating = $("#txtTags").val();
+        var link = $("#txtUrl").val();
+        var summary = $("#txtSummary").val();
+        var readLater = $("#chkReadLater");
+        var SaveOfflineCopy = $("#chkSaveOfflineCopy");
+        var privacy = $("#chkPrivacy");
+        var frmJson = $('#frmBookmark').formParams();
+        console.log(frmJson);
+
     });
 });
 

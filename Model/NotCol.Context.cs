@@ -20,6 +20,7 @@ namespace Model
         public NotColEntities()
             : base("name=NotColEntities")
         {
+            this.Configuration.LazyLoadingEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -28,10 +29,10 @@ namespace Model
         }
     
         public virtual DbSet<Source> Sources { get; set; }
+        public virtual DbSet<SourceTag> SourceTags { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<SourceTag> SourceTags { get; set; }
     
         public virtual int SaveSource(string tags, Nullable<long> userID, string title, string link, string summary, Nullable<bool> readLater, Nullable<bool> saveOffline, Nullable<bool> privacy, Nullable<int> rating)
         {

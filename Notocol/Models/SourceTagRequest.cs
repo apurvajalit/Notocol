@@ -6,6 +6,7 @@ using Model;
 
 namespace Notocol.Models
 {
+    
     public class SourceTagRequest
     {
         public Source Source { get; set; }

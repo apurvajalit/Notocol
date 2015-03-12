@@ -55,6 +55,7 @@
     <Content Include="app\img\pen.png" />
     <Content Include="app\img\star.png" />
     <Content Include="app\jquery-1.11.1.min.js" />
+    <Content Include="app\jquery.formparams.min.js" />
     <Content Include="app\jRating.jquery.css" />
     <Content Include="app\jRating.jquery.js" />
     <Content Include="app\main.html" />

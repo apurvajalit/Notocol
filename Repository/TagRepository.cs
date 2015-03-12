@@ -2,7 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using Model;
-using EntityFramework.BulkInsert.Extensions;
+
 using System.Transactions;
 namespace Repository
 {
