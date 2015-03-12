@@ -21,13 +21,8 @@ namespace Model
     
         public long ID { get; set; }
         public long UserID { get; set; }
-        public string Title { get; set; }
         public string Link { get; set; }
-        public string Summary { get; set; }
-        public Nullable<bool> ReadLater { get; set; }
-        public Nullable<bool> SaveOffline { get; set; }
-        public Nullable<bool> Privacy { get; set; }
-        public Nullable<int> Rating { get; set; }
+        public string Description { get; set; }
         public Nullable<System.DateTime> ModifiedAt { get; set; }
     
         public virtual User User { get; set; }

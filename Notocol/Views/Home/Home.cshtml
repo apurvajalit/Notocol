@@ -1,7 +1,94 @@
-﻿mon
+﻿
 @{
+    
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    
+    .top-buffer { margin-top:3%; }
 
-<label>Search </label>
+    body,html{
+        height:100%;
+
+    }
+     #outer {
+        position: relative;
+    }
+    #outer a {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    #outer input {
+         text-indent: 16px;
+    }
+
+    .left-dotted-border{
+        border-left: 1px dotted  #333;
+    }
+
+    .min-content-height{
+        min-height:100%;
+    }
+     #dashboard-data {
+    width: 100%;
+    height: 100%;
+    min-height: 50vh;
+    display: block;
+}
+    
+</style>
+<div class="container" id="searchBar" style="min-height:100%">
+    <div class="row top-buffer">
+        <div class="col-sm-12 text-center">
+            <form class="form-inline" role="form" id="searchParamters">
+                <div class="form-group">
+                    <label for="search">Search</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="sr-only" for="keyword"></label>
+                    <input type="text" class="form-control" id="keyword" placeholder="Enter keywords">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tag-tree">under</label>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" class="form-control" id="tag" placeholder="tag">
+                </div>
+                <div class="form-group">
+                    <a href="javascript:void(0)" onclick="alert('Show tag tree')"><img src="~/Content/img/Hierarchy.png" style="width:25px; height:25px"></a>
+                </div>    
+                           
+                <button type="submit" class="btn btn-default">Search</button>
+            </form>
+        </div>
+    </div>
+    
+
+</div>
+<hr size="2" />
+
+<div id="dashboard-data" class="container-fluid" >
+    <div class="row">
+        <div class="col-sm-8 min-content-height" style="min-height:100vh">
+            <div>My Content</div>
+            <div class="row top-buffer">
+                <div class="col-sm-3">obj1</div>
+                <div class="col-sm-3">obj2</div>
+                <div class="col-sm-3">obj3</div>
+                <div class="col-sm-3">obj4</div>
+            </div>
+            
+        </div>
+        <div class="col-sm-4 left-dotted-border size" style="min-height:100vh">
+            Recommended content
+
+        </div>
+        
+    </div>
+</div>
+
