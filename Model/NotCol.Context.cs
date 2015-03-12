@@ -87,5 +87,10 @@ namespace Model
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTags_Result>("GetTags", userIDParameter, strToSearchParameter);
         }
+    
+        public virtual ObjectResult<spTestSourceData_Result> spTestSourceData()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spTestSourceData_Result>("spTestSourceData");
+        }
     }
 }

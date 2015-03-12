@@ -51,6 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extended\NotCol.Context.cs" />
+    <Compile Include="GetTags_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
     <Compile Include="NotCol.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -71,6 +74,9 @@
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="SourceTag.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="spTestSourceData_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="sysdiagram.cs">

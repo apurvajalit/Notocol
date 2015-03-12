@@ -10,15 +10,9 @@
 namespace Model
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Source
+    public partial class spTestSourceData_Result
     {
-        public Source()
-        {
-            this.SourceTags = new HashSet<SourceTag>();
-        }
-    
         public long ID { get; set; }
         public long UserID { get; set; }
         public string Title { get; set; }
@@ -29,8 +23,13 @@ namespace Model
         public Nullable<bool> Privacy { get; set; }
         public Nullable<int> Rating { get; set; }
         public Nullable<System.DateTime> ModifiedAt { get; set; }
-    
-        public virtual User User { get; set; }
-        public virtual ICollection<SourceTag> SourceTags { get; set; }
+        public long ID1 { get; set; }
+        public long SourceID { get; set; }
+        public long TagsID { get; set; }
+        public long ID2 { get; set; }
+        public string Name { get; set; }
+        public long ParentID { get; set; }
+        public long UserID1 { get; set; }
+        public string Description { get; set; }
     }
 }
