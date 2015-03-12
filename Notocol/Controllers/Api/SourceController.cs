@@ -21,11 +21,10 @@ namespace Notocol.Controllers.Api
         /// <summary>
         /// Save Source and its related Tag(s)
         /// </summary>
-        /// <param name="userID"> User's Unique ID</param>
-        /// <param name="sourceTags">This object holds definition of source and all the tags used.</param>
+        /// <param name="source"></param>
         /// <returns></returns>
         [HttpPost]
-        public long Add([FromBody]SourceTagRequest source)//(SourceTagRequest sourceTags1)
+        public long Add([FromBody]SourceTagRequest source)
         {
             SourceRepository obSourceRepository = new SourceRepository();
             obSourceRepository.SaveSource(source.Source, source.Tags);
