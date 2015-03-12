@@ -18,6 +18,8 @@
           <Property Name="SaveOffline" Type="bit" />
           <Property Name="Privacy" Type="bit" />
           <Property Name="Rating" Type="int" />
+          <Property Name="TagNames" Type="varchar" MaxLength="1000" />
+          <Property Name="TagIDs" Type="varchar" MaxLength="1000" />
           <Property Name="ModifiedAt" Type="datetime" />
         </EntityType>
         <EntityType Name="SourceTag">
@@ -210,6 +212,8 @@
           <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
           <NavigationProperty Name="User" Relationship="NotColModel.FK_Source_User" FromRole="Source" ToRole="User" />
           <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Source" FromRole="Source" ToRole="SourceTag" />
+          <Property Name="TagNames" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="TagIDs" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SourceTag">
           <Key>
@@ -343,6 +347,8 @@
           <EntitySetMapping Name="Sources">
             <EntityTypeMapping TypeName="NotColModel.Source">
               <MappingFragment StoreEntitySet="Source">
+                <ScalarProperty Name="TagIDs" ColumnName="TagIDs" />
+                <ScalarProperty Name="TagNames" ColumnName="TagNames" />
                 <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
                 <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="Privacy" ColumnName="Privacy" />

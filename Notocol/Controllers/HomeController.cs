@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Model;
+using Notocol.Controllers.Api;
 using Repository;
 
 namespace Notocol.Controllers
@@ -34,8 +35,9 @@ namespace Notocol.Controllers
         }
         public ActionResult Home()
         {
-            ViewBag.Title = "Home";
-            return View();
+            Api.SourceController objController = new Api.SourceController();
+            IList<Source> lstSource = objController.Source();
+            return View(lstSource);
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]

@@ -13,9 +13,10 @@ namespace Notocol.Controllers.Api
     public class SourceController : BaseApiController
     {
         [HttpGet]
-        public string Source()
+        public IList<Source> Source()
         {
-            return "Source API Get";
+            SourceRepository obSourceRepository = new SourceRepository();
+            return  obSourceRepository.GetSource(2);
         }
 
         /// <summary>
@@ -30,5 +31,7 @@ namespace Notocol.Controllers.Api
             obSourceRepository.SaveSource(source.Source, source.Tags);
             return source.Source.ID;
         }
+
+
     }
 }

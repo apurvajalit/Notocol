@@ -29,6 +29,8 @@ namespace Model
         public Nullable<bool> Privacy { get; set; }
         public Nullable<int> Rating { get; set; }
         public Nullable<System.DateTime> ModifiedAt { get; set; }
+        public string TagNames { get; set; }
+        public string TagIDs { get; set; }
     
         public virtual User User { get; set; }
         public virtual ICollection<SourceTag> SourceTags { get; set; }

@@ -1,4 +1,5 @@
-﻿
+﻿@using Model
+@model IList<Source>
 @{
     
     ViewBag.Title = "Home";
@@ -64,16 +65,16 @@
         <div class="col-sm-12 text-center">
             <form class="form-inline" role="form" id="searchParamters">
                 <div class="form-group">
-                    <label for="search">Search</label>
+                    <label id="search">Search</label>
                 </div>
 
                 <div class="form-group">
-                    <label class="sr-only" for="keyword"></label>
+                    <label class="sr-only" id="keyword"></label>
                     <input type="text" class="form-control" id="keyword" placeholder="Enter keywords">
                 </div>
                 
                 <div class="form-group">
-                    <label for="tag-tree">under</label>
+                    <label id="tag-tree">under</label>
                 </div>
                 
                 <div class="form-group">
@@ -92,13 +93,13 @@
 </div>
 <hr size="2" />
 
-<div id="dashboard-data" class="container-fluid" >
+<div id="dashboard-data" class="container-fluid">
     <div class="row">
-        <div class="col-sm-12 min-content-height" style="min-height:100vh">
+        <div class="col-sm-12 min-content-height" style="min-height: 100vh">
             <p> My Content </p>
             <div>
                 <button type="button" class="btn btn-default" id="GetNewPageData">Add new Page</button>
-       
+
             </div>
             <div class="top-buffer" id="NewPageInfo">
                 <form class="form-group role=" form" id="newPageDetails">
@@ -113,188 +114,68 @@
                     <div class="form-group">
                         <input type="text" class="form-control" id="tags" placeholder="Enter tags">
                     </div>
-                    
+
                     <button type="submit" class="btn btn-default" id="addNewPage">Save Page</button>
                 </form>
-                <hr size="2" />
+                <hr size="2"/>
 
             </div>
 
             <div class="top-buffer" id="pages">
                 <div class="row">
-                    <div class="col-sm-3 pageBox">
-                        <a href="">Hello world</a>
-                        
-                    </div> 
+                        @{
+                            foreach (var source in Model)
+                            {
+                                <div class="col-sm-3 pageBox">
+                                    <a href="@source.Link">@source.Title</a>
+                                    <br/>
+                                    @source.TagNames;
+                                </div>
+                            }
+
+                        }
+
+                                
                 </div>
             </div>
+        </div>
+
     </div>
-           
 </div>
 
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             $("#NewPageInfo").hide();
-            
-
-            var results = [
-                {
-                    "ID": 5,
-                    "Name": "Project Management",
-                    "ParentID": 1,
-                    "UserID": 2
-                },
-                {
-                    "ID": 7,
-                    "Name": "Javascript",
-                    "ParentID": 1,
-                    "UserID": 2
-                }
-
-            ];
-
-            var sample_input_pages = [
-                {
-                    "Source": {
-                        "ID": 1,
-                        "UserID": 0,
-                        "Title": "Self-Study Guide to Machine Learning - Machine Learning Mastery",
-                        "Link": "https://machinelearningmastery.com/self-study-guide-to-machine-learning/",
-                        "Summary": "ML references",
-                        "ReadLater": false,
-                        "SaveOffline": false,
-                        "Privacy": false,
-                        "Rating": 0,
-                        "ModifiedAt": Date(),
-                    },
-                    "Tags": results
-                },
-
-                {
-                    "Source": {
-                        "ID": 2,
-                        "UserID": 0,
-                        "Title": "LoudCloud Systems, Inc. | Understand behaviors. Improve learning.",
-                        "Link": "http://loudcloudsystems.com/",
-                        "Summary": "Adaptive Learning Data",
-                        "ReadLater": false,
-                        "SaveOffline": false,
-                        "Privacy": false,
-                        "Rating": 0,
-                        "ModifiedAt": Date(),
-                    },
-                    "Tags": results
-                },
-                {
-                    "Source": {
-                        "ID": 2,
-                        "UserID": 0,
-                        "Title": "LoudCloud Systems, Inc. | Understand behaviors. Improve learning.",
-                        "Link": "http://loudcloudsystems.com/",
-                        "Summary": "Adaptive Learning Data",
-                        "ReadLater": false,
-                        "SaveOffline": false,
-                        "Privacy": false,
-                        "Rating": 0,
-                        "ModifiedAt": Date(),
-                    },
-                    "Tags": results
-                },
-                {
-                    "Source": {
-                        "ID": 2,
-                        "UserID": 0,
-                        "Title": "LoudCloud Systems, Inc. | Understand behaviors. Improve learning.",
-                        "Link": "http://loudcloudsystems.com/",
-                        "Summary": "Adaptive Learning Data",
-                        "ReadLater": false,
-                        "SaveOffline": false,
-                        "Privacy": false,
-                        "Rating": 0,
-                        "ModifiedAt": Date(),
-                    },
-                    "Tags": results
-                },
-                {
-                    "Source": {
-                        "ID": 2,
-                        "UserID": 0,
-                        "Title": "LoudCloud Systems, Inc. | Understand behaviors. Improve learning.",
-                        "Link": "http://loudcloudsystems.com/",
-                        "Summary": "Adaptive Learning Data",
-                        "ReadLater": false,
-                        "SaveOffline": false,
-                        "Privacy": false,
-                        "Rating": 0,
-                        "ModifiedAt": Date(),
-                    },
-                    "Tags": results
-                }
-            ];
-            
-            var current_row_element = null;
-            var pageContentRoot = document.getElementById("pages");
-            for (var j = 0; j < sample_input_pages.length; j++) {
-                
-                var currentColElement, pageData;
-                if (!(j % 4)) {
-                
-                    current_row_element = document.createElement('div');;
-                    current_row_element.className="row";
-                    pageContentRoot.appendChild(current_row_element);
-                }
-                currentColElement = document.createElement('div');
-                currentColElement.className = "pageBox col-sm-3";
-                
-                pageData = document.createElement('a');
-                pageData.href = sample_input_pages[j].Source.Link;
-                pageData.text = sample_input_pages[j].Source.Title;
-                
-                currentColElement.appendChild(pageData);
-                current_row_element.appendChild(currentColElement);
-            }
-            $("#GetNewPageData").click(function () {
+           
+            $("#GetNewPageData").click(function() {
 
                 $("#NewPageInfo").show();
                 $("#GetNewPageData").hide();
             });
-            $("#addNewPage").click(function () {
+
+           
+            $("#addNewPage").click(function() {
                 var url = $("#pageURL").val();
                 var note = $("#pageDesc").val();
                 var tagnames = $("#tags").val().split(",");
 
                 var tagData = [];
-                var tagInfo;
+                
                 for (var i = 0; i < tagnames.length; i++) {
-                    tagName = tagnames[i];
-
-                    var j = 0;
-                    for (; j < results.length; j++) {
-                        if (!(tagName.localeCompare(results[j].Name))) {
-                            tagInfo = results[j];
-                            break;
-                        }
-                    }
-                    if (j == results.length) {
-                        tagInfo = {
-                            "ID": "0",
-                            "Name": tagName,
-                            "ParentID": "0",
-                            "UserID": "2"
-                        };
-
-                    }
-
-                    tagData[tagData.length] = tagInfo;
+                    tagData[tagData.length] = {
+                        "ID": "0",
+                        "Name": tagnames[i],
+                        "ParentID": "1",
+                        "UserID": "2"
+                    };
                 }
-
-                alert("url is " + url);
+  
                 var srcData = {
                     "Source": {
-                        "ID": 1,
-                        "UserID": 0,
+                        "ID": 0,
+                        "UserID": 2,
                         "Title": "Testing",
                         "Link": url,
                         "Summary": note,
@@ -302,25 +183,22 @@
                         "SaveOffline": false,
                         "Privacy": false,
                         "Rating": 0,
-                        "ModifiedAt": Date(),
+                        "ModifiedAt": Date()
                     },
                     "Tags": tagData
                 }
 
-
+                // Script to add Source to database.
                 $.ajax({
                     type: "POST",
-                    dataType: "json",
+                    dataType: "application/json",
                     data: srcData,
-                    //url: 'api/Source?userID=2', // url of Api controller
-                    url: 'http://localhost:5555/api/Source?userID=2',
-                    success: function (data) {
-                        if (data.redirect)
-                            alert("Redirect true !");
-
+                    url: 'http://localhost:5555/api/Source',
+                    success: function(data) {
+                        alert(data);
                     },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(errorThrown);
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(errorThrown);
                     }
                 });
                 $("#NewPageInfo").hide();
@@ -328,5 +206,5 @@
             });
         });
     </script>
-    
+
 }
