@@ -22,6 +22,6 @@
     ],
 
     "web_accessible_resources": [
-        "HTML/popup.html", "Scripts/External/jquery-2.1.3.min.js", "Scripts/Content/loadExtUI.js", "Style/extUI.css", "Scripts/Content/populateContentPage.js"
+        "HTML/popup.html", "Scripts/External/jquery-2.1.3.min.js", "Scripts/Content/loadExtUI.js", "Style/extUI.css", "Scripts/Content/sendDetails.js"
     ]
 }
