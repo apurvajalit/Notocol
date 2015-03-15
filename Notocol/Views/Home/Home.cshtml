@@ -124,12 +124,14 @@
             <div class="top-buffer" id="pages">
                 <div class="row">
                         @{
+
                             foreach (var source in Model)
                             {
                                 <div class="col-sm-3 pageBox">
                                     <a href="@source.Link">@source.Title</a>
-                                    <br/>
-                                    @source.TagNames;
+                                    <p> $('<a>').prop('href', url).prop('hostname');</p>
+                                    <p>@source.Summary</p>
+                                    <div class="tagsText"><span class="glyphicon glyphicon-tag"></span> @source.TagNames </div>
                                 </div>
                             }
 

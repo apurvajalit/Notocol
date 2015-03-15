@@ -15,6 +15,14 @@ namespace Notocol.Controllers
             return View();
 
         }
+        public ActionResult TestPopup()
+        {
+            ViewBag.Title = "Testing the working of our extension UI";
+            
+            return View();
+
+        }
+
         public ActionResult AboutUs()
         {
             ViewBag.Title = "Home Page";

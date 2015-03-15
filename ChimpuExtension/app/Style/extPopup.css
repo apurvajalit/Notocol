@@ -1,4 +1,4 @@
-﻿#chimp_ext_container {
+﻿.chimpPopUpContainer{
     max-width: 420px !important;
     overflow-x: hidden !important;
     font-family: Arial, sans-serif !important;
@@ -13,4 +13,7 @@
     position: absolute !important;
     top:10px !important;
     float:right !important;
+
 }
+
+
