@@ -72,6 +72,7 @@ if (popup_root == null) {
 
     });
 } else { //UI already opened, close it
+    //though it closes the popup but still leaves some of its elements like head and title elements
     console.log("Unloading UI")
     document.body.removeChild(popup_root);
 }
