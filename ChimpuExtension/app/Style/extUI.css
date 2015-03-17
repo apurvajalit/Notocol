@@ -1,0 +1,23 @@
+﻿body{
+}
+#chimp_ext_container {
+    width: 200px !important;
+    z-index:100; /*temporary solution*/
+    overflow-x: hidden !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 12px !important;
+    margin:1px !important;
+    padding:10px !important;
+    border: 1px groove !important;
+    border-radius: 5px !important;
+    background-color:aqua !important;
+    position: fixed !important;
+    top:10px !important;
+    float:right !important;
+}
+ul.tagit {
+    width: 171px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 0px !important;
+}

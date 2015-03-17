@@ -6,8 +6,6 @@ if (popup_root == null) {
     $.get(chrome.extension.getURL("HTML/popup.html"), function (data) {
         
         $($.parseHTML(data)).appendTo('body');
-       
-        alert("Title and URL: " + document.title + " " + window.location.href);
         $("#page_title").val(document.title);
         $("#page_url").val(window.location.href);
 
