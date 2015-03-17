@@ -1,21 +1,4 @@
 ﻿chrome.browserAction.onClicked.addListener(function (tab) {
-    /*chrome.tabs.insertCSS(tab.id, { file: "Style/cleanslate.css" }, function () {
-        chrome.tabs.insertCSS(tab.id, { file: "Style/extUI.css" }, function () {
-            chrome.tabs.insertCSS(tab.id, { file: "Style/jquery-ui.css" }, function () {
-                chrome.tabs.insertCSS(tab.id, { file: "Style/jquery.tagit.css" }, function () {
-                    chrome.tabs.executeScript(tab.id, { file: "Scripts/External/jquery-2.1.3.min.js" }, function () {
-                        chrome.tabs.executeScript(tab.id, { file: "Scripts/External/jquery-ui.min.js" }, function () {
-                            chrome.tabs.executeScript(tab.id, { file: "Scripts/External/tag-it.js" }, function () {
-                                chrome.tabs.executeScript(tab.id, { file: "Scripts/Content/loadExtUI.js" }, function () {
-                                    chrome.tabs.executeScript(tab.id, { code: "$('#myTags').tagit();alert('hello!');" });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });*/
     function fun(i) {
         if (i == 0) chrome.tabs.insertCSS(tab.id, { file: "Style/extUI.css" }, function () { fun(1) });
         if (i == 1) chrome.tabs.insertCSS(tab.id, { file: "Style/jquery-ui.css" }, function () { fun(2) });
