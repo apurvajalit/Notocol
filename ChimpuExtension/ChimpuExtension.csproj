@@ -43,8 +43,11 @@
     <Content Include="app\Scripts\Background\background.js" />
     <Content Include="app\Scripts\Content\loadExtUI.js" />
     <Content Include="app\Scripts\External\jquery-2.1.3.min.js" />
+    <Content Include="app\Scripts\Content\sendDetails.js" />
     <Content Include="app\Scripts\External\jquery-ui.min.js" />
+    <Content Include="app\Scripts\External\jquery.min.js" />
     <Content Include="app\Scripts\External\tag-it.js" />
+    <Content Include="app\Style\cleanslate.css" />
     <Content Include="app\Style\extUI.css" />
     <Content Include="app\Style\jquery-ui.css" />
     <Content Include="app\Style\jquery.tagit.css" />
