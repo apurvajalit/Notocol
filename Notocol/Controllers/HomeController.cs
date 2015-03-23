@@ -114,5 +114,13 @@ namespace Notocol.Controllers
 
             return 0;
         }
+
+        public ActionResult SourceItems(string keywordFilter, string tagFilter)
+        {
+            //TODO Make use of filters passed
+            Api.SourceController objController = new Api.SourceController();
+            IList<Source> lstSource = objController.Source();
+            return PartialView(lstSource);
+        }  
     }
 }

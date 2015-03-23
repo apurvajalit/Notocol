@@ -17,7 +17,8 @@
         "tabs",
         "http://*/*",
         "https://*/*",
-        "activeTab"
+        "activeTab",
+        "contextMenus"
         //is there any security problem if we add "<all_urls>" ???
     ],
 

@@ -1,4 +1,31 @@
-﻿chrome.browserAction.onClicked.addListener(function (tab) {
+﻿var clickHandler = function (e) {
+    var url = e.pageUrl;
+    var buzzPostUrl = "";
+
+    
+    // Open the page up.
+    alert(url);
+};
+
+var SelectionClickHandler = function (e) {
+    
+    alert(encodeURI(e.selectionText));
+};
+
+chrome.contextMenus.create({
+    "title": "Page Handler",
+    "contexts": ["page", "selection"],
+    "onclick": clickHandler
+});
+
+chrome.contextMenus.create({
+    "title": "Selection Handler",
+    "contexts": ["selection"],
+    "onclick": SelectionClickHandler
+});
+
+
+chrome.browserAction.onClicked.addListener(function (tab) {
     function fun(i) {
         if (i == 0) chrome.tabs.insertCSS(tab.id, { file: "Style/extUI.css" }, function () { fun(1) });
         if (i == 1) chrome.tabs.insertCSS(tab.id, { file: "Style/jquery-ui.css" }, function () { fun(2) });
