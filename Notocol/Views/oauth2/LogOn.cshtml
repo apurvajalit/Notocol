@@ -1,0 +1,23 @@
+﻿@model dynamic
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+</head>
+<body>
+<div>
+    Login : @Html.TextBox("Login")
+    Password: @Html.Password("Password")
+</div>
+<div>
+    <input type="button" id="btnGoogle" value="Sign in with Google"/>
+    <input type="button" id="btnFacebook" value="Sign in with Facebook" />
+</div>
+</body>
+</html>

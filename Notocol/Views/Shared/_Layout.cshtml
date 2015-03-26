@@ -22,10 +22,11 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Home", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("How it works", "HowItWorks", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("About Us", "AboutUs", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("My Tags", "MyTags", "Home", new { area = "" }, null)</li>
+                    <li><a href="#" onclick="signin()">Sign In</a></li>
+                    <li>@Html.ActionLink("Home", "Home", "Home", new {area = ""}, null)</li>
+                    <li>@Html.ActionLink("How it works", "HowItWorks", "Home", new {area = ""}, null)</li>
+                    <li>@Html.ActionLink("About Us", "AboutUs", "Home", new {area = ""}, null)</li>
+                    <li>@Html.ActionLink("My Tags", "MyTags", "Home", new {area = ""}, null)</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @{var user = "Apurva";}
@@ -67,5 +68,28 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script src="https://cdn.auth0.com/js/lock-6.2.min.js"></script>
+<script type="text/javascript">
+    var lock = new Auth0Lock('vs4n82A6wLrmViah2QW2IWM8pSV8mCbe', 'idevexplorer.auth0.com');
+
+    function signin() {
+        lock.show({
+            callbackURL: 'http://localhost:5555/api/auth/auth0/',
+            responseType: 'code',
+            authParams: {
+                scope: 'openid profile'
+            }
+        });
+    }
+</script>
+<script>
+    $(function() {
+        $.getJSON('/api/hello', function(data) {
+            $("#content").is(":hidden");
+            $('#userInfo').text(JSON.stringify(data.userInfo, 1, 2));
+        });
+    });
+</script>
+
 </body>
 </html>

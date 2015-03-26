@@ -10,14 +10,12 @@
 namespace Model
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class sysdiagram
+    public partial class GetTags1_Result
     {
-        public string name { get; set; }
-        public int principal_id { get; set; }
-        public int diagram_id { get; set; }
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public Nullable<long> ChildId { get; set; }
+        public string ChildName { get; set; }
+        public Nullable<long> ParentId { get; set; }
+        public string Parents { get; set; }
     }
 }

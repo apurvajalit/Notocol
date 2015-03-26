@@ -18,7 +18,7 @@ namespace Model
         public long SourceID { get; set; }
         public long TagsID { get; set; }
     
-        public virtual Source Source { get; set; }
         public virtual Tag Tag { get; set; }
+        public virtual Source Source { get; set; }
     }
 }

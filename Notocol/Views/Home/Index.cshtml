@@ -1,6 +1,6 @@
 ﻿@using System.Configuration
 
-
+<link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.2.5/annotator.min.css">
 
 <div class="jumbotron">
     <h1>@ConfigurationManager.AppSettings["proj"]</h1>
@@ -31,6 +31,7 @@
         <h4>Tags</h4>
         <div id="dvTagSearch"><input type="text" id="txtSearchTags" /></div>
         <div id="dvTags"></div>
+        <div id="content"></div>
     </form>
 </div>
 @section scripts
@@ -57,23 +58,25 @@
 
         function GetTags(strToSearch) {
             $.ajax({
-                    url: '@Url.Action("SearchTags", "Home")', //+strToSearch,
-                   // url: '/home/searchTags',
-                    type: 'POST',
-                    async: false,
-                    data: { id: strToSearch },
+                url: '@Url.Action("SearchTags", "Home")', //+strToSearch,
+                // url: '/home/searchTags',
+                type: 'POST',
+                async: false,
+                data: { id: strToSearch },
                 success:
 
-            function(data) {
-                $('#dvTags').empty();
-                $('#dvTags').append('<ul>');
-                $.each(data, function(index, tag) {
+                    function(data) {
+                        $('#dvTags').empty();
+                        $('#dvTags').append('<ul>');
+                        $.each(data, function(index, tag) {
 
-                    $('#dvTags').append('<li>' + tag.Name + '</li>');
-                });
-            }
-        });
+                            $('#dvTags').append('<li>' + tag.Name + '</li>');
+                        });
+                    }
+            });
         }
     </script>
+
+    
 
 }

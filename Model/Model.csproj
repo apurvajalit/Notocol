@@ -69,6 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extended\NotCol.Context.cs" />
+    <Compile Include="GetTags1_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
     <Compile Include="GetTags_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
@@ -94,10 +97,10 @@
     <Compile Include="SourceTag.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
-    <Compile Include="spTestSourceData_Result.cs">
+    <Compile Include="spTestSourceData1_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
-    <Compile Include="sysdiagram.cs">
+    <Compile Include="spTestSourceData_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="Tag.cs">

@@ -11,6 +11,9 @@ namespace Notocol
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            //This is required for Service Stack
+            routes.IgnoreRoute("api/{*pathInfo}");
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
