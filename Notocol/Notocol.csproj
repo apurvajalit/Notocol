@@ -212,6 +212,8 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Api\AnnotationController.cs" />
+    <Compile Include="Controllers\Api\AnnotationController.Depricated.cs" />
+    <Compile Include="Controllers\Api\AnnotationDataFromRequest.cs" />
     <Compile Include="Controllers\Api\BaseApiController.cs" />
     <Compile Include="Controllers\Api\SourceController.cs" />
     <Compile Include="Controllers\Api\TagController.cs" />

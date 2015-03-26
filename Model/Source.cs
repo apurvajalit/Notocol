@@ -17,6 +17,7 @@ namespace Model
         public Source()
         {
             this.SourceTags = new HashSet<SourceTag>();
+            this.Annotations = new HashSet<Annotation>();
         }
     
         public long ID { get; set; }
@@ -34,5 +35,6 @@ namespace Model
     
         public virtual User User { get; set; }
         public virtual ICollection<SourceTag> SourceTags { get; set; }
+        public virtual ICollection<Annotation> Annotations { get; set; }
     }
 }

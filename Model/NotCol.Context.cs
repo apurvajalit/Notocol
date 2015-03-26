@@ -32,6 +32,7 @@ namespace Model
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Source> Sources { get; set; }
+        public virtual DbSet<Annotation> Annotations { get; set; }
     
         public virtual int SaveSource(string tags, Nullable<long> userID, string title, string link, string summary, Nullable<bool> readLater, Nullable<bool> saveOffline, Nullable<bool> privacy, Nullable<int> rating)
         {

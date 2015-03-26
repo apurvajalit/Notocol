@@ -68,6 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Annotation.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
     <Compile Include="Extended\NotCol.Context.cs" />
     <Compile Include="GetTags1_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>

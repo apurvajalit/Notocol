@@ -5,6 +5,14 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="NotColModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Annotation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" Nullable="false" />
+          <Property Name="Data" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SourceID" Type="bigint" Nullable="false" />
+        </EntityType>
         <EntityType Name="Source">
           <Key>
             <PropertyRef Name="ID" />
@@ -50,6 +58,18 @@
           <Property Name="Identifier" Type="varchar" MaxLength="500" />
           <Property Name="ModifiedAt" Type="datetime" />
         </EntityType>
+        <Association Name="FK_Annotaion_Source">
+          <End Role="Source" Type="Self.Source" Multiplicity="1" />
+          <End Role="Annotation" Type="Self.Annotation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Annotation">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Source_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
           <End Role="Source" Type="Self.Source" Multiplicity="*" />
@@ -115,10 +135,15 @@
         </Function>
         <Function Name="spTestSourceData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa" />
         <EntityContainer Name="NotColModelStoreContainer">
+          <EntitySet Name="Annotation" EntityType="Self.Annotation" Schema="nileshgsa" store:Type="Tables" />
           <EntitySet Name="Source" EntityType="Self.Source" Schema="nileshgsa" store:Type="Tables" />
           <EntitySet Name="SourceTag" EntityType="Self.SourceTag" Schema="nileshgsa" store:Type="Tables" />
           <EntitySet Name="Tag" EntityType="Self.Tag" Schema="nileshgsa" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="nileshgsa" store:Type="Tables" />
+          <AssociationSet Name="FK_Annotaion_Source" Association="Self.FK_Annotaion_Source">
+            <End Role="Source" EntitySet="Source" />
+            <End Role="Annotation" EntitySet="Annotation" />
+          </AssociationSet>
           <AssociationSet Name="FK_Source_User" Association="Self.FK_Source_User">
             <End Role="User" EntitySet="User" />
             <End Role="Source" EntitySet="Source" />
@@ -161,12 +186,12 @@
           <EntitySet Name="Tags" EntityType="NotColModel.Tag" />
           <EntitySet Name="Users" EntityType="NotColModel.User" />
           <AssociationSet Name="FK_SourceTags_Tag" Association="NotColModel.FK_SourceTags_Tag">
-            <End Role="Tag" EntitySet="Tags" />
-            <End Role="SourceTag" EntitySet="SourceTags" />
+            <End EntitySet="Tags" Role="Tag" />
+            <End EntitySet="SourceTags" Role="SourceTag" />
           </AssociationSet>
           <AssociationSet Name="FK_Tag_User" Association="NotColModel.FK_Tag_User">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Tag" EntitySet="Tags" />
+            <End EntitySet="Users" Role="User" />
+            <End EntitySet="Tags" Role="Tag" />
           </AssociationSet>
           <FunctionImport Name="GetTags1" ReturnType="Collection(NotColModel.GetTags1_Result)">
             <Parameter Name="userID" Mode="In" Type="Int64" />
@@ -186,12 +211,17 @@
           <FunctionImport Name="spTestSourceData1" ReturnType="Collection(NotColModel.spTestSourceData1_Result)" />
           <EntitySet Name="Sources" EntityType="NotColModel.Source" />
           <AssociationSet Name="FK_Source_User" Association="NotColModel.FK_Source_User">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Source" EntitySet="Sources" />
+            <End EntitySet="Users" Role="User" />
+            <End EntitySet="Sources" Role="Source" />
           </AssociationSet>
           <AssociationSet Name="FK_SourceTags_Source" Association="NotColModel.FK_SourceTags_Source">
+            <End EntitySet="Sources" Role="Source" />
+            <End EntitySet="SourceTags" Role="SourceTag" />
+          </AssociationSet>
+          <EntitySet Name="Annotations" EntityType="NotColModel.Annotation" />
+          <AssociationSet Name="FK_Annotaion_Source" Association="NotColModel.FK_Annotaion_Source">
             <End Role="Source" EntitySet="Sources" />
-            <End Role="SourceTag" EntitySet="SourceTags" />
+            <End Role="Annotation" EntitySet="Annotations" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="GetTags_Result">
@@ -224,9 +254,9 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SourceID" Type="Int64" Nullable="false" />
-          <Property Name="TagsID" Type="Int64" Nullable="false" />
+          <Property Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int64" />
+          <Property Name="SourceID" Nullable="false" Type="Int64" />
+          <Property Name="TagsID" Nullable="false" Type="Int64" />
           <NavigationProperty Name="Tag" Relationship="NotColModel.FK_SourceTags_Tag" FromRole="SourceTag" ToRole="Tag" />
           <NavigationProperty Name="Source" Relationship="NotColModel.FK_SourceTags_Source" FromRole="SourceTag" ToRole="Source" />
         </EntityType>
@@ -234,11 +264,11 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ParentID" Type="Int64" Nullable="false" />
-          <Property Name="UserID" Type="Int64" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int64" />
+          <Property Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="ParentID" Nullable="false" Type="Int64" />
+          <Property Name="UserID" Nullable="false" Type="Int64" />
+          <Property Name="Description" MaxLength="500" FixedLength="false" Unicode="true" Type="String" />
           <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Tag" FromRole="Tag" ToRole="SourceTag" />
           <NavigationProperty Name="User" Relationship="NotColModel.FK_Tag_User" FromRole="Tag" ToRole="User" />
         </EntityType>
@@ -246,17 +276,17 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Username" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
+          <Property Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int64" />
+          <Property Name="Username" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="Password" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="Identifier" MaxLength="500" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="ModifiedAt" Precision="3" Type="DateTime" />
           <NavigationProperty Name="Tags" Relationship="NotColModel.FK_Tag_User" FromRole="User" ToRole="Tag" />
           <NavigationProperty Name="Sources" Relationship="NotColModel.FK_Source_User" FromRole="User" ToRole="Source" />
         </EntityType>
         <Association Name="FK_SourceTags_Tag">
-          <End Type="NotColModel.Tag" Role="Tag" Multiplicity="1" />
-          <End Type="NotColModel.SourceTag" Role="SourceTag" Multiplicity="*" />
+          <End Type="NotColModel.Tag" Multiplicity="1" Role="Tag" />
+          <End Type="NotColModel.SourceTag" Multiplicity="*" Role="SourceTag" />
           <ReferentialConstraint>
             <Principal Role="Tag">
               <PropertyRef Name="ID" />
@@ -267,8 +297,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Tag_User">
-          <End Type="NotColModel.User" Role="User" Multiplicity="1" />
-          <End Type="NotColModel.Tag" Role="Tag" Multiplicity="*" />
+          <End Type="NotColModel.User" Multiplicity="1" Role="User" />
+          <End Type="NotColModel.Tag" Multiplicity="*" Role="Tag" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="ID" />
@@ -310,24 +340,25 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="Int64" Nullable="false" />
-          <Property Name="Title" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Link" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="Summary" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int64" />
+          <Property Name="UserID" Nullable="false" Type="Int64" />
+          <Property Name="Title" MaxLength="500" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="Link" MaxLength="1000" FixedLength="false" Unicode="true" Type="String" />
+          <Property Name="Summary" MaxLength="2000" FixedLength="false" Unicode="true" Type="String" />
           <Property Name="ReadLater" Type="Boolean" />
           <Property Name="SaveOffline" Type="Boolean" />
           <Property Name="Privacy" Type="Boolean" />
           <Property Name="Rating" Type="Int32" />
-          <Property Name="TagNames" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="TagIDs" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
+          <Property Name="TagNames" MaxLength="1000" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="TagIDs" MaxLength="1000" FixedLength="false" Unicode="false" Type="String" />
+          <Property Name="ModifiedAt" Precision="3" Type="DateTime" />
           <NavigationProperty Name="User" Relationship="NotColModel.FK_Source_User" FromRole="Source" ToRole="User" />
           <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Source" FromRole="Source" ToRole="SourceTag" />
+          <NavigationProperty Name="Annotations" Relationship="NotColModel.FK_Annotaion_Source" FromRole="Source" ToRole="Annotation" />
         </EntityType>
         <Association Name="FK_Source_User">
-          <End Type="NotColModel.User" Role="User" Multiplicity="1" />
-          <End Type="NotColModel.Source" Role="Source" Multiplicity="*" />
+          <End Type="NotColModel.User" Multiplicity="1" Role="User" />
+          <End Type="NotColModel.Source" Multiplicity="*" Role="Source" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="ID" />
@@ -338,13 +369,34 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SourceTags_Source">
-          <End Type="NotColModel.Source" Role="Source" Multiplicity="1" />
-          <End Type="NotColModel.SourceTag" Role="SourceTag" Multiplicity="*" />
+          <End Type="NotColModel.Source" Multiplicity="1" Role="Source" />
+          <End Type="NotColModel.SourceTag" Multiplicity="*" Role="SourceTag" />
           <ReferentialConstraint>
             <Principal Role="Source">
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="SourceTag">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Annotation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="Data" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SourceID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Source" Relationship="NotColModel.FK_Annotaion_Source" FromRole="Annotation" ToRole="Source" />
+        </EntityType>
+        <Association Name="FK_Annotaion_Source">
+          <End Type="NotColModel.Source" Role="Source" Multiplicity="1" />
+          <End Type="NotColModel.Annotation" Role="Annotation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Annotation">
               <PropertyRef Name="SourceID" />
             </Dependent>
           </ReferentialConstraint>
@@ -437,6 +489,15 @@
                 <ScalarProperty Name="Link" ColumnName="Link" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Annotations">
+            <EntityTypeMapping TypeName="NotColModel.Annotation">
+              <MappingFragment StoreEntitySet="Annotation">
+                <ScalarProperty Name="SourceID" ColumnName="SourceID" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -8,7 +8,7 @@ namespace Notocol.Controllers.Api
     public class TagController : BaseApiController
     {
         [HttpGet]
-        public IList<Tag> Tags(string strSearch)
+        public IList<Tag> Tags(string strSearch="")
         {
             TagRepository objTagRepository = new TagRepository();
             IList<Tag> searchTags = objTagRepository.SearchTags(strSearch, 2);
