@@ -17,6 +17,14 @@ namespace Notocol.Controllers
            // return Redirect("default.htm");
 
         }
+        public ActionResult TestPopup()
+        {
+            ViewBag.Title = "Testing the working of our extension UI";
+            
+            return View();
+
+        }
+
         public ActionResult AboutUs()
         {
             ViewBag.Title = "Home Page";
@@ -108,5 +116,13 @@ namespace Notocol.Controllers
 
             return 0;
         }
+
+        public ActionResult SourceItems(string keywordFilter, string tagFilter)
+        {
+            //TODO Make use of filters passed
+            Api.SourceController objController = new Api.SourceController();
+            IList<Source> lstSource = objController.Source();
+            return PartialView(lstSource);
+        }  
     }
 }

@@ -5,6 +5,7 @@
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <style>
     
     .top-buffer { margin-top:3%; }
@@ -69,7 +70,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="sr-only" id="keyword"></label>
+                    <label class="sr-only" id="keywordlabel"></label>
                     <input type="text" class="form-control" id="keyword" placeholder="Enter keywords">
                 </div>
                 
@@ -79,12 +80,11 @@
                 
                 <div class="form-group">
                     <input type="text" class="form-control" id="tag" placeholder="tag">
+                    <ul id="myTags" hidden="hidden"></ul>
                 </div>
-                <div class="form-group">
-                    <a href="javascript:void(0)" onclick="alert('Show tag tree')"><img src="~/Content/img/Hierarchy.png" style="width:25px; height:25px"></a>
-                </div>    
+            
                            
-                <button type="submit" class="btn btn-default">Search</button>
+                <button type="submit" class="btn btn-default" id="searchForPages">Search</button>
             </form>
         </div>
     </div>
@@ -120,24 +120,18 @@
                 <hr size="2"/>
 
             </div>
-
-            <div class="top-buffer" id="pages">
-                <div class="row">
-                        @{
-                            foreach (var source in Model)
-                            {
-                                <div class="col-sm-3 pageBox">
-                                    <a href="@source.Link">@source.Title</a>
-                                    <br/>
-                                    @source.TagNames;
-                                </div>
-                            }
-
-                        }
-
-                                
-                </div>
+            <div>
+                <br />
+                <button type="button" class="btn btn-default" style="float:right" id="refreshPages">Reload Pages</button>
+                <br />
             </div>
+
+            <div id="pages" class="top-buffer">
+                    
+                <div hidden="hidden">  @Html.Action("SourceItems", "Home") </div>
+                @{Html.RenderPartial("SourceItems", Model);}
+            </div> 
+
         </div>
 
     </div>
@@ -205,6 +199,74 @@
                 $("#GetNewPageData").show();
             });
         });
+
+    </script>
+    
+    <script>
+        function getPages() {
+            var keywordsEntered = $('#keyword').val();
+            var tagsEntered = $('#tag').val();
+            $.ajax({
+                // Reload the pages based on current given filter
+                url: "/Home/SourceItems",
+                type: 'Get',
+                data: { keywordFilter: keywordsEntered, tagFilter: tagsEntered },
+                datatype: 'html'
+            })
+            .success(function (data) {
+               console.log("For keywords:" + keywordsEntered + " and tags:" + tagsEntered + " received data");
+                $("#pages").html(data);
+
+            })
+            .error(function(xhr, status){
+                alert("something seems wrong with status " + status);
+                
+            });
+        }
+
+        $("#refreshPages").on("click", function () {
+            getPages();
+        });
+
+        $("#searchForPages").on("click", function () {
+            getPages();
+        });
+
+
     </script>
 
-}
+    <script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
+    <script src="~/Scripts/tag-it.js"></script>
+    <script>
+        function getTags(request, response) {
+            $.ajax({
+                url: "http://localhost:5555/api/Tag",
+                datatype: "json",
+                data: {
+                    strsearch: request.term
+                },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.name, //Use rest of the data to map IDs
+                            value: item.Name
+                        }
+                    }));
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#mytags").tagit({
+                allowspaces: true,
+                autocomplete: {
+                    source: getTags,
+                    minLength: 1
+                }
+
+            });
+
+        });
+
+    </script>
+}    

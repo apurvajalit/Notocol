@@ -1,0 +1,20 @@
+﻿@using Model
+@model IList<Source>
+
+<div class="row">
+    @{
+
+        foreach (var source in Model)
+        {
+            <div class="col-sm-3 pageBox">
+                <a href="@source.Link">@source.Title</a>
+
+                <p>@source.Summary</p>
+                <div class="tagsText"><span class="glyphicon glyphicon-tag"></span> @source.TagNames </div>
+            </div>
+        }
+
+    }
+
+
+</div>

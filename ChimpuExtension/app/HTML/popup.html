@@ -1,16 +1,31 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Chimpu</title>
-     
-  </head>
-
   <body>
       <div id="chimp_ext_container">
           <div class="chimp_ext_header">
 
           </div>
           <div class="chimp_ext_content">
+              <style>
+                  #save {
+                      padding: 5px !important;
+                      display: block !important;
+                      margin-left: auto !important;
+                      margin-right: auto !important;
+                      background-color: #009afd !important;
+                      margin-bottom: 10px !important;
+                      margin-top: 10px !important;
+                  }
+
+                  input.chimp_ext_text_input {
+                      display: block !important;
+                      margin-left: auto !important;
+                      margin-right: auto !important;
+                      padding: 5px !important;
+                      background-color: white !important;
+                  }
+              </style>
+
               <div>
                   <input type="text" class="chimp_ext_text_input" id="page_title" />
               </div>
@@ -21,17 +36,18 @@
               <div>
                   <input type="text" class="chimp_ext_text_input" id="page_note" placeholder="Enter Notes"/>
               </div>
-              <div>
-                  <input type="text" class="chimp_ext_text_input" id="page_tags" placeholder="Enter Tags"/>
-              </div>
+              <ul id="myTags">
+                  <!--<li>Tag1</li>
+                  <li>Tag2</li>-->
+              </ul>
 
               <div>
                   <input type="button" class="chimp_ext_button" value="save" id="save"/>
               </div>
               
           </div>    
-           <div class="chimp_ext_footer">
-           </div>
+          <div class="chimp_ext_footer">
+          </div>
       </div>
   </body>
 </html>
