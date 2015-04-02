@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Model;
 using System.Data.Entity;
+using Notocol.Models;
 
 namespace Repository
 {
@@ -29,22 +30,136 @@ namespace Repository
 
         }
 
-        public IList<string> GetAnnotations(string pageURL, long userID=2)
+        private IList<long> getSourceID(long userID)
         {
-            IList<string> lstAnnotations = null;
+            IList<long> sourceID;
             
+            sourceID = (System.Collections.Generic.IList<long>)(from sources in context.Sources
+                         where sources.UserID == userID
+                         select sources.ID);
+            
+
+            return sourceID;
+
+        }
+
+        public IList<AnnotationDataResponse> getAnnotations()
+        {
+            IList<Annotation> lstAnnotations = null;
+            IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
+            try
+            {
+
+                using (GetDataContext())
+                {
+                    
+                    lstAnnotations = (from annotations in context.Annotations
+         
+                                      select annotations).ToList();
+
+
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+
+            foreach (var annotation in lstAnnotations)
+            {
+                annData.Add(new AnnotationDataResponse(annotation, 101));
+            }
+            return annData;
+        }
+        public IList<AnnotationDataResponse> getAnnotations(string pageURL, long userID)
+        {
+            IList<Annotation> lstAnnotations = null;
+            IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
             try
             {
                 
                 using (GetDataContext())
                 {
-                    long sourceID = getSourceID(pageURL, userID);
-                    if(sourceID != 0){
-                        lstAnnotations = (from annotations in context.Annotations
-                                          where annotations.SourceID == sourceID
-                                          select annotations.Data).ToList();
+                //    long sourceID = getSourceID(pageURL, userID);
+                      lstAnnotations = (from annotations in context.Annotations
+                                          where annotations.User== userID && annotations.Uri == pageURL
+                                          select annotations).ToList();
+                    
+                
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+
+            foreach (var annotation in lstAnnotations)
+            {
+                annData.Add(new AnnotationDataResponse(annotation, 1));
+            }
+            return annData;
+        }
+
+        //public IList<AnnotationData> getAnnotations(long userID)
+        //{
+        //    IList<Annotation> lstAnnotations = null;
+        //    IList<AnnotationData> annData = new List<AnnotationData>();
+        //    try
+        //    {
+
+        //        using (GetDataContext())
+        //        {
+        //            //IList<long> sourceID = getSourceID(userID);
+        //            //if (sourceID.Count != 0)
+        //            {
+        //                lstAnnotations = (from annotations in context.Annotations
+        //                                 where annotations.User == userID
+        //                                  select annotations).ToList();
+        //            }
+
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        DisposeContext();
+        //    }
+        //    foreach (var annotation in lstAnnotations)
+        //    {
+        //        annData.Add(new AnnotationData(annotation));
+        //    }
+        //    return annData;
+            
+        //}
+
+        public AnnotationDataResponse getAnnotation(long annotationID)
+        {
+            
+            IList<Annotation> annotation;
+            try
+            {
+
+                using (GetDataContext())
+                {
+                    //IList<long> sourceID = getSourceID(userID);
+                    //if (sourceID.Count != 0)
+                    {
+                        annotation = (from annotations in context.Annotations
+                                          where annotations.ID == annotationID
+                                          select annotations).ToList();
                     }
-                
+
                 }
             }
             catch
@@ -55,20 +170,22 @@ namespace Repository
             {
                 DisposeContext();
             }
-            return lstAnnotations;
+            if (annotation.Count() > 0)
+                return new AnnotationDataResponse(annotation[0], 201);
+            else
+                return null;
         }
-        
-        public Annotation CreateAnnotation(string pageURL, string objAnnotationData, long userID=2)
+        public AnnotationDataResponse createAnnotation(NewAnnotationDataFromRequest annDatareq)
         {
-            Annotation objAnnotation = new Annotation();
+            Annotation annotation = annDatareq.toAnnotation();
+            AnnotationDataResponse response = null;
             try
             {
                 using (GetDataContext())
                 {
-                    objAnnotation.SourceID = getSourceID(pageURL, userID);
-                    
-                    objAnnotation.Data = objAnnotationData;
-                    context.Entry(objAnnotation).State = EntityState.Added;
+                   // objAnnotation.SourceID = getSourceID(annData.uri, annData.user);
+                    annotation.SourceID = 8;
+                    context.Entry(annotation).State = EntityState.Added;
                     context.SaveChanges();
                 }
             }
@@ -80,41 +197,50 @@ namespace Repository
             {
                 DisposeContext();
             }
-            return objAnnotation;
+
+            response = new AnnotationDataResponse(annotation, 301);
+            return response;
         }
 
-        public IList<Annotation> SaveAnnotations(IList<Annotation> lstAnnotation)
-        {
-            using (GetDataContext())
-            {
-                foreach (Annotation objAnnotation in lstAnnotation)
-                {
-                    context.Entry(objAnnotation).State = objAnnotation.ID == 0 ? EntityState.Added : EntityState.Modified;
+        //public AnnotationDataResponse updateAnnotations(IList<Annotation> lstAnnotation)
+        //{
+        //    using (GetDataContext())
+        //    {
+        //        foreach (Annotation objAnnotation in lstAnnotation)
+        //        {
+        //            context.Entry(objAnnotation).State = objAnnotation.ID == 0 ? EntityState.Added : EntityState.Modified;
                     
-                }
-                context.SaveChanges();
+        //        }
+        //        context.SaveChanges();
 
-                // By implementing Bulkinsert plugin
-                //using (var transactionScope = new TransactionScope())
-                //{
-                //    context.BulkInsert(lstTag);
-                //    context.SaveChanges();
-                //    transactionScope.Complete();
-                //}
-            }
-            return lstAnnotation;
-        }
+        //        // By implementing Bulkinsert plugin
+        //        //using (var transactionScope = new TransactionScope())
+        //        //{
+        //        //    context.BulkInsert(lstTag);
+        //        //    context.SaveChanges();
+        //        //    transactionScope.Complete();
+        //        //}
+        //    }
+        //    return 0;
+        //}
 
-        public bool DeleteAnnotation(Annotation objAnnotation)
+        public AnnotationDataResponse updateAnnotation(AnnotationDataResponse annData)
         {
+            IList<Annotation> annotation;
             try
             {
                 using (GetDataContext())
                 {
-                    context.Annotations.Attach(objAnnotation); // connect to annotation DB
-                    context.Annotations.Remove(objAnnotation);
-                    context.SaveChanges();
-                    return true;
+                    annotation = (from annotations in context.Annotations
+                                  where annotations.ID == annData.id
+                                  select annotations).ToList();
+                    if (annotation.Count() > 0)
+                    {
+                        AnnotationDataResponse.UpdateAnnotationObject(annotation[0], annData);
+                        context.Entry(annotation[0]).State = EntityState.Modified;
+                        context.SaveChanges();
+                    }
+                    
                 }
             }
             catch
@@ -125,8 +251,31 @@ namespace Repository
             {
                 DisposeContext();
             }
-            return false;
+            return annData;
         }
+
+        //public bool deleteAnnotation(AnnotationData annData)
+        //{
+        //    Annotation objAnnotation = AnnotationData.GetAnnotationObject(annData);
+
+        //    try
+        //    {
+        //        using (GetDataContext())
+        //        {
+        //            context.Entry(objAnnotation).State = EntityState.Deleted;
+        //            context.SaveChanges();
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        DisposeContext();
+        //    }
+        //    return true;
+        //}
 
     }
 }

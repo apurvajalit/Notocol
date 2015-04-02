@@ -39,89 +39,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetOpenAuth.Core">
-      <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.Core.UI">
-      <HintPath>..\packages\DotNetOpenAuth.Core.UI.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.InfoCard">
-      <HintPath>..\packages\DotNetOpenAuth.InfoCard.4.3.4.13329\lib\net45-full\DotNetOpenAuth.InfoCard.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.InfoCard.UI">
-      <HintPath>..\packages\DotNetOpenAuth.InfoCard.UI.4.3.4.13329\lib\net45-full\DotNetOpenAuth.InfoCard.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth.Common">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth.Common.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth.Consumer">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth.Consumer.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth.Consumer.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth.ServiceProvider">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth.ServiceProvider.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth.ServiceProvider.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth2">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth2.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth2.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth2.AuthorizationServer">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth2.AuthorizationServer.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth2.AuthorizationServer.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth2.Client">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth2.Client.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth2.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth2.Client.UI">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth2.Client.UI.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth2.Client.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth2.ClientAuthorization">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth2.ClientAuthorization.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth2.ClientAuthorization.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth2.ResourceServer">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth2.ResourceServer.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth2.ResourceServer.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId.Provider">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.Provider.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.Provider.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId.Provider.UI">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.Provider.UI.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.Provider.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty.UI">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.UI.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId.UI">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.Core.UI.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenIdInfoCard.UI">
-      <HintPath>..\packages\DotNetOpenAuth.OpenIdInfoCard.UI.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenIdInfoCard.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetOpenAuth.OpenIdOAuth">
-      <HintPath>..\packages\DotNetOpenAuth.OpenIdOAuth.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenIdOAuth.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Swashbuckle.Core">
       <HintPath>..\packages\Swashbuckle.Core.5.0.4\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -212,25 +136,18 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Api\AnnotationController.cs" />
-    <Compile Include="Controllers\Api\AnnotationController.Depricated.cs" />
-    <Compile Include="Controllers\Api\AnnotationDataFromRequest.cs" />
     <Compile Include="Controllers\Api\BaseApiController.cs" />
     <Compile Include="Controllers\Api\SourceController.cs" />
     <Compile Include="Controllers\Api\TagController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\oauth2Controller.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AnnotaterStoreInfo.cs" />
-    <Compile Include="Models\Annotation.cs" />
-    <Compile Include="Models\AnnotationRange.cs" />
-    <Compile Include="Models\AnnotationSearchResults.cs" />
-    <Compile Include="Models\AnnotationPermissions.cs" />
     <Compile Include="Models\SourceTagRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\annotator.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -239,6 +156,7 @@
     <Content Include="Content\img\delete.png" />
     <Content Include="Content\img\downloadIcon.png" />
     <Content Include="Content\img\Hierarchy.png" />
+    <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\jquery.orgchart.css" />
     <Content Include="Content\jquery.tagit.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -283,13 +201,20 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\annotate.js" />
+    <Content Include="Scripts\annotator-full.min.js" />
+    <Content Include="Scripts\annotator.min.css" />
+    <Content Include="Scripts\annotator.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-2.1.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.min.js" />
+    <Content Include="Scripts\jquery-ui.css" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\npm.js" />
@@ -395,11 +320,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

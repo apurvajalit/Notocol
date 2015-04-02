@@ -7,8 +7,8 @@ namespace Notocol.Models
 {
     public class AnnotationSearchResults
     {
-        public String total { get; set; }
+        public long total { get; set; }
        
-        public IList<Annotation> annotations { get; set; }
+        public IList<AnnotationDataResponse> rows { get; set; }
     }
 }

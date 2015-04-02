@@ -9,8 +9,18 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" />
-          <Property Name="Data" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Annotator_schema_version" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Created" Type="date" />
+          <Property Name="Updated" Type="date" />
+          <Property Name="Text" Type="nvarchar(max)" />
+          <Property Name="Quote" Type="nvarchar(max)" />
+          <Property Name="Uri" Type="nvarchar(max)" />
+          <Property Name="Ranges" Type="nvarchar(max)" />
+          <Property Name="User" Type="bigint" />
+          <Property Name="Consumer" Type="varchar" MaxLength="10" />
+          <Property Name="Tags" Type="nvarchar(max)" />
+          <Property Name="Permissions" Type="nvarchar(max)" />
           <Property Name="SourceID" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="Source">
@@ -385,9 +395,19 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="Data" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="SourceID" Type="Int64" Nullable="false" />
           <NavigationProperty Name="Source" Relationship="NotColModel.FK_Annotaion_Source" FromRole="Annotation" ToRole="Source" />
+          <Property Name="Annotator_schema_version" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Created" Type="DateTime" Precision="0" />
+          <Property Name="Updated" Type="DateTime" Precision="0" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Quote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Ranges" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="User" Type="Int64" />
+          <Property Name="Consumer" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Tags" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Permissions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Annotaion_Source">
           <End Type="NotColModel.Source" Role="Source" Multiplicity="1" />
@@ -496,8 +516,18 @@
           <EntitySetMapping Name="Annotations">
             <EntityTypeMapping TypeName="NotColModel.Annotation">
               <MappingFragment StoreEntitySet="Annotation">
+                <ScalarProperty Name="Permissions" ColumnName="Permissions" />
+                <ScalarProperty Name="Tags" ColumnName="Tags" />
+                <ScalarProperty Name="Consumer" ColumnName="Consumer" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Ranges" ColumnName="Ranges" />
+                <ScalarProperty Name="Uri" ColumnName="Uri" />
+                <ScalarProperty Name="Quote" ColumnName="Quote" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Annotator_schema_version" ColumnName="Annotator_schema_version" />
                 <ScalarProperty Name="SourceID" ColumnName="SourceID" />
-                <ScalarProperty Name="Data" ColumnName="Data" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
