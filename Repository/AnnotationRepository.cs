@@ -16,32 +16,7 @@ namespace Repository
             CreateDataContext();
         }
 
-        private long getSourceID(string pageURL,long userID)
-        {
-            long sourceID = 0;
-            IList<Source> lstSource = null;
-            lstSource = (from sources in context.Sources
-                         where sources.UserID == userID && sources.Link == pageURL
-                         select sources).ToList();
-            if (lstSource != null)
-                sourceID = lstSource.First().ID;
-            
-            return sourceID;
-
-        }
-
-        private IList<long> getSourceID(long userID)
-        {
-            IList<long> sourceID;
-            
-            sourceID = (System.Collections.Generic.IList<long>)(from sources in context.Sources
-                         where sources.UserID == userID
-                         select sources.ID);
-            
-
-            return sourceID;
-
-        }
+       
 
         public IList<AnnotationDataResponse> getAnnotations()
         {
@@ -71,7 +46,7 @@ namespace Repository
 
             foreach (var annotation in lstAnnotations)
             {
-                annData.Add(new AnnotationDataResponse(annotation, 101));
+                annData.Add(new AnnotationDataResponse(annotation));
             }
             return annData;
         }
@@ -84,11 +59,14 @@ namespace Repository
                 
                 using (GetDataContext())
                 {
-                //    long sourceID = getSourceID(pageURL, userID);
+                    SourceRepository sourceRepository = new SourceRepository();
+                    long sourceID = sourceRepository.getSourceID(pageURL, userID);
+                    if (sourceID != 0) { 
+
                       lstAnnotations = (from annotations in context.Annotations
-                                          where annotations.User== userID && annotations.Uri == pageURL
+                                          where annotations.SourceID == sourceID
                                           select annotations).ToList();
-                    
+                    }
                 
                 }
             }
@@ -101,9 +79,12 @@ namespace Repository
                 DisposeContext();
             }
 
-            foreach (var annotation in lstAnnotations)
+            if ((lstAnnotations != null) && (lstAnnotations.Count() > 0))
             {
-                annData.Add(new AnnotationDataResponse(annotation, 1));
+                foreach (var annotation in lstAnnotations)
+                {
+                    annData.Add(new AnnotationDataResponse(annotation));
+                }
             }
             return annData;
         }
@@ -149,18 +130,12 @@ namespace Repository
             IList<Annotation> annotation;
             try
             {
-
                 using (GetDataContext())
                 {
-                    //IList<long> sourceID = getSourceID(userID);
-                    //if (sourceID.Count != 0)
-                    {
-                        annotation = (from annotations in context.Annotations
-                                          where annotations.ID == annotationID
-                                          select annotations).ToList();
-                    }
-
-                }
+                    annotation = (from annotations in context.Annotations
+                                    where annotations.ID == annotationID
+                                    select annotations).ToList();
+                 }
             }
             catch
             {
@@ -171,7 +146,7 @@ namespace Repository
                 DisposeContext();
             }
             if (annotation.Count() > 0)
-                return new AnnotationDataResponse(annotation[0], 201);
+                return new AnnotationDataResponse(annotation[0]);
             else
                 return null;
         }
@@ -183,13 +158,33 @@ namespace Repository
             {
                 using (GetDataContext())
                 {
-                   // objAnnotation.SourceID = getSourceID(annData.uri, annData.user);
-                    annotation.SourceID = 8;
+                    SourceRepository sourceRepository = new SourceRepository();
+                    long sourceID = sourceRepository.getSourceID(annDatareq.uri, annDatareq.user);
+                    if (sourceID == 0)
+                    {
+                        //Create the source for this user
+                        Source source = new Source();
+                        IList<Tag> tags = new List<Tag>();
+
+                        source.Link = annDatareq.uri;
+                        source.UserID = annDatareq.user;
+                        SourceRepository obSourceRepository = new SourceRepository();
+                        try {
+                            obSourceRepository.SaveSource(source, tags);
+                            sourceID =  source.ID;
+                        }
+                        catch
+                        {
+                            throw;
+                        }
+                       
+                    }
+                    annotation.SourceID = sourceID;
                     context.Entry(annotation).State = EntityState.Added;
                     context.SaveChanges();
                 }
             }
-            catch
+            catch 
             {
                 throw;
             }
@@ -198,7 +193,7 @@ namespace Repository
                 DisposeContext();
             }
 
-            response = new AnnotationDataResponse(annotation, 301);
+            response = new AnnotationDataResponse(annotation);
             return response;
         }
 

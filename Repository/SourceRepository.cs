@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 
 using Model;
+using Notocol.Models;
 
 namespace Repository
 {
@@ -80,18 +81,85 @@ namespace Repository
             return objSource;
         }
 
-        public IList<Source> GetSource(int userID)
+        public long getSourceID(string pageURL, long userID)
+        {
+            long sourceID = 0;
+            IList<Source> lstSource = null;
+
+            try
+            {
+                using (GetDataContext()) { 
+                    lstSource = (from sources in context.Sources
+                                 where sources.UserID == userID && sources.Link == pageURL
+                                 select sources).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+
+            }
+
+            if (lstSource.Count() > 0)
+                sourceID = lstSource.First().ID;
+
+            return sourceID;
+
+        }
+
+        public SourceDataRequest getSourceData(string pageURL, long userID)
+        {
+            SourceDataRequest sourceData = new SourceDataRequest();
+            try
+            {
+                using (GetDataContext())
+                {
+                    IList<Source> sources = (from Sources in context.Sources
+                                         where Sources.UserID == userID && Sources.Link == pageURL  
+                                         select Sources).ToList();
+                    if(sources.Count > 0){
+                        sourceData.Source = sources[0];
+                        sourceData.Tags = (from Tags in context.Tags
+                                           where Tags.SourceTags.FirstOrDefault().SourceID == sourceData.Source.ID
+                                           select Tags).ToList();
+                        IList<Annotation> annotations = (from Annotations in context.Annotations
+                                                  where Annotations.Source.ID == sourceData.Source.ID
+                                                  select Annotations).ToList();
+                        sourceData.Annotations = new List<AnnotationDataResponse>();
+                        if(annotations.Count() > 0){
+                            foreach (var objAnnotation in annotations)
+                            {
+                                sourceData.Annotations.Add(new AnnotationDataResponse(objAnnotation));
+                            }
+ 
+                        }
+                        
+                    }
+                }
+
+            }
+            catch
+            {
+                throw;
+            }
+            return sourceData;
+
+        }
+
+        public IList<Source> GetSource(long userID)
         {
             IList<Source> lstSources = null;
             try
             {
-                long sourceID = 0;
                 // Save Source
                 using (GetDataContext())
                 {
                     lstSources = (from sources in context.Sources
-                        where sources.UserID == userID
-                        select sources).ToList();
+                                  where sources.UserID == userID
+                                  select sources).ToList();
                 }
             }
             catch (Exception e)
