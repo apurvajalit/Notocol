@@ -143,6 +143,11 @@
           <Parameter Name="privacy" Type="bit" Mode="In" />
           <Parameter Name="rating" Type="int" Mode="In" />
         </Function>
+        <Function Name="SearchForSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa">
+          <Parameter Name="keywordStr" Type="varchar" Mode="In" />
+          <Parameter Name="tagStr" Type="varchar" Mode="In" />
+          <Parameter Name="userID" Type="bigint" Mode="In" />
+        </Function>
         <Function Name="spTestSourceData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa" />
         <EntityContainer Name="NotColModelStoreContainer">
           <EntitySet Name="Annotation" EntityType="Self.Annotation" Schema="nileshgsa" store:Type="Tables" />
@@ -233,6 +238,11 @@
             <End Role="Source" EntitySet="Sources" />
             <End Role="Annotation" EntitySet="Annotations" />
           </AssociationSet>
+          <FunctionImport Name="SearchForSource" ReturnType="Collection(NotColModel.SearchForSource_Result)">
+            <Parameter Name="keywordStr" Mode="In" Type="String" />
+            <Parameter Name="tagStr" Mode="In" Type="String" />
+            <Parameter Name="userID" Mode="In" Type="Int64" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="GetTags_Result">
           <Property Type="Int64" Name="ChildId" Nullable="true" />
@@ -421,6 +431,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="SearchForSource_Result">
+          <Property Type="Int64" Name="ID" Nullable="true" />
+          <Property Type="Int64" Name="UserID" Nullable="true" />
+          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Link" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
+          <Property Type="Boolean" Name="ReadLater" Nullable="true" />
+          <Property Type="Boolean" Name="SaveOffline" Nullable="true" />
+          <Property Type="Boolean" Name="Privacy" Nullable="true" />
+          <Property Type="Int32" Name="Rating" Nullable="true" />
+          <Property Type="String" Name="TagNames" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="TagIDs" Nullable="true" MaxLength="1000" />
+          <Property Type="DateTime" Name="ModifiedAt" Nullable="true" Precision="23" />
+          </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -532,6 +556,24 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SearchForSource" FunctionName="NotColModel.Store.SearchForSource">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="NotColModel.SearchForSource_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Link" ColumnName="Link" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
+                <ScalarProperty Name="ReadLater" ColumnName="ReadLater" />
+                <ScalarProperty Name="SaveOffline" ColumnName="SaveOffline" />
+                <ScalarProperty Name="Privacy" ColumnName="Privacy" />
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="TagNames" ColumnName="TagNames" />
+                <ScalarProperty Name="TagIDs" ColumnName="TagIDs" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

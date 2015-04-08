@@ -31,9 +31,16 @@ namespace Notocol.Controllers.Api
             obSourceRepository.SaveSource(source.Source, source.Tags);
             return source.Source.ID;
         }
-        
-        
-        
+
+
+        [HttpGet]
+        [Route("api/Source/Search/")]
+        public long Search(string keyword, string tag, long userID)
+        {
+            SourceRepository obSourceRepository = new SourceRepository();
+             obSourceRepository.Search(keyword, tag, userID);
+            return 1;
+        }
         
 
     }

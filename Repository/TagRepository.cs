@@ -83,6 +83,7 @@ namespace Repository
         /// <returns></returns>
         public IList<Tag> SaveTags(IList<Tag> lstTag)
         {
+            try { 
             using (GetDataContext())
             {
                 foreach (Tag objTag in lstTag)
@@ -99,6 +100,11 @@ namespace Repository
                 //    context.SaveChanges();
                 //    transactionScope.Complete();
                 //}
+            }
+            }
+            catch
+            {
+                throw;
             }
             return lstTag;
         }

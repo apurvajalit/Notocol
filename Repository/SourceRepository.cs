@@ -9,6 +9,8 @@ using System.Transactions;
 
 using Model;
 using Notocol.Models;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace Repository
 {
@@ -185,6 +187,15 @@ namespace Repository
                 throw e;
             }
             return lstSources;
+        }
+
+        public void Search(string keyword, string tag, long userID){
+
+            System.Data.Entity.Core.Objects.ObjectResult<SearchForSource_Result> result;
+            using (GetDataContext())
+            {
+                result =  context.SearchForSource(keyword, tag, userID);
+            }
         }
     }
 }

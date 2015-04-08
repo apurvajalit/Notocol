@@ -149,7 +149,29 @@
                 $("#GetNewPageData").hide();
             });
 
-           
+            $('#searchForPages').click(function () {
+                var keywordString  = $("#keyword").val();
+                var tagString = $("#tag").val();
+                var srcData = {
+                    "keyword" : keywordString,
+                    "tag": tagString,
+                    "user" : 2
+                }
+
+                $.ajax({
+                    type: "GET",
+                    dataType: "application/json",
+                    data: srcData,
+                    url: 'http://localhost:5555/api/Source',
+                    success: function (data) {
+                        alert(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(errorThrown);
+                    }
+                });
+            });
+
             $("#addNewPage").click(function() {
                 var url = $("#pageURL").val();
                 var note = $("#pageDesc").val();
