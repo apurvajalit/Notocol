@@ -83,7 +83,7 @@ namespace Repository
         /// <returns></returns>
         public IList<Tag> SaveTags(IList<Tag> lstTag)
         {
-            using (GetDataContext())
+          using (GetDataContext())
             {
                 foreach (Tag objTag in lstTag)
                 {
