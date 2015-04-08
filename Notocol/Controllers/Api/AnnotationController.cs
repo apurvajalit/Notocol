@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 //using System.IdentityModel.Tokens;
 using Notocol.Models;
+using Model;
 
 namespace Notocol.Controllers.Api
 {
