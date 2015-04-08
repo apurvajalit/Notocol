@@ -143,6 +143,7 @@
     <Compile Include="Controllers\Api\BaseApiController.cs" />
     <Compile Include="Controllers\Api\SourceController.cs" />
     <Compile Include="Controllers\Api\SourceData.cs" />
+    <Compile Include="Controllers\Api\SourceDataForExtensionController.cs" />
     <Compile Include="Controllers\Api\TagController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">

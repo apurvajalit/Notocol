@@ -1,23 +1,17 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using Model;
-using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Notocol.Models
 {
-    [DataContract(IsReference = true)]
     public class SourceDataRequest
     {
-        [DataMember]
-        public Source Source { get; set; }
-        
-        [DataMember]
+        public  Source Source { get; set; }
         public IList<Tag> Tags { get; set; }
 
-         [DataMember]
-        public IList<AnnotationDataResponse> Annotations { get; set; }
-        
     }
+
 }

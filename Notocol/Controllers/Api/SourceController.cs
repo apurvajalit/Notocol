@@ -32,13 +32,9 @@ namespace Notocol.Controllers.Api
             return source.Source.ID;
         }
         
-        [HttpGet]
-        public SourceDataRequest GetSourceData(string pageURL, long userID)
-        {
-            SourceRepository obSourceRepository = new SourceRepository();
-            return obSourceRepository.getSourceData(pageURL, userID);
-        }
-
+        
+        
+        
 
     }
 }

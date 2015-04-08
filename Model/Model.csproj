@@ -83,6 +83,10 @@
     <Compile Include="Extended\AnnotationModels\AnnotationRange.cs" />
     <Compile Include="Extended\AnnotationModels\AnnotationSearchResults.cs" />
     <Compile Include="Extended\NotCol.Context.cs" />
+    <Compile Include="Extended\SourceDataModels\AnnotationDetails.cs" />
+    <Compile Include="Extended\SourceDataModels\SourceDataForExtension.cs" />
+    <Compile Include="Extended\SourceDataModels\SourceDetails.cs" />
+    <Compile Include="Extended\SourceDataModels\TagDetails.cs" />
     <Compile Include="Extended\SourceDataRequest.cs" />
     <Compile Include="GetTags1_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>

@@ -110,9 +110,9 @@ namespace Repository
 
         }
 
-        public SourceDataRequest getSourceData(string pageURL, long userID)
+        public SourceDataForExtension getSourceData(string pageURL, long userID)
         {
-            SourceDataRequest sourceData = new SourceDataRequest();
+            SourceDataForExtension sourceData = new SourceDataForExtension();
             try
             {
                 using (GetDataContext())
@@ -121,23 +121,41 @@ namespace Repository
                                          where Sources.UserID == userID && Sources.Link == pageURL  
                                          select Sources).ToList();
                     if(sources.Count > 0){
-                        sourceData.Source = sources[0];
-                        sourceData.Tags = (from Tags in context.Tags
-                                           where Tags.SourceTags.FirstOrDefault().SourceID == sourceData.Source.ID
+                        sourceData.Source = new SourceDetails();
+                        sourceData.Source.id = sources[0].ID;
+                        sourceData.Source.url = sources[0].Link;
+                        IList<Tag> tags = (from Tags in context.Tags
+                                           where Tags.SourceTags.FirstOrDefault().SourceID == sourceData.Source.id
                                            select Tags).ToList();
+                        if (tags.Count() > 0) {
+                            sourceData.Tags = new List<TagDetails>();
+                            foreach (Tag tag in tags)
+                            {
+                                TagDetails tagDetails = new TagDetails();
+                                tagDetails.id = tag.ID;
+                                tagDetails.tagName = tag.Name;
+                                sourceData.Tags.Add(tagDetails);
+                            }
+                        }
                         IList<Annotation> annotations = (from Annotations in context.Annotations
-                                                  where Annotations.Source.ID == sourceData.Source.ID
+                                                  where Annotations.Source.ID == sourceData.Source.id
                                                   select Annotations).ToList();
-                        sourceData.Annotations = new List<AnnotationDataResponse>();
+                        sourceData.Annotations = new List<AnnotationDetails>();
                         if(annotations.Count() > 0){
                             foreach (var objAnnotation in annotations)
                             {
-                                sourceData.Annotations.Add(new AnnotationDataResponse(objAnnotation));
+                                AnnotationDetails annDetails = new AnnotationDetails();
+                                annDetails.annotationID = objAnnotation.ID;
+                                annDetails.quote = objAnnotation.Quote;
+                                annDetails.text = objAnnotation.Text;
+                                annDetails.range = AnnotationRange.AnnotationRangeListFromString(objAnnotation.Ranges).FirstOrDefault() ;
+
+                                sourceData.Annotations.Add(annDetails);
                             }
  
                         }
                         
-                    }
+                    } 
                 }
 
             }
