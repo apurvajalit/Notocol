@@ -189,13 +189,16 @@ namespace Repository
             return lstSources;
         }
 
-        public void Search(string keyword, string tag, long userID){
-
+        public SearchForSource_Result Search(string keyword, string tag, long userID)
+        {
+            SearchForSource_Result lstSources = null;
             System.Data.Entity.Core.Objects.ObjectResult<SearchForSource_Result> result;
             using (GetDataContext())
             {
-                result =  context.SearchForSource(keyword, tag, userID);
+             //   lstSources = (SearchForSource_Result) context.SearchForSource(keyword, tag, userID);
+               
             }
+            return lstSources;
         }
     }
 }

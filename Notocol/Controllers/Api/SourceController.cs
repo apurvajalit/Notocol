@@ -35,7 +35,7 @@ namespace Notocol.Controllers.Api
 
         [HttpGet]
         [Route("api/Source/Search/")]
-        public long Search(string keyword, string tag, long userID)
+        public long Search(long userID, string keyword="", string tag="")
         {
             SourceRepository obSourceRepository = new SourceRepository();
              obSourceRepository.Search(keyword, tag, userID);

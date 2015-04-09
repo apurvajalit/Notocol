@@ -28,16 +28,16 @@ namespace Repository
                     if (charactersToSearch == "")
                     {
                         lstTags = (from tags in context.Tags
-                            where tags.UserID == userID
-                            select tags).ToList();
+                                   where tags.UserID == userID
+                                   select tags).ToList();
                     }
                     else
                     {
                         lstTags = (from tags in context.Tags
-                            where tags.Name.Contains(charactersToSearch) && tags.UserID == userID
-                            select tags).ToList();
+                                   where tags.Name.Contains(charactersToSearch) && tags.UserID == userID
+                                   select tags).ToList();
                     }
-                    
+
                 }
             }
             catch
@@ -83,24 +83,24 @@ namespace Repository
         /// <returns></returns>
         public IList<Tag> SaveTags(IList<Tag> lstTag)
         {
-            try { 
-            using (GetDataContext())
-            {
-                foreach (Tag objTag in lstTag)
+            try {
+                using (GetDataContext())
                 {
-                    context.Entry(objTag).State = objTag.ID == 0 ? EntityState.Added : EntityState.Modified;
-                    
-                }
-                context.SaveChanges();
+                    foreach (Tag objTag in lstTag)
+                    {
+                        context.Entry(objTag).State = objTag.ID == 0 ? EntityState.Added : EntityState.Modified;
 
-                // By implementing Bulkinsert plugin
-                //using (var transactionScope = new TransactionScope())
-                //{
-                //    context.BulkInsert(lstTag);
-                //    context.SaveChanges();
-                //    transactionScope.Complete();
-                //}
-            }
+                    }
+                    context.SaveChanges();
+
+                    // By implementing Bulkinsert plugin
+                    //using (var transactionScope = new TransactionScope())
+                    //{
+                    //    context.BulkInsert(lstTag);
+                    //    context.SaveChanges();
+                    //    transactionScope.Complete();
+                    //}
+                }
             }
             catch
             {
