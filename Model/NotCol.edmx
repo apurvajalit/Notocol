@@ -238,7 +238,7 @@
             <End Role="Source" EntitySet="Sources" />
             <End Role="Annotation" EntitySet="Annotations" />
           </AssociationSet>
-          <FunctionImport Name="SearchForSource" ReturnType="Collection(NotColModel.SearchForSource_Result)">
+          <FunctionImport Name="SearchForSource" EntitySet="Sources" ReturnType="Collection(NotColModel.Source)">
             <Parameter Name="keywordStr" Mode="In" Type="String" />
             <Parameter Name="tagStr" Mode="In" Type="String" />
             <Parameter Name="userID" Mode="In" Type="Int64" />
@@ -557,22 +557,6 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SearchForSource" FunctionName="NotColModel.Store.SearchForSource">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="NotColModel.SearchForSource_Result">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="Link" ColumnName="Link" />
-                <ScalarProperty Name="Summary" ColumnName="Summary" />
-                <ScalarProperty Name="ReadLater" ColumnName="ReadLater" />
-                <ScalarProperty Name="SaveOffline" ColumnName="SaveOffline" />
-                <ScalarProperty Name="Privacy" ColumnName="Privacy" />
-                <ScalarProperty Name="Rating" ColumnName="Rating" />
-                <ScalarProperty Name="TagNames" ColumnName="TagNames" />
-                <ScalarProperty Name="TagIDs" ColumnName="TagIDs" />
-                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
-              </ComplexTypeMapping>
-            </ResultMapping>
           </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>

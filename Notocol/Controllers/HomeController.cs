@@ -117,11 +117,11 @@ namespace Notocol.Controllers
             return 0;
         }
 
-        public ActionResult SourceItems(string keywordFilter, string tagFilter)
+        public ActionResult SourceItems(string keywordFilter="", string tagFilter="", long userID=2)
         {
             //TODO Make use of filters passed
             Api.SourceController objController = new Api.SourceController();
-            IList<Source> lstSource = objController.Source();
+            IList<Source> lstSource = objController.Search(userID, keywordFilter, tagFilter);
             return PartialView(lstSource);
         }  
     }

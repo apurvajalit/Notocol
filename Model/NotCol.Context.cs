@@ -152,7 +152,7 @@ namespace Model
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spTestSourceData1_Result>("spTestSourceData1");
         }
     
-        public virtual ObjectResult<SearchForSource_Result> SearchForSource(string keywordStr, string tagStr, Nullable<long> userID)
+        public virtual ObjectResult<Source> SearchForSource(string keywordStr, string tagStr, Nullable<long> userID)
         {
             var keywordStrParameter = keywordStr != null ?
                 new ObjectParameter("keywordStr", keywordStr) :
@@ -166,7 +166,24 @@ namespace Model
                 new ObjectParameter("userID", userID) :
                 new ObjectParameter("userID", typeof(long));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SearchForSource_Result>("SearchForSource", keywordStrParameter, tagStrParameter, userIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Source>("SearchForSource", keywordStrParameter, tagStrParameter, userIDParameter);
+        }
+    
+        public virtual ObjectResult<Source> SearchForSource(string keywordStr, string tagStr, Nullable<long> userID, MergeOption mergeOption)
+        {
+            var keywordStrParameter = keywordStr != null ?
+                new ObjectParameter("keywordStr", keywordStr) :
+                new ObjectParameter("keywordStr", typeof(string));
+    
+            var tagStrParameter = tagStr != null ?
+                new ObjectParameter("tagStr", tagStr) :
+                new ObjectParameter("tagStr", typeof(string));
+    
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("userID", userID) :
+                new ObjectParameter("userID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Source>("SearchForSource", mergeOption, keywordStrParameter, tagStrParameter, userIDParameter);
         }
     }
 }

@@ -1,7 +1,16 @@
 ﻿@using System.Configuration
 
 <link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.2.5/annotator.min.css">
-
+<style>
+    .pageBox{
+        border: 1px solid gray ;
+        border-radius:10px;
+        min-height:150px;
+        position:relative;
+        margin-bottom:10px;
+        
+     }
+</style>
 <div class="jumbotron">
     <h1>@ConfigurationManager.AppSettings["proj"]</h1>
     <p class="lead">Your Smart Study Assistant </p>
@@ -27,54 +36,30 @@
     </div>
 </div>
 <div>
-    <form method="POST" id="tags">
-        <h4>Tags</h4>
-        <div id="dvTagSearch"><input type="text" id="txtSearchTags" /></div>
-        <div id="dvTags"></div>
-        <div id="content"></div>
-    </form>
-</div>
+    <p> Action link below!</p>
+    <button class="btn btn-group-xs btn-xs" data-toggle="modal" data-target="#myModal">View notes</button>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Hello world!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 @section scripts
 {
-    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript">
-        var lastValue = '';
-        $('#txtSearchTags').on('change keyup paste', function() {
-            // Don't count the keys which don't actually change
-            // the text. The four below are the arrow keys, but
-            // there are more that I omitted for brevity.
-            if (event.which != 37 && event.which != 38 &&
-                event.which != 39 && event.which != 40) {
-                // check for last value
-                if ($(this).val() != lastValue) {
-                    lastValue = $(this).val();
-                    if (lastValue.length >= 3) {
-                        //alert(lastValue);
-                        GetTags(lastValue);
-                    }
-                }
-            }
+    <script>
+        $(document).ready(function () {
+            $("#MyModal").modal();
         });
-
-        function GetTags(strToSearch) {
-            $.ajax({
-                url: '@Url.Action("SearchTags", "Home")', //+strToSearch,
-                // url: '/home/searchTags',
-                type: 'POST',
-                async: false,
-                data: { id: strToSearch },
-                success:
-
-                    function(data) {
-                        $('#dvTags').empty();
-                        $('#dvTags').append('<ul>');
-                        $.each(data, function(index, tag) {
-
-                            $('#dvTags').append('<li>' + tag.Name + '</li>');
-                        });
-                    }
-            });
-        }
     </script>
 
     

@@ -168,6 +168,16 @@ namespace Repository
 
                         source.Link = annDatareq.uri;
                         source.UserID = annDatareq.user;
+
+                        foreach (var tagString in annDatareq.tags)
+                        {
+                            Tag tag = new Tag();
+                            tag.Name = tagString;
+                            tag.ParentID = 1;
+                            tag.UserID = annDatareq.user;
+                            tags.Add(tag);
+                        }
+
                         SourceRepository obSourceRepository = new SourceRepository();
                         try {
                             obSourceRepository.SaveSource(source, tags);

@@ -16,10 +16,10 @@ namespace Notocol.Models
      public class AnnotationRange
     {
         public String start { get; set; }
-        public long startoffset { get; set; }
+        public long startOffset { get; set; }
         public String end { get; set; }
 
-        public long endoffset { get; set; }
+        public long endOffset { get; set; }
 
 
         public static string AnnotationRangeListToString(IList<AnnotationRange> ranges)

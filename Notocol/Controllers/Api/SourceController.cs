@@ -35,11 +35,11 @@ namespace Notocol.Controllers.Api
 
         [HttpGet]
         [Route("api/Source/Search/")]
-        public long Search(long userID, string keyword="", string tag="")
+        public IList<Source> Search(long userID, string keyword="", string tag="")
         {
             SourceRepository obSourceRepository = new SourceRepository();
-             obSourceRepository.Search(keyword, tag, userID);
-            return 1;
+            return obSourceRepository.Search(keyword, tag, userID);
+             
         }
         
 

@@ -58,6 +58,8 @@ namespace Repository
                 using (GetDataContext())
                 {
                     IList<SourceTag> lstSourceTags = new List<SourceTag>();
+                    //var alreadyAddedTags = lstTags.Intersect(objSource.SourceTags);
+                    //CurrentCollection.AddRange(DownloadedItems.Except(duplicates));
 
                     foreach (Tag objTag in lstTags)
                     {
@@ -189,16 +191,22 @@ namespace Repository
             return lstSources;
         }
 
-        public SearchForSource_Result Search(string keyword, string tag, long userID)
+        public IList<Source> Search(string keyword, string tag, long userID)
         {
-            SearchForSource_Result lstSources = null;
+           ;
+           IList<Source> listSources;
+ 
+
             System.Data.Entity.Core.Objects.ObjectResult<SearchForSource_Result> result;
             using (GetDataContext())
             {
-             //   lstSources = (SearchForSource_Result) context.SearchForSource(keyword, tag, userID);
-               
+                listSources = context.SearchForSource(keyword, tag, userID).ToList<Source>();
+                 
+                //IList<Course> courseList = ctx.GetCoursesByStudentId(1).ToList<Course>();
+            //    list = (from a in result select a).ToList <SearchForSource_Result>();    // Linq query               
             }
-            return lstSources;
+            
+            return listSources;
         }
     }
 }
