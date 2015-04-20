@@ -4,10 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Mvc;
 
 namespace Notocol.Controllers.Api
 {
     public class BaseApiController : ApiController
     {
+ 
+        
     }
 }

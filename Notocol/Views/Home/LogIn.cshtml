@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "LogIn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+    
+
+    @using (Html.BeginForm("SignInUser", "User", FormMethod.Post,
+                                      new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            Username: @Html.TextBox("username")
+            Password: @Html.Password("password")
+            <button type="submit" value="Sign In">Sign In</button>
+        </fieldset>
+    }
+
+    @using (Html.BeginForm("SignUpUser", "User", FormMethod.Post,
+                                      new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            Username: @Html.TextBox("username")
+            Password: @Html.Password("password")
+            <button type="submit" value="Sign Up">Sign Up</button>        </fieldset>
+    }
+

@@ -18,7 +18,7 @@ namespace Repository
         /// <param name="charactersToSearch"></param>
         /// <param name="userID"></param>
         /// <returns></returns>
-        public IList<Tag> SearchTags(string charactersToSearch,int userID)
+        public IList<Tag> SearchTags(string charactersToSearch,long userID)
         {
             IList<Tag> lstTags = null;
             try
@@ -81,13 +81,14 @@ namespace Repository
         /// </summary>
         /// <param name="lstTag"></param>
         /// <returns></returns>
-        public IList<Tag> SaveTags(IList<Tag> lstTag)
+        public IList<Tag> SaveTags(long userID, IList<Tag> lstTag)
         {
             try {
                 using (GetDataContext())
                 {
                     foreach (Tag objTag in lstTag)
                     {
+                        objTag.UserID = userID;
                         context.Entry(objTag).State = objTag.ID == 0 ? EntityState.Added : EntityState.Modified;
 
                     }

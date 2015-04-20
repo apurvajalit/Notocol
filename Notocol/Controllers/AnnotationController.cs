@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace Notocol.Controllers
 {
+    
     public class AnnotationController : Controller
     {
         // GET: Annotation
@@ -16,6 +17,13 @@ namespace Notocol.Controllers
             AnnotationRepository objAnnotationRepository = new AnnotationRepository();
             return objAnnotationRepository.getAnnotations(url, userID);
            
+        }
+
+        public ActionResult Test(long sourceID)
+        {
+            AnnotationRepository objAnnotationRepository = new AnnotationRepository();
+            return PartialView(objAnnotationRepository.getAnnotations(sourceID));
+
         }
     }
 }

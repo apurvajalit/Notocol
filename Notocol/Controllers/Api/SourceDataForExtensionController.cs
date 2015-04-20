@@ -10,11 +10,14 @@ namespace Notocol.Controllers.Api
 {
     public class SourceDataForExtensionController:BaseApiController
     {
+        [CustomAuthFilter]
         [HttpGet]
-        public SourceDataForExtension GetSourceData(string pageURL, long userID)
+        public SourceDataForExtension GetSourceData(string pageURL)
         {
             SourceRepository obSourceRepository = new SourceRepository();
-            return obSourceRepository.getSourceData(pageURL, userID);
+            var userIDinfo = Request.Properties["userID"];
+
+            return obSourceRepository.getSourceData(pageURL, Convert.ToInt64(userIDinfo));
         }
 
         

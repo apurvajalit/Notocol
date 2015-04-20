@@ -28,11 +28,12 @@ namespace Repository
         /// <param name="lstTags"></param>
         /// <returns></returns>
 
-        public Source SaveSource(Source objSource, IList<Tag> lstTags)
+        public Source SaveSource(long userID, Source objSource, IList<Tag> lstTags)
         {
             try
             {
                 long sourceID = 0;
+                objSource.UserID = userID;
                 string tagNames="";
                // get tag names to assign to source.
                 foreach (Tag objTag in lstTags)
@@ -52,7 +53,7 @@ namespace Repository
                 }
                 // save data to Tag table
                 TagRepository objTagRepository = new TagRepository();
-                objTagRepository.SaveTags(lstTags);
+                objTagRepository.SaveTags(userID, lstTags);
                 
                 // save data to sourceTag table
                 using (GetDataContext())

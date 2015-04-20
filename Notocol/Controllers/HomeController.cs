@@ -3,11 +3,14 @@ using System.Web.Mvc;
 using Model;
 using Notocol.Controllers.Api;
 using Repository;
+using System;
 
 namespace Notocol.Controllers
 {
     public class HomeController : Controller
     {
+        long userID = 0;
+
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
@@ -32,6 +35,13 @@ namespace Notocol.Controllers
             return View();
         }
 
+        public ActionResult Login()
+        {
+            ViewBag.Title = "Login";
+
+            return View();
+        }
+
         public ActionResult MyTags()
         {
             IList<Tag> searchTags = SearchMyTags("");
@@ -44,10 +54,10 @@ namespace Notocol.Controllers
             return View();
         }
         public ActionResult Home()
-        {
-            Api.SourceController objController = new Api.SourceController();
-            IList<Source> lstSource = objController.Source();
-            return View(lstSource);
+        {                       
+            SourceRepository obSourceRepository = new SourceRepository();
+      
+            return View(obSourceRepository.GetSource(userID));
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
@@ -65,14 +75,14 @@ namespace Notocol.Controllers
 
         public long AddTag(Tag objTag)
         {
-            objTag.UserID = 2;
+            objTag.UserID = userID;
             TagRepository objTagRepository = new TagRepository();
             return objTagRepository.SaveTag(objTag).ID;
         }
 
         public bool DeleteTag(Tag objTag)
         {
-            objTag.UserID = 2;
+            objTag.UserID = userID;
             TagRepository objTagRepository = new TagRepository();
             return objTagRepository.DeleteTag(objTag);
         }
@@ -117,12 +127,16 @@ namespace Notocol.Controllers
             return 0;
         }
 
-        public ActionResult SourceItems(string keywordFilter="", string tagFilter="", long userID=2)
+        public ActionResult SourceItems(string keywordFilter="", string tagFilter="")
         {
-            //TODO Make use of filters passed
-            Api.SourceController objController = new Api.SourceController();
-            IList<Source> lstSource = objController.Search(userID, keywordFilter, tagFilter);
-            return PartialView(lstSource);
+           
+           
+            SourceRepository obSourceRepository = new SourceRepository();
+            //TODO Enable null check
+          //  if (Session != null && Session["userID"] != null)
+                userID = Convert.ToInt64(Session["userID"]);
+            
+            return PartialView(obSourceRepository.Search(keywordFilter, tagFilter, userID));
         }  
     }
 }

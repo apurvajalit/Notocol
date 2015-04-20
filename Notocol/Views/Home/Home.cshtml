@@ -8,7 +8,7 @@
 
 <style>
     
-    .top-buffer { margin-top:3%; }
+    .top-buffer {  }
 
     body,html{
         height:100%;
@@ -56,7 +56,7 @@
         bottom: 2px;
         left: 5px;
         font-size:12px ;
-        background-color:aliceblue;
+        background-color:#F9F9F9;
         
     }
     .viewNotesButton{
@@ -64,6 +64,12 @@
         bottom: 2px;
         right: 5px;
     }
+    .single-note-box{
+        background-color:#F9F9F9;
+  
+        border-radius:5px;
+        margin-bottom:3%;
+     }
 </style>
 
 <div class="container" id="searchBar" style="min-height:100%">
@@ -107,7 +113,7 @@
                 <button type="button" class="btn btn-default" id="GetNewPageData">Add new Page</button>
 
             </div>
-            <div class="top-buffer" id="NewPageInfo">
+            <div class="top-buffer" id="NewPageInfo" hidden="hidden">
                 <form class="form-group role=" form" id="newPageDetails">
                     <div class="form-group">
                         <input type="text" class="form-control" id="pageDesc" placeholder="Enter Title/Note ">
@@ -146,9 +152,10 @@
 @section scripts
 {
     <script type="text/javascript">
+        var userID = '@Session["userID"]'
         $(document).ready(function() {
-            $("#NewPageInfo").hide();
-           
+           // $("#NewPageInfo").hide();
+
             $("#GetNewPageData").click(function() {
 
                 $("#NewPageInfo").show();
@@ -161,20 +168,20 @@
                 var tagnames = $("#tags").val().split(",");
 
                 var tagData = [];
-                
+
                 for (var i = 0; i < tagnames.length; i++) {
                     tagData[tagData.length] = {
                         "ID": "0",
                         "Name": tagnames[i],
                         "ParentID": "1",
-                        "UserID": "2"
+                        "UserID": userID
                     };
                 }
-  
+
                 var srcData = {
                     "Source": {
                         "ID": 0,
-                        "UserID": 2,
+                        "UserID": userID,
                         "Title": "Testing",
                         "Link": url,
                         "Summary": note,
@@ -211,7 +218,7 @@
         function getPages() {
             var keywordsEntered = $('#keyword').val();
             var tagsEntered = $('#tag').val();
-            var userID = 2;
+            var userID = '@Session["userID"]';
             $.ajax({
                 // Reload the pages based on current given filter
                 url: "/Home/SourceItems",
@@ -227,7 +234,7 @@
             .error(function(xhr, status){
                 console.log("something seems wrong with status " + status + " " + xhr);
                 setTimeout(getPages, 5000);
-                
+
             });
         }
 

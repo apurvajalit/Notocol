@@ -15,9 +15,10 @@ namespace Notocol.Models
         public string text;
         public IList<string> tags;
         public string uri;
-        public long user;
+        public string title;
+        
 
-        public Annotation toAnnotation()
+        public Annotation toAnnotation(long userID)
         {
             Annotation annotation = new Annotation();
             annotation.Ranges = JsonConvert.SerializeObject(this.ranges);
@@ -25,7 +26,7 @@ namespace Notocol.Models
             annotation.Text = this.text;
             annotation.Tags = JsonConvert.SerializeObject(this.tags);
             annotation.Uri = this.uri;
-            annotation.User = this.user;
+            annotation.User = userID;
 
             annotation.Annotator_schema_version = "v1.0";
             annotation.Created = DateTime.UtcNow;

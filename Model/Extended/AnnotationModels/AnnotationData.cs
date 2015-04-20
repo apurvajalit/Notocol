@@ -54,7 +54,7 @@ namespace Notocol.Models
 
         public AnnotationPermissions permission { get; set; }
 
-        public AnnotationData(NewAnnotationDataFromRequest req)
+        public AnnotationData(NewAnnotationDataFromRequest req, long userID)
         {
             // TODO: Complete member initialization
             this.quote = req.quote;
@@ -65,7 +65,7 @@ namespace Notocol.Models
             this.annotator_schema_version = "v1.0";
             this.created = "2011-05-24T18:52:08.036814";//System.DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssTZD");
             this.updated = this.created;
-            this.user = req.user;
+            this.user = userID;
             this.consumer = "";
             this.permission = new AnnotationPermissions();
         }

@@ -16,6 +16,44 @@ namespace Repository
             CreateDataContext();
         }
 
+        public IList<AnnotationDataResponse> getAnnotations(long sourceID)
+        {
+            IList<Annotation> lstAnnotations = null;
+            IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
+            try
+            {
+
+                using (GetDataContext())
+                {
+                    SourceRepository sourceRepository = new SourceRepository();
+                    if (sourceID != 0)
+                    {
+
+                        lstAnnotations = (from annotations in context.Annotations
+                                          where annotations.SourceID == sourceID
+                                          select annotations).ToList();
+                    }
+
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+
+            if ((lstAnnotations != null) && (lstAnnotations.Count() > 0))
+            {
+                foreach (var annotation in lstAnnotations)
+                {
+                    annData.Add(new AnnotationDataResponse(annotation));
+                }
+            }
+            return annData;
+        }
        
 
         public IList<AnnotationDataResponse> getAnnotations()
@@ -150,16 +188,16 @@ namespace Repository
             else
                 return null;
         }
-        public AnnotationDataResponse createAnnotation(NewAnnotationDataFromRequest annDatareq)
+        public AnnotationDataResponse createAnnotation(NewAnnotationDataFromRequest annDatareq, long userID)
         {
-            Annotation annotation = annDatareq.toAnnotation();
+            Annotation annotation = annDatareq.toAnnotation(userID);
             AnnotationDataResponse response = null;
             try
             {
                 using (GetDataContext())
                 {
                     SourceRepository sourceRepository = new SourceRepository();
-                    long sourceID = sourceRepository.getSourceID(annDatareq.uri, annDatareq.user);
+                    long sourceID = sourceRepository.getSourceID(annDatareq.uri, userID);
                     if (sourceID == 0)
                     {
                         //Create the source for this user
@@ -167,20 +205,21 @@ namespace Repository
                         IList<Tag> tags = new List<Tag>();
 
                         source.Link = annDatareq.uri;
-                        source.UserID = annDatareq.user;
+                        source.UserID = userID;
+                        source.Title = annDatareq.title;
 
                         foreach (var tagString in annDatareq.tags)
                         {
                             Tag tag = new Tag();
                             tag.Name = tagString;
                             tag.ParentID = 1;
-                            tag.UserID = annDatareq.user;
+                            tag.UserID = userID;
                             tags.Add(tag);
                         }
 
                         SourceRepository obSourceRepository = new SourceRepository();
                         try {
-                            obSourceRepository.SaveSource(source, tags);
+                            obSourceRepository.SaveSource(userID, source, tags);
                             sourceID =  source.ID;
                         }
                         catch
@@ -190,6 +229,7 @@ namespace Repository
                        
                     }
                     annotation.SourceID = sourceID;
+                    annotation.User = userID;
                     context.Entry(annotation).State = EntityState.Added;
                     context.SaveChanges();
                 }
@@ -229,7 +269,7 @@ namespace Repository
         //    return 0;
         //}
 
-        public AnnotationDataResponse updateAnnotation(AnnotationDataResponse annData)
+        public AnnotationDataResponse updateAnnotation(AnnotationDataResponse annData, long userID)
         {
             IList<Annotation> annotation;
             try
@@ -237,7 +277,7 @@ namespace Repository
                 using (GetDataContext())
                 {
                     annotation = (from annotations in context.Annotations
-                                  where annotations.ID == annData.id
+                                  where annotations.ID == annData.id & annotations.User == userID
                                   select annotations).ToList();
                     if (annotation.Count() > 0)
                     {

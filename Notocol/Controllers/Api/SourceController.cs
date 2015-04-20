@@ -10,11 +10,13 @@ using Repository;
 
 namespace Notocol.Controllers.Api
 {
+    [CustomAuthFilter]
     public class SourceController : BaseApiController
     {
         [HttpGet]
-        public IList<Source> Source(long userID = 2)
+        public IList<Source> Source()
         {
+            long userID = Convert.ToInt64(Request.Properties["userID"]);
             SourceRepository obSourceRepository = new SourceRepository();
             return  obSourceRepository.GetSource(userID);
         }
@@ -27,16 +29,18 @@ namespace Notocol.Controllers.Api
         [HttpPost]
         public long Add([FromBody]SourceDataRequest source)
         {
+            long userID = Convert.ToInt64(Request.Properties["userID"]);
             SourceRepository obSourceRepository = new SourceRepository();
-            obSourceRepository.SaveSource(source.Source, source.Tags);
+            obSourceRepository.SaveSource(userID, source.Source, source.Tags);
             return source.Source.ID;
         }
 
 
         [HttpGet]
         [Route("api/Source/Search/")]
-        public IList<Source> Search(long userID, string keyword="", string tag="")
+        public IList<Source> Search(string keyword="", string tag="")
         {
+            long userID = Convert.ToInt64(Request.Properties["userID"]);
             SourceRepository obSourceRepository = new SourceRepository();
             return obSourceRepository.Search(keyword, tag, userID);
              
