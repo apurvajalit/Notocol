@@ -107,7 +107,7 @@ namespace Notocol.Controllers
                 Session["Provider"] = result.Provider;
                 Session["ProviderUserId"] = result.ProviderUserId;
                 Session["username"] = result.UserName;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Home", "Home");
             }
         }
 

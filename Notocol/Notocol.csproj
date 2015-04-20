@@ -178,6 +178,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AnnotationController.cs" />
     <Compile Include="Controllers\Api\AnnotationController.cs" />
     <Compile Include="Controllers\Api\CustomAuthFilter.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +306,8 @@
     <Content Include="Views\Home\SourceItems.cshtml" />
     <Content Include="Views\Annotation\Test.cshtml" />
     <Content Include="Views\Home\LogIn.cshtml" />
+    <None Include="Views\Account\Login.cshtml" />
+    <None Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <None Include="Views\oauth2\LogOn.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
@@ -311,7 +315,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\AuthActionFilter\" />
     <Folder Include="Views\Authentication\" />
     <Folder Include="Views\Base\" />

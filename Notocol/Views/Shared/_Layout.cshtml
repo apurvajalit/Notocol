@@ -50,40 +50,33 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    @*<li><a href="#" onclick="signin()">Sign In</a></li>*@
-                    <li>@Html.ActionLink("Sign In", "Login", "Home", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("Home", "Home", "Home", new {area = ""}, null)</li>
-                    <li>@Html.ActionLink("How it works", "HowItWorks", "Home", new {area = ""}, null)</li>
-                    <li>@Html.ActionLink("About Us", "AboutUs", "Home", new {area = ""}, null)</li>
-                    <li>@Html.ActionLink("My Tags", "MyTags", "Home", new {area = ""}, null)</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @{var user = Session["username"];
-                      var id = this.Session.SessionID;
-                      }
+                        var id = this.Session.SessionID;
+                    }
                     @if (user == null)
                     {
-                        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        <li>@Html.ActionLink("Register", "Login", "Home", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "glyphicon glyphicon-user" })</li>
+                        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "glyphicon glyphicon-log-in" })</li>
                     }
                     else
                     {
-                            <li class="dropdown">
+                        <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                 <span class="glyphicon glyphicon-user"></span>
-                                @user 
+                                @user
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a href="#">Manage tags</a></li>
                                 <li><a href="#">Help</a></li>
                                 <li><a href="#">Settings</a></li>
-                                <li><a href="#">Log out</a></li>
+                                <li>@Html.ActionLink("Log out", "Logout", "Account")</li>
                             </ul>
                         </li>
                     }
-                    
-                    
                 </ul>
             </div>
         </div>
