@@ -129,6 +129,7 @@ namespace Repository
                         sourceData.Source = new SourceDetails();
                         sourceData.Source.id = sources[0].ID;
                         sourceData.Source.url = sources[0].Link;
+                        sourceData.Source.summary = sources[0].Summary;
                         IList<Tag> tags = (from Tags in context.Tags
                                            where Tags.SourceTags.FirstOrDefault().SourceID == sourceData.Source.id
                                            select Tags).ToList();

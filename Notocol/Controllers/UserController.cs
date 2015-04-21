@@ -12,6 +12,8 @@ namespace Notocol.Controllers
     public class UserController : Controller
     {
         UserRepository objUserRepository = new UserRepository();
+
+
          //GET: User
         [HttpPost]
         public ActionResult SignInUser(string userName, string password="", string identifier="")
@@ -22,7 +24,7 @@ namespace Notocol.Controllers
                 HttpCookie userInfoCookies = new HttpCookie("UserInfo");
                 string token = Convert.ToString(userID);
                 userInfoCookies.Value = token;
-                
+                userInfoCookies.Expires = DateTime.MaxValue;
                 Response.Cookies.Add(userInfoCookies);
 
                 Session["username"] = userName;
@@ -48,11 +50,17 @@ namespace Notocol.Controllers
         }
 
 
-        public ActionResult SignOutUser(long userID)
+        public ActionResult SignOutUser(long userID=0)
         {
+            
+            Session.Clear();
             Session.Abandon();
+            if (Request.Cookies["UserInfo"] != null)
+            {
+                Response.Cookies["UserInfo"].Expires = DateTime.Now.AddDays(-1);
+            }
 
-            return View();
+            return View("~/Views/Home/Index.cshtml");
         }
         
         [HttpPost]

@@ -11,5 +11,6 @@ namespace Notocol.Models
     {
         public string url;
         public long id;
+        public string summary;
     }
 }

@@ -29,10 +29,9 @@ namespace SingleSignOn.Controllers
 
         public ActionResult Logout()
         {
-           Session.Abandon();
-            Session.Clear();
+
+            return RedirectToAction("SignOutUser", "User");
             
-            return View("~/Views/Home/Index.cshtml");
         }
        
     }

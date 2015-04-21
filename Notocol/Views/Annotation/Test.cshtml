@@ -9,17 +9,23 @@
 <div class="modal-body">
     
     @{
-
+        if (Model.Count > 0) { 
         foreach (var annotation in Model)
         {
+            var annotatedText = "\"" + @annotation.quote + "\"";
             <div class="single-note-box">
-                <p class="text-primary"><em>@annotation.quote</em></p>
+                <p class="text-primary"><em>@annotatedText</em></p>
                 <p class="text-info"><small>@annotation.text</small></p>
             </div>
             
 
 
             
+        }
+        }
+        else
+        {
+            <p class="text-warning"><em>No notes for this page</em></p>
         }
 
     }

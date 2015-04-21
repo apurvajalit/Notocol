@@ -13,7 +13,11 @@ namespace Notocol.Controllers.Api
     {
         private long getUserID(string tokenValue)
         {
-            return Convert.ToInt64(tokenValue);
+            long userID = 0;
+            if(tokenValue != "")
+                 userID = Convert.ToInt64(tokenValue);
+
+            return userID;
         }
 
         public override void OnAuthorization(HttpActionContext actionContext)

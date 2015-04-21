@@ -9,12 +9,35 @@ namespace Notocol.Controllers
 {
     public class HomeController : Controller
     {
-        long userID = 0;
+        //long userID = 0;
 
+        private bool checkSession(){
+
+            if (Session["userID"] != null) return true;
+
+            if (Request.Cookies["UserInfo"] != null)
+            {
+                UserRepository userRepo = new UserRepository();
+                long userID = Convert.ToInt64(Request.Cookies["UserInfo"].Value);
+                string userName = userRepo.getuserName(userID);
+                if (userName != null)
+                {
+                    Session["userID"] = userID;
+                    Session["username"] = userName;
+                    return true;
+
+                }
+            }
+            return false;
+        }
         public ActionResult Index()
         {
+            
             ViewBag.Title = "Home Page";
             SaveSource(null, null);
+            if(checkSession()){
+                return RedirectToAction("Home");
+            }
             return View();
             
            // return Redirect("default.htm");
@@ -54,9 +77,13 @@ namespace Notocol.Controllers
             return View();
         }
         public ActionResult Home()
-        {                       
+        {
+            if (!checkSession())
+            {
+                RedirectToAction("Index");
+            }
             SourceRepository obSourceRepository = new SourceRepository();
-      
+            long userID = Convert.ToInt64(Session["userID"]);
             return View(obSourceRepository.GetSource(userID));
         }
 
@@ -75,14 +102,14 @@ namespace Notocol.Controllers
 
         public long AddTag(Tag objTag)
         {
-            objTag.UserID = userID;
+            objTag.UserID = Convert.ToInt64(Session["userID"]);
             TagRepository objTagRepository = new TagRepository();
             return objTagRepository.SaveTag(objTag).ID;
         }
 
         public bool DeleteTag(Tag objTag)
         {
-            objTag.UserID = userID;
+            objTag.UserID = Convert.ToInt64(Session["userID"]);
             TagRepository objTagRepository = new TagRepository();
             return objTagRepository.DeleteTag(objTag);
         }
@@ -134,7 +161,7 @@ namespace Notocol.Controllers
             SourceRepository obSourceRepository = new SourceRepository();
             //TODO Enable null check
           //  if (Session != null && Session["userID"] != null)
-                userID = Convert.ToInt64(Session["userID"]);
+                long userID = Convert.ToInt64(Session["userID"]);
             
             return PartialView(obSourceRepository.Search(keywordFilter, tagFilter, userID));
         }  
