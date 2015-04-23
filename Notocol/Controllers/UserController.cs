@@ -14,13 +14,12 @@ namespace Notocol.Controllers
         UserRepository objUserRepository = new UserRepository();
 
 
-         //GET: User
-        [HttpPost]
-        public ActionResult SignInUser(string userName, string password="", string identifier="")
+        private long CheckLoginUser(string userName, string password, string identifier)
         {
             long userID = objUserRepository.checkUser(userName, password, identifier);
-            if(userID > 0) 
+            if (userID > 0)
             {
+                LoginUser(userID, userName);
                 HttpCookie userInfoCookies = new HttpCookie("UserInfo");
                 string token = Convert.ToString(userID);
                 userInfoCookies.Value = token;
@@ -29,24 +28,53 @@ namespace Notocol.Controllers
 
                 Session["username"] = userName;
                 Session["userID"] = userID;
-                return RedirectToAction("Home", "Home");
-            }else{
+
+            }
+            return userID;
+            
+        }
+
+        private ActionResult LoginUser(long userID, string userName)
+        {
+            HttpCookie userInfoCookies = new HttpCookie("UserInfo");
+            string token = Convert.ToString(userID);
+            userInfoCookies.Value = token;
+            userInfoCookies.Expires = DateTime.MaxValue;
+            Response.Cookies.Add(userInfoCookies);
+            Session["username"] = userName;
+            Session["userID"] = userID;
+            
+            TempData["RefreshExtension"] = true;
+            return RedirectToAction("Home", "Home");
+        }
+
+        private ActionResult AddNewUser(string userName, string password, string identifier){
+            long userID = objUserRepository.addUser(userName, password, identifier);
+            if (userID > 0)
+            {
+                return LoginUser(userID, userName);
+            }
+            else
+            {
                 return View("Error");
             }
-            
+        }
+
+        [HttpPost]
+        public ActionResult SignInUser(string userName, string password="", string identifier="")
+        {
+            if (CheckLoginUser(userName, password, identifier) > 0){
+                TempData["RefreshExtension"] = true;
+                return RedirectToAction("Home", "Home");
+            }
+            else return RedirectToAction("Error", "Home");
               
         }
 
         [HttpPost]
         public ActionResult SignUpUser(string userName, string password="", string identifier="")
         {
-            long userID = objUserRepository.addUser(userName, password, identifier);
-            if(userID > 0) 
-            {
-                return SignInUser(userName, password, identifier);
-            }else{
-                return View("Error");
-            }
+            return AddNewUser(userName, password, identifier);
         }
 
 
@@ -60,7 +88,8 @@ namespace Notocol.Controllers
                 Response.Cookies["UserInfo"].Expires = DateTime.Now.AddDays(-1);
             }
 
-            return View("~/Views/Home/Index.cshtml");
+            
+            return RedirectToAction("Index", "Home", new  {refresh = true }); 
         }
         
         [HttpPost]
@@ -69,6 +98,7 @@ namespace Notocol.Controllers
             bool deleteStatus = objUserRepository.deleteUser(userID);
             if (deleteStatus)
             {
+                TempData["RefreshExtension"] = true;
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -103,20 +133,31 @@ namespace Notocol.Controllers
             Session["ProviderUserId"] = result.ProviderUserId;
             Session["username"] = result.UserName;
 
-            if (User.Identity.IsAuthenticated)
+            if (CheckLoginUser(result.UserName, "", result.ProviderUserId) > 0)
             {
-                // If the current user is logged in add the new account
-                OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, User.Identity.Name);
-                return RedirectToLocal(returnUrl);
+                TempData["RefreshExtension"] = true;
+                return RedirectToAction("Home", "Home");
             }
             else
             {
-                // User is new, ask for their desired membership name
-                Session["Provider"] = result.Provider;
-                Session["ProviderUserId"] = result.ProviderUserId;
-                Session["username"] = result.UserName;
-                return RedirectToAction("Home", "Home");
+
+                return AddNewUser(result.UserName, "", result.ProviderUserId);
             }
+            //User existence check can be implemented here.
+            //if (User.Identity.IsAuthenticated)
+            //{
+            //    // If the current user is logged in add the new account
+            //    OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, User.Identity.Name);
+            //    return RedirectToLocal(returnUrl);
+            //}
+            //else
+            //{
+            //    // User is new, ask for their desired membership name
+            //    Session["Provider"] = result.Provider;
+            //    Session["ProviderUserId"] = result.ProviderUserId;
+            //    Session["username"] = result.UserName;
+            //    return RedirectToAction("Home", "Home");
+            //}
         }
 
         private ActionResult RedirectToLocal(string returnUrl)

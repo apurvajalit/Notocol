@@ -62,6 +62,19 @@
         });
     </script>
 
-    
+    <script>
+        $(function () {
+            //if (@ViewBag.RefreshExtension ) {
+                // The ID of the extension we want to talk to.
+                var editorExtensionId = "kdnpencneajimjghgpodkjilppipomop";
+                // Make a simple request:
+                chrome.runtime.sendMessage(editorExtensionId, { reloadExtension: "true" },
+                  function (response) {
+                  });
+            //}
+        });
+     </script>
+
 
 }
+

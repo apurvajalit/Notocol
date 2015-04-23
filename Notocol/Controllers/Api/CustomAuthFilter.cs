@@ -22,13 +22,20 @@ namespace Notocol.Controllers.Api
 
         public override void OnAuthorization(HttpActionContext actionContext)
         {
-          string token = actionContext.Request.Headers.GetValues("X-Notocol-Token").FirstOrDefault();
             long userID;
-            if (token == null || (userID = getUserID(token)) == 0) {
-                actionContext.Response = new HttpResponseMessage();
-                return;
+            try { 
+              string token = actionContext.Request.Headers.GetValues("X-Notocol-Token").FirstOrDefault();
+                
+                if ((userID = getUserID(token)) == 0) {
+                    actionContext.Response = new HttpResponseMessage();
+                    return;
+                }
+                actionContext.Request.Properties["userID"] = userID;
+             }catch(Exception e){
+                 throw;
+             }finally{
+
             }
-            actionContext.Request.Properties["userID"] = userID;
         }
         
     }

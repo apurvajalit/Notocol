@@ -30,14 +30,24 @@ namespace Notocol.Controllers
             }
             return false;
         }
-        public ActionResult Index()
+        public ActionResult Index(bool refresh = false)
         {
             
             ViewBag.Title = "Home Page";
             SaveSource(null, null);
+            
+
             if(checkSession()){
                 return RedirectToAction("Home");
             }
+
+            if (refresh)
+            {
+                ViewBag.RefreshExtension = 1;
+            }
+            else
+                ViewBag.RefreshExtension = 0;
+
             return View();
             
            // return Redirect("default.htm");
@@ -84,6 +94,12 @@ namespace Notocol.Controllers
             }
             SourceRepository obSourceRepository = new SourceRepository();
             long userID = Convert.ToInt64(Session["userID"]);
+            if (TempData["RefreshExtension"] != null)
+            {
+                ViewBag.RefreshExtension = 1;
+            }else
+                ViewBag.RefreshExtension = 0;
+
             return View(obSourceRepository.GetSource(userID));
         }
 
@@ -164,6 +180,8 @@ namespace Notocol.Controllers
                 long userID = Convert.ToInt64(Session["userID"]);
             
             return PartialView(obSourceRepository.Search(keywordFilter, tagFilter, userID));
-        }  
+        }
+
+        
     }
 }
