@@ -43,7 +43,7 @@ namespace Repository
 
                 // check for 0 length
                 tagNames = tagNames.Length > 0 ? tagNames.Remove(0,1):"";
- // Save Source
+                // Save Source
                 using (GetDataContext())
                 {
                     objSource.TagNames = tagNames;
@@ -61,13 +61,27 @@ namespace Repository
                     IList<SourceTag> lstSourceTags = new List<SourceTag>();
                     //var alreadyAddedTags = lstTags.Intersect(objSource.SourceTags);
                     //CurrentCollection.AddRange(DownloadedItems.Except(duplicates));
+                    
+                    var lstSourceTagMapping = (from sourcetag in context.SourceTags
+                                         where sourcetag.SourceID == sourceID
+                                        select sourcetag).ToList();
+
+                    foreach(var mapping in lstSourceTagMapping) context.SourceTags.Remove(mapping);
+                    context.SaveChanges();
 
                     foreach (Tag objTag in lstTags)
                     {
                         SourceTag objSourceTag = new SourceTag();
                         objSourceTag.SourceID = sourceID;
                         objSourceTag.TagsID = objTag.ID;
-                        context.SourceTags.Add(objSourceTag);
+                        try { 
+                            context.SourceTags.Add(objSourceTag);
+                        }
+                        catch (Exception)
+                        {
+                            throw ;
+                            //ignore if duplicate tag added
+                        }
                         objSourceTag = null;
                     }
                     context.SaveChanges();
@@ -209,6 +223,51 @@ namespace Repository
             }
             
             return listSources;
+        }
+
+        private void updateSourceTagMapping(long sourceID, IList<Tag> tags)
+        {
+            try { 
+                using (GetDataContext()) { 
+                    foreach (Tag objTag in tags)
+                    {
+                        SourceTag objSourceTag = new SourceTag();
+                        objSourceTag.SourceID = sourceID;
+                        objSourceTag.TagsID = objTag.ID;
+                        try
+                        {
+                            context.SourceTags.Add(objSourceTag);
+                            context.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            ;
+                            //ignore if duplicate mapping added
+                        }
+                        objSourceTag = null;
+                    }
+                    
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+            finally
+            {
+                DisposeContext();
+            }
+ 
+        }
+
+        public void UpdateTags(long userID, long sourceID, IList<Tag> tags)
+        {
+            TagRepository objTagRepository = new TagRepository();
+            //Create tags that do not exist
+            tags = objTagRepository.AddIfNotExistTags(userID, sourceID, tags);
+            //Add mappings if they don't exist
+            updateSourceTagMapping(sourceID, tags);
         }
     }
 }

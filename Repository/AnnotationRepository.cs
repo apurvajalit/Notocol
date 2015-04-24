@@ -226,12 +226,34 @@ namespace Repository
                         {
                             throw;
                         }
-                       
+
                     }
+                    else
+                    {
+                        if (annDatareq.tags.Count > 0)
+                        {
+                            IList<Tag> tags = new List<Tag>();
+                            foreach (var tagString in annDatareq.tags)
+                            {
+                                Tag tag = new Tag();
+                                tag.Name = tagString;
+                                tag.ParentID = 1;
+                                tag.UserID = userID;
+                                tags.Add(tag);
+                            }
+                            SourceRepository objectSourceRepository = new SourceRepository();
+                            objectSourceRepository.UpdateTags(userID, sourceID, tags);
+                            //Add tags to the sourceID if they are not already added to the source
+                        }
+
+                    }
+                    
                     annotation.SourceID = sourceID;
                     annotation.User = userID;
                     context.Entry(annotation).State = EntityState.Added;
                     context.SaveChanges();
+
+                    
                 }
             }
             catch 

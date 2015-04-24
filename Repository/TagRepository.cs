@@ -18,6 +18,36 @@ namespace Repository
         /// <param name="charactersToSearch"></param>
         /// <param name="userID"></param>
         /// <returns></returns>
+        /// 
+        public long checkTag(long userID, string tagString){
+            IList<Tag> lstTags = null;
+          
+            try
+            {
+                using (GetDataContext())
+                {
+                    if (tagString != "")
+                    {
+                        
+                        lstTags = (from tags in context.Tags
+                                   where tags.Name.Equals(tagString) && tags.UserID == userID
+                                   select tags).ToList();
+                    }
+
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            if(lstTags != null && lstTags.Count !=0 ) return lstTags[0].ID;
+            return 0;
+        }
+        
         public IList<Tag> SearchTags(string charactersToSearch,long userID)
         {
             IList<Tag> lstTags = null;
@@ -88,24 +118,27 @@ namespace Repository
                 {
                     foreach (Tag objTag in lstTag)
                     {
-                        objTag.UserID = userID;
-                        context.Entry(objTag).State = objTag.ID == 0 ? EntityState.Added : EntityState.Modified;
+                        if (objTag.ID == 0) { 
+                            objTag.UserID = userID;
+                            context.Entry(objTag).State = EntityState.Added;
+                        }
 
                     }
                     context.SaveChanges();
 
                     // By implementing Bulkinsert plugin
-                    //using (var transactionScope = new TransactionScope())
-                    //{
+                    // using (var transactionScope = new TransactionScope())
+                    // {
                     //    context.BulkInsert(lstTag);
                     //    context.SaveChanges();
                     //    transactionScope.Complete();
-                    //}
+                    // }
                 }
             }
             catch
             {
                 throw;
+                //Duplicate Tags handling here
             }
             return lstTag;
         }
@@ -138,5 +171,23 @@ namespace Repository
             return false;
         }
 
+        public IList<Tag> AddIfNotExistTags(long userID, long sourceID, IList<Tag> tagList)
+        {
+
+            for (int i = 0; i < tagList.Count; i++)
+            {
+                if (tagList[i].ID == 0)
+                {
+                    long ID = 0;
+                    //Add the tag
+                    //TODO Currentl all IDs are 0, hence checking string for all tags
+                    if ((ID = checkTag(userID, tagList[i].Name)) == 0) tagList[i] = SaveTag(tagList[i]);
+                    else tagList[i].ID = ID;
+
+                }
+                
+            }
+            return tagList;
+        }
     }
 }
