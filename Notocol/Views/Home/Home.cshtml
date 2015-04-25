@@ -1,5 +1,5 @@
 ﻿@using Model
-@model IList<Source>
+@model IList<Tag>
 @{
     
     ViewBag.Title = "Home";
@@ -70,6 +70,12 @@
         border-radius:5px;
         margin-bottom:3%;
      }
+
+    .scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
 </style>
 
 <div class="container" id="searchBar" style="min-height:100%">
@@ -84,22 +90,37 @@
                     <label class="sr-only" id="keywordlabel"></label>
                     <input type="text" class="form-control" id="keyword" placeholder="Enter keywords">
                 </div>
-                
+
                 <div class="form-group">
                     <label id="tag-tree">under</label>
                 </div>
-                
+
                 <div class="form-group">
                     <input type="text" class="form-control" id="tag" placeholder="tag">
-                    <ul id="myTags" hidden="hidden"></ul>
-                </div>
-            
-                           
 
-            </form>
-            <br />
-            <button class="btn btn-default " id="searchForPages">Search</button>
-        </div>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">All tags<span class="caret"></span></a>
+                    <ul class="dropdown-menu scrollable-menu" role="menu">
+                        
+                        <li value="0"><a href="#">All tags</a></li>
+                        <li class="divider"></li>
+                        @foreach (var tag in Model)
+                        {
+                            <li value="@tag.ID"><a href="#">@tag.Name</a></li>
+                        }
+
+                        
+                    </ul>
+                </div>
+
+        
+
+
+        </form>
+        <br />
+        <button class="btn btn-default " id="searchForPages">Search</button>
+    </div> 
     </div>
     
 
@@ -218,21 +239,22 @@
         });
 
     </script>
-    
     <script>
+        var searchTagString= "";
         function getPages() {
             var keywordsEntered = $('#keyword').val();
-            var tagsEntered = $('#tag').val();
+            //var tagsEntered = $('#tag').val();
+            
             var userID = '@Session["userID"]';
             $.ajax({
                 // Reload the pages based on current given filter
                 url: "/Home/SourceItems",
                 type: 'Get',
-                data: { "keywordFilter": keywordsEntered, "tagFilter": tagsEntered, "userID": userID},
+                data: { "keywordFilter": keywordsEntered, "tagString": searchTagString, "userID": userID},
                 datatype: 'html'
             })
             .success(function (data) {
-               console.log("For keywords:" + keywordsEntered + " and tags:" + tagsEntered + " received data");
+                console.log("For keywords:" + keywordsEntered + " and tags:" + searchTagString + " received data");
                 $("#pages").html(data);
 
             })
@@ -243,67 +265,48 @@
             });
         }
 
-        $("#refreshPages").on("click", function () {
+        $(function(){
+            //Fetch all user tags
             getPages();
-        });
-
-        $("#searchForPages").on("click", function () {
-            getPages();
-        });
-        getPages();
-
-    </script>
-
-    <script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
-    <script src="~/Scripts/tag-it.js"></script>
-    <script>
-        function getTags(request, response) {
-            $.ajax({
-                url: "http://localhost:5555/api/Tag",
-                datatype: "json",
-                data: {
-                    strsearch: request.term
-                },
-                success: function (data) {
-                    response($.map(data, function (item) {
-                        return {
-                            label: item.name, //Use rest of the data to map IDs
-                            value: item.Name
-                        }
-                    }));
-                }
+            $("#refreshPages").on("click", function () {
+                getPages();
             });
+
+            $("#searchForPages").on("click", function () {
+                getPages();
+            });
+            
+
+            $(".dropdown-menu li a").click(function(){
+                var selText = $(this).text();
+                $(this).parents('.btn-group').find('.dropdown-toggle').html(selText+' <span class="caret"></span>');
+                if(selText == "All tags") searchTagString = "";
+                else searchTagString=selText;
+                getPages();
+            });
+        });
+
+        if (@ViewBag.RefreshExtension ) {
+            // The ID of the extension we want to talk to.
+            var editorExtensionId = "kdnpencneajimjghgpodkjilppipomop";
+
+            // Make a simple request:
+            chrome.runtime.sendMessage(editorExtensionId, { reloadExtension: "true" },
+              function (response) {
+
+              });
         }
+    
+        
 
-        $(document).ready(function () {
-            $("#mytags").tagit({
-                allowspaces: true,
-                autocomplete: {
-                    source: getTags,
-                    minLength: 1
-                }
-
-            });
-
-        });
+        
 
     </script>
 
-    <script>
-       $(function () {
+    
+    
 
+    
 
-           if (@ViewBag.RefreshExtension ) {
-               // The ID of the extension we want to talk to.
-               var editorExtensionId = "kdnpencneajimjghgpodkjilppipomop";
-
-               // Make a simple request:
-               chrome.runtime.sendMessage(editorExtensionId, { reloadExtension: "true" },
-                 function (response) {
-
-                 });
-           }
-       });
-</script>
 
 }    

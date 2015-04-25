@@ -92,7 +92,8 @@ namespace Notocol.Controllers
             {
                 RedirectToAction("Index");
             }
-            SourceRepository obSourceRepository = new SourceRepository();
+            
+            
             long userID = Convert.ToInt64(Session["userID"]);
             if (TempData["RefreshExtension"] != null)
             {
@@ -100,7 +101,15 @@ namespace Notocol.Controllers
             }else
                 ViewBag.RefreshExtension = 0;
 
-            return View(obSourceRepository.GetSource(userID));
+            
+            
+            return View(getAllUserTags());
+        }
+
+        public IList<Tag> getAllUserTags()
+        {
+            
+            return new TagRepository().SearchTags("", Convert.ToInt64(Session["userID"]));
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
@@ -170,7 +179,7 @@ namespace Notocol.Controllers
             return 0;
         }
 
-        public ActionResult SourceItems(string keywordFilter="", string tagFilter="")
+        public ActionResult SourceItems(string keywordFilter = "", string tagString = "")
         {
            
            
@@ -179,7 +188,7 @@ namespace Notocol.Controllers
           //  if (Session != null && Session["userID"] != null)
                 long userID = Convert.ToInt64(Session["userID"]);
             
-            return PartialView(obSourceRepository.Search(keywordFilter, tagFilter, userID));
+            return PartialView(obSourceRepository.Search(keywordFilter, tagString, userID));
         }
 
         

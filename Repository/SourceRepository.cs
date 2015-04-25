@@ -207,19 +207,14 @@ namespace Repository
             return lstSources;
         }
 
-        public IList<Source> Search(string keyword, string tag, long userID)
+        public IList<Source> Search(string keyword, string tagstring, long userID)
         {
            ;
            IList<Source> listSources;
- 
-
-            System.Data.Entity.Core.Objects.ObjectResult<SearchForSource_Result> result;
             using (GetDataContext())
             {
-                listSources = context.SearchForSource(keyword, tag, userID).ToList<Source>();
+                listSources = context.SearchForSource(keyword, tagstring, userID).ToList<Source>();
                  
-                //IList<Course> courseList = ctx.GetCoursesByStudentId(1).ToList<Course>();
-            //    list = (from a in result select a).ToList <SearchForSource_Result>();    // Linq query               
             }
             
             return listSources;

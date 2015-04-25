@@ -59,6 +59,7 @@ namespace Repository
                     {
                         lstTags = (from tags in context.Tags
                                    where tags.UserID == userID
+                                   orderby tags.Name
                                    select tags).ToList();
                     }
                     else
