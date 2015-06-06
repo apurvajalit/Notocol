@@ -27,7 +27,7 @@ namespace Notocol.Controllers.Api
         /// <param name="source"></param>
         /// <returns></returns>
         [HttpPost]
-        public long Add([FromBody]SourceDataRequest source)
+        public long Add([FromBody]SourceData source)
         {
             long userID = Convert.ToInt64(Request.Properties["userID"]);
             SourceRepository obSourceRepository = new SourceRepository();

@@ -75,20 +75,18 @@
     <Compile Include="Annotation.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
-    <Compile Include="Extended\AnnotationModels\AnnotaterStoreInfo.cs" />
-    <Compile Include="Extended\AnnotationModels\AnnotationData.cs" />
-    <Compile Include="Extended\AnnotationModels\NewAnnotationDataFromRequest.cs" />
-    <Compile Include="Extended\AnnotationModels\AnnotationDataResponse.cs" />
-    <Compile Include="Extended\AnnotationModels\AnnotationPermissions.cs" />
-    <Compile Include="Extended\AnnotationModels\AnnotationRange.cs" />
-    <Compile Include="Extended\AnnotationModels\AnnotationSearchResults.cs" />
+    <Compile Include="Extended\Extension\ApplicationStatus.cs" />
+    <Compile Include="Extended\Extension\ExtensionAnnotationData.cs" />
+    <Compile Include="Extended\Extension\ExtensionSearchResponse.cs" />
+    <Compile Include="Extended\Extension\ExtensionUser.cs" />
     <Compile Include="Extended\NotCol.Context.cs" />
-    <Compile Include="Extended\SourceDataModels\AnnotationDetails.cs" />
-    <Compile Include="Extended\SourceDataModels\SourceDataForExtension.cs" />
-    <Compile Include="Extended\SourceDataModels\SourceDetails.cs" />
-    <Compile Include="Extended\SourceDataModels\TagDetails.cs" />
-    <Compile Include="Extended\SourceDataRequest.cs" />
+    <Compile Include="Extended\NoteData.cs" />
+    <Compile Include="Extended\SourceData.cs" />
+    <Compile Include="Extended\SourceItem.cs" />
     <Compile Include="GetTags1_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetTags2_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="GetTags_Result.cs">
@@ -120,6 +118,9 @@
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="spTestSourceData1_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="spTestSourceData2_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="spTestSourceData_Result.cs">
@@ -156,7 +157,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="NotCol.edmx.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

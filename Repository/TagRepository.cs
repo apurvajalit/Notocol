@@ -4,6 +4,8 @@ using System.Linq;
 using Model;
 
 using System.Transactions;
+using System.Data.Entity.Core.Objects;
+using System;
 namespace Repository
 {
     public class TagRepository : BaseRepository
@@ -169,7 +171,7 @@ namespace Repository
             {
                 DisposeContext();
             }
-            return false;
+
         }
 
         public IList<Tag> AddIfNotExistTags(long userID, long sourceID, IList<Tag> tagList)
@@ -189,6 +191,70 @@ namespace Repository
                 
             }
             return tagList;
+        }
+
+        private void UpdateSourceTagMapping(long sourceID, IList<long> tagIDs)
+        {
+            try
+            {
+                using (GetDataContext())
+                {
+                    foreach (long tagID in tagIDs)
+                    {
+                        SourceTag objSourceTag = new SourceTag();
+                        objSourceTag.SourceID = sourceID;
+                        objSourceTag.TagsID = tagID;
+                        context.SourceTags.Add(objSourceTag);
+                        
+                        
+                    }
+                    try
+                    {
+
+                        context.SaveChanges();
+                    }
+                    catch (Exception)
+                    {
+                        
+                        //ignore if duplicate mapping added
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+            finally
+            {
+                DisposeContext();
+            }
+
+        }
+        public void AddUserTagsToSource(long userID, long sourceID, string[] tags)
+        {
+            List<long> tagIDs = new List<long>();
+
+            try{
+                using(GetDataContext()){
+                    foreach (string tag in tags)
+                    {
+                        ObjectParameter objParam = new ObjectParameter("TagID", typeof(long));
+                        
+                        Object id = context.GetTagID(tag, (int)userID, objParam);
+                        context.SaveChanges();
+                        var tagID = Convert.ToInt64(objParam.Value);
+                        //tagIDs.Add(Convert.ToInt64(Convert.ToInt64(id)));
+                      
+                    }
+                    UpdateSourceTagMapping(sourceID, tagIDs);
+
+                }
+            }catch{
+                throw;
+            }
+            
         }
     }
 }

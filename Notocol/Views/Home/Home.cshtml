@@ -10,6 +10,9 @@
     
     .top-buffer {  }
 
+    #keyword{
+        min-width: 450px;
+    }
     body,html{
         height:100%;
 
@@ -43,13 +46,23 @@
     }
      
     .pageBox{
+        
         border: 1px solid gray ;
         border-radius:10px;
         min-height:150px;
         position:relative;
         margin-bottom:10px;
         
+        
      }
+    .pageBoxContainer{
+        border: 1px solid gray ;
+        border-radius:10px;
+        min-height:150px;
+        position:relative;
+        margin-bottom:10px;
+
+    }
 
     .tagsText{
         position: absolute;
@@ -72,35 +85,48 @@
      }
 
     .scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
-}
+        height: auto;
+        max-height: 200px;
+        overflow-x: hidden;
+    }
+
+    .page-title{
+        
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 125%;
+
+    }
+    .page-subtitle{
+        
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 75%;
+
+    }
+    /*#tagButton{
+        border: none;
+        background-color: #F9F9F9;
+
+    }*/
 </style>
 
 <div class="container" id="searchBar" style="min-height:100%">
     <div class="row top-buffer">
         <div class="col-sm-12 text-center">
             <form class="form-inline" role="form" id="searchParamters">
-                <div class="form-group">
-                    <label id="search">Search</label>
-                </div>
+                
+                    @*<label id="search" class="text-info" style="font-size:125%">Search</label>*@
+                
 
-                <div class="form-group">
+                   
                     <label class="sr-only" id="keywordlabel"></label>
-                    <input type="text" class="form-control" id="keyword" placeholder="Enter keywords">
-                </div>
+                    <input type="text" class="form-control" id="keyword" placeholder="Enter keywords for search">
+                
+                
+                    <label id="tag-tree">in</label>
+ 
 
-                <div class="form-group">
-                    <label id="tag-tree">under</label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" class="form-control" id="tag" placeholder="tag">
-
-                </div>
                 <div class="btn-group">
-                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">All tags<span class="caret"></span></a>
+                    <a id="tagButton" class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">All tags<span class="caret"></span></a>
                     <ul class="dropdown-menu scrollable-menu" role="menu">
                         
                         <li value="0"><a href="#">All tags</a></li>
@@ -166,8 +192,7 @@
         <div class="col-sm-12 min-content-height " style="min-height: 100vh">
             <div id="pages">
 
-                @*<div>  @Html.Action("SourceItems", "Home", Model) </div>*@
-                @*@{Html.RenderPartial("SourceItems", Model);}*@
+                
             </div>
 
         </div>
@@ -177,7 +202,8 @@
 
 @section scripts
 {
-    <script type="text/javascript">
+    
+    <script type="text/javascript"> //Script to care of page addition in Home Page
         var userID = '@Session["userID"]'
         $(document).ready(function() {
            // $("#NewPageInfo").hide();
@@ -248,7 +274,7 @@
             var userID = '@Session["userID"]';
             $.ajax({
                 // Reload the pages based on current given filter
-                url: "/Home/SourceItems",
+                url: "/Source/SourceItems",
                 type: 'Get',
                 data: { "keywordFilter": keywordsEntered, "tagString": searchTagString, "userID": userID},
                 datatype: 'html'
@@ -286,9 +312,11 @@
             });
         });
 
+        $('#keyword').on("change", getPages);
+
         if (@ViewBag.RefreshExtension ) {
             // The ID of the extension we want to talk to.
-            var editorExtensionId = "kdnpencneajimjghgpodkjilppipomop";
+            var editorExtensionId = "namhfjepbaaecpmpgehfppgnhhgaflne";
 
             // Make a simple request:
             chrome.runtime.sendMessage(editorExtensionId, { reloadExtension: "true" },

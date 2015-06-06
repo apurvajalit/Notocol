@@ -7,6 +7,7 @@
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
     <script type="text/javascript">
     (function () {
         if (typeof window.janrain !== 'object') window.janrain = {};
@@ -53,7 +54,7 @@
                     <li>@Html.ActionLink("Home", "Home", "Home", new {area = ""}, null)</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    @{var user = Session["username"];
+                    @{var user = Session["userName"];
                         var id = this.Session.SessionID;
                     }
                     @if (user == null)

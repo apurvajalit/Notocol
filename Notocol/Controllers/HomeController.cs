@@ -2,8 +2,8 @@
 using System.Web.Mvc;
 using Model;
 using Notocol.Controllers.Api;
-using Repository;
 using System;
+using Notocol.Models;
 
 namespace Notocol.Controllers
 {
@@ -15,26 +15,26 @@ namespace Notocol.Controllers
 
             if (Session["userID"] != null) return true;
 
-            if (Request.Cookies["UserInfo"] != null)
-            {
-                UserRepository userRepo = new UserRepository();
-                long userID = Convert.ToInt64(Request.Cookies["UserInfo"].Value);
-                string userName = userRepo.getuserName(userID);
-                if (userName != null)
-                {
-                    Session["userID"] = userID;
-                    Session["username"] = userName;
-                    return true;
+            //if (Request.Cookies["UserInfo"] != null)
+            //{
+            //    UserRepository userRepo = new UserRepository();
+            //    long userID = Convert.ToInt64(Request.Cookies["UserInfo"].Value);
+            //    string userName = userRepo.getuserName(userID);
+            //    if (userName != null)
+            //    {
+            //        Session["userID"] = userID;
+            //        Session["userName"] = userName;
+            //        return true;
 
-                }
-            }
+            //    }
+            //}
             return false;
         }
         public ActionResult Index(bool refresh = false)
         {
             
             ViewBag.Title = "Home Page";
-            SaveSource(null, null);
+           // SaveSource(null, null);
             
 
             if(checkSession()){
@@ -75,12 +75,6 @@ namespace Notocol.Controllers
             return View();
         }
 
-        public ActionResult MyTags()
-        {
-            IList<Tag> searchTags = SearchMyTags("");
-            return View(searchTags);
-        }
-
         public ActionResult HowItWorks()
         {
             ViewBag.Title = "How it works";
@@ -101,51 +95,52 @@ namespace Notocol.Controllers
             }else
                 ViewBag.RefreshExtension = 0;
 
-            
-            
-            return View(getAllUserTags());
-        }
 
-        public IList<Tag> getAllUserTags()
-        {
-            
-            return new TagRepository().SearchTags("", Convert.ToInt64(Session["userID"]));
-        }
 
-        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public JsonResult SearchTags(string id)
-        {
-            return Json(SearchMyTags(id), JsonRequestBehavior.AllowGet);
+            return View(TagHelper.GetAllUserTags(Convert.ToInt64(Session["userID"])));
         }
+        
 
-        public IList<Tag> SearchMyTags(string strSearch)
-        {
-            TagRepository objTagRepository = new TagRepository();
-            IList<Tag> searchTags = objTagRepository.SearchTags(strSearch, 2);
-            return searchTags;
-        }
+        //public ActionResult MyTags()
+        //{
+        //    IList<Tag> searchTags = SearchMyTags("");
+        //    return View(searchTags);
+        //}
 
-        public long AddTag(Tag objTag)
-        {
-            objTag.UserID = Convert.ToInt64(Session["userID"]);
-            TagRepository objTagRepository = new TagRepository();
-            return objTagRepository.SaveTag(objTag).ID;
-        }
+        //[AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        //public JsonResult SearchTags(string id)
+        //{
+        //    return Json(SearchMyTags(id), JsonRequestBehavior.AllowGet);
+        //}
 
-        public bool DeleteTag(Tag objTag)
-        {
-            objTag.UserID = Convert.ToInt64(Session["userID"]);
-            TagRepository objTagRepository = new TagRepository();
-            return objTagRepository.DeleteTag(objTag);
-        }
+        //public IList<Tag> SearchMyTags(string strSearch)
+        //{
+        //    TagRepository objTagRepository = new TagRepository();
+        //    IList<Tag> searchTags = objTagRepository.SearchTags(strSearch, 2);
+        //    return searchTags;
+        //}
+
+        //public long AddTag(Tag objTag)
+        //{
+        //    objTag.UserID = Convert.ToInt64(Session["userID"]);
+        //    TagRepository objTagRepository = new TagRepository();
+        //    return objTagRepository.SaveTag(objTag).ID;
+        //}
+
+        //public bool DeleteTag(Tag objTag)
+        //{
+        //    objTag.UserID = Convert.ToInt64(Session["userID"]);
+        //    TagRepository objTagRepository = new TagRepository();
+        //    return objTagRepository.DeleteTag(objTag);
+        //}
         /// <summary>
         /// Controller Method to save Source Data
         /// </summary>
         /// <param name="objSource"></param>
         /// <param name="lstTags"></param>
         /// <returns></returns>
-        public long SaveSource(Source objSource, IList<Tag> lstTags)
-        {
+        //public long SaveSource(Source objSource, IList<Tag> lstTags)
+        //{
             //Source objSourceTemp = new Source();
             //IList<Tag> lstTagsTemp = new List<Tag>();
             //objSourceTemp.Title = "abcd123";
@@ -176,20 +171,20 @@ namespace Notocol.Controllers
            // obSourceRepository.SaveSource(objSourceTemp, lstTagsTemp);
 
 
-            return 0;
-        }
+           // return 0;
+        //}
 
-        public ActionResult SourceItems(string keywordFilter = "", string tagString = "")
-        {
+        //public ActionResult SourceItems(string keywordFilter = "", string tagString = "")
+        //{
            
            
-            SourceRepository obSourceRepository = new SourceRepository();
-            //TODO Enable null check
-          //  if (Session != null && Session["userID"] != null)
-                long userID = Convert.ToInt64(Session["userID"]);
+        //    SourceRepository obSourceRepository = new SourceRepository();
+        //    //TODO Enable null check
+        //  //  if (Session != null && Session["userID"] != null)
+        //        long userID = Convert.ToInt64(Session["userID"]);
             
-            return PartialView(obSourceRepository.Search(keywordFilter, tagString, userID));
-        }
+        //    return PartialView(obSourceRepository.Search(keywordFilter, tagString, userID));
+        //}
 
         
     }

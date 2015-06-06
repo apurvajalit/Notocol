@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using Newtonsoft.Json;
+using System.Web.Http;
 
 namespace Notocol
 {
@@ -8,13 +9,9 @@ namespace Notocol
         {
 
             // Web API routes
-            config.MapHttpAttributeRoutes();
+            //All the routes to web APIs for extension have been moved to routeconfig.cs
 
-           config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+           config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
         }
     }
 }

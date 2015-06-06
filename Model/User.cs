@@ -16,8 +16,8 @@ namespace Model
     {
         public User()
         {
-            this.Tags = new HashSet<Tag>();
             this.Sources = new HashSet<Source>();
+            this.Tags = new HashSet<Tag>();
         }
     
         public long ID { get; set; }
@@ -25,8 +25,9 @@ namespace Model
         public string Password { get; set; }
         public string Identifier { get; set; }
         public Nullable<System.DateTime> ModifiedAt { get; set; }
+        public string Email { get; set; }
     
-        public virtual ICollection<Tag> Tags { get; set; }
         public virtual ICollection<Source> Sources { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; }
     }
 }

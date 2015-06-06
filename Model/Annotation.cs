@@ -14,20 +14,18 @@ namespace Model
     
     public partial class Annotation
     {
-        public long ID { get; set; }
-        public long SourceID { get; set; }
-        public string Annotator_schema_version { get; set; }
-        public Nullable<System.DateTime> Created { get; set; }
-        public Nullable<System.DateTime> Updated { get; set; }
+        public int ID { get; set; }
+        public string Updated { get; set; }
+        public string Target { get; set; }
+        public string Created { get; set; }
         public string Text { get; set; }
-        public string Quote { get; set; }
-        public string Uri { get; set; }
-        public string Ranges { get; set; }
-        public Nullable<long> User { get; set; }
-        public string Consumer { get; set; }
         public string Tags { get; set; }
+        public string Uri { get; set; }
+        public string Document { get; set; }
+        public string Consumer { get; set; }
         public string Permissions { get; set; }
-    
-        public virtual Source Source { get; set; }
+        public string User { get; set; }
+        public int UserID { get; set; }
+        public Nullable<long> SourceID { get; set; }
     }
 }

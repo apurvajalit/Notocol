@@ -16,43 +16,39 @@ namespace Notocol.Controllers
 
         private long CheckLoginUser(string userName, string password, string identifier)
         {
-            long userID = objUserRepository.checkUser(userName, password, identifier);
-            if (userID > 0)
-            {
-                LoginUser(userID, userName);
-                HttpCookie userInfoCookies = new HttpCookie("UserInfo");
-                string token = Convert.ToString(userID);
-                userInfoCookies.Value = token;
-                userInfoCookies.Expires = DateTime.MaxValue;
-                Response.Cookies.Add(userInfoCookies);
-
-                Session["username"] = userName;
-                Session["userID"] = userID;
-
-            }
-            return userID;
+            Model.User userDB;
+            long userID = objUserRepository.checkUser(userName, password, identifier, out userDB);
             
+            
+            
+            return userID;
         }
 
-        private ActionResult LoginUser(long userID, string userName)
+        private void SetUserSession(long userID, string userName)
         {
-            HttpCookie userInfoCookies = new HttpCookie("UserInfo");
-            string token = Convert.ToString(userID);
-            userInfoCookies.Value = token;
-            userInfoCookies.Expires = DateTime.MaxValue;
-            Response.Cookies.Add(userInfoCookies);
-            Session["username"] = userName;
+            Session["userName"] = userName;
             Session["userID"] = userID;
-            
-            TempData["RefreshExtension"] = true;
-            return RedirectToAction("Home", "Home");
+
+        }
+        private void ResetUserSession()
+        {
+            Session["userName"] = null;
+            Session["userID"] = null;
         }
 
         private ActionResult AddNewUser(string userName, string password, string identifier){
-            long userID = objUserRepository.addUser(userName, password, identifier);
-            if (userID > 0)
-            {
-                return LoginUser(userID, userName);
+            Model.User userDB = new Model.User();
+            userDB.Username = userName;
+            userDB.Password = password;
+            userDB.Identifier = identifier;
+            //TODO ADD correct email input here
+            userDB.Email = "dummy@dummy.com";
+            userDB.ModifiedAt = DateTime.Now;
+
+            if((userDB.ID = objUserRepository.addUser(userDB)) > 0)
+            {            
+                SetUserSession(userDB.ID, userDB.Username);
+                return RedirectToAction("Home", "Home");
             }
             else
             {
@@ -63,7 +59,10 @@ namespace Notocol.Controllers
         [HttpPost]
         public ActionResult SignInUser(string userName, string password="", string identifier="")
         {
-            if (CheckLoginUser(userName, password, identifier) > 0){
+            long userID = 0;
+            if ((userID = CheckLoginUser(userName, password, identifier)) > 0)
+            {
+                SetUserSession(userID, userName);
                 TempData["RefreshExtension"] = true;
                 return RedirectToAction("Home", "Home");
             }
@@ -78,33 +77,28 @@ namespace Notocol.Controllers
         }
 
 
-        public ActionResult SignOutUser(long userID=0)
+        public ActionResult SignOutUser()
         {
-            
-            Session.Clear();
-            Session.Abandon();
-            if (Request.Cookies["UserInfo"] != null)
-            {
-                Response.Cookies["UserInfo"].Expires = DateTime.Now.AddDays(-1);
-            }
 
-            
+            ResetUserSession();
             return RedirectToAction("Index", "Home", new  {refresh = true }); 
         }
         
         [HttpPost]
         public ActionResult DeleteUser(long userID)
         {
-            bool deleteStatus = objUserRepository.deleteUser(userID);
-            if (deleteStatus)
-            {
-                TempData["RefreshExtension"] = true;
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                return View("Error");
-            }
+            //bool deleteStatus = false;
+            //if (deleteStatus)
+            //{
+            //    TempData["RefreshExtension"] = true;
+            //    return RedirectToAction("Index", "Home");
+            //}
+            //else
+            //{
+            //    return View("Error");
+            //}
+            //throw NotImplementedException;
+            return View("Error");
         }
 
         [HttpPost]

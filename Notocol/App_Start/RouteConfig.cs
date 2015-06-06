@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.Http;
+
+using Notocol.Controllers;
 
 namespace Notocol
 {
@@ -12,9 +15,37 @@ namespace Notocol
         public static void RegisterRoutes(RouteCollection routes)
         {
             //This is required for Service Stack
-            routes.IgnoreRoute("api/{*pathInfo}");
+            //routes.IgnoreRoute("api/{*pathInfo}");
 
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            // Web API Session Enabled Route Configurations start
+            routes.MapHttpRoute(
+                name: "annotationAPIStoreStatusRoute",
+                routeTemplate: "app",
+                defaults: new { controller = "ChromeExtensionStore" }
+            ).RouteHandler = new SessionStateRouteHandler();
+
+            routes.MapHttpRoute(
+                name: "annotationAPIStoreInfoRoute",
+                routeTemplate: "api",
+                defaults: new { controller = "annotations", action = "storeInfo", id = RouteParameter.Optional }
+            ).RouteHandler = new SessionStateRouteHandler();
+
+
+            routes.MapHttpRoute(
+                name: "wsSocketHandler",
+                routeTemplate: "ws",
+                defaults: new { controller = "ws", action = "Get", id = RouteParameter.Optional }
+            ).RouteHandler = new SessionStateRouteHandler();
+
+            routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            ).RouteHandler = new SessionStateRouteHandler();
+            ////Web API Session Enabled Route Configurations end here
+
 
             routes.MapRoute(
                 name: "Default",

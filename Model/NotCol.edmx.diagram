@@ -5,16 +5,15 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="326fa09e0dcb417fa57d2b5a794d330a" Name="Diagram1" ZoomLevel="75">
-        <EntityTypeShape EntityType="NotColModel.SourceTag" PointX="5.25" PointY="3.625" Width="1.5" />
-        <EntityTypeShape EntityType="NotColModel.Tag" PointX="3" PointY="5.625" Width="1.5" />
-        <EntityTypeShape EntityType="NotColModel.User" PointX="0.75" PointY="3.375" Width="1.5" />
-        <AssociationConnector Association="NotColModel.FK_SourceTags_Tag" />
-        <AssociationConnector Association="NotColModel.FK_Tag_User" />
-        <EntityTypeShape EntityType="NotColModel.Source" PointX="3" PointY="1.125" Width="1.5" />
+        <EntityTypeShape EntityType="NotColModel.Annotation" Width="1.5" PointX="5.5" PointY="6.125" />
+        <EntityTypeShape EntityType="NotColModel.Source" Width="1.5" PointX="3" PointY="4.25" />
+        <EntityTypeShape EntityType="NotColModel.SourceTag" Width="1.5" PointX="5.25" PointY="3.625" />
+        <EntityTypeShape EntityType="NotColModel.Tag" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="NotColModel.User" Width="1.5" PointX="0.75" PointY="3.25" />
         <AssociationConnector Association="NotColModel.FK_Source_User" />
         <AssociationConnector Association="NotColModel.FK_SourceTags_Source" />
-        <EntityTypeShape EntityType="NotColModel.Annotation" Width="1.5" PointX="5.25" PointY="0.75" />
-        <AssociationConnector Association="NotColModel.FK_Annotaion_Source" />
+        <AssociationConnector Association="NotColModel.FK_SourceTags_Tag" />
+        <AssociationConnector Association="NotColModel.FK_Tag_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

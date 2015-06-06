@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 
 using Model;
-using Notocol.Models;
+//using Notocol.Models;
 using System.Data.SqlClient;
 using System.Data;
 
@@ -100,7 +100,7 @@ namespace Repository
             return objSource;
         }
 
-        public long getSourceID(string pageURL, long userID)
+        public long GetSourceIDFromSourceURI(string sourceURI, long userID)
         {
             long sourceID = 0;
             IList<Source> lstSource = null;
@@ -109,7 +109,7 @@ namespace Repository
             {
                 using (GetDataContext()) { 
                     lstSource = (from sources in context.Sources
-                                 where sources.UserID == userID && sources.Link == pageURL
+                                 where sources.UserID == userID && sources.SourceURI == sourceURI
                                  select sources).ToList();
                 }
             }
@@ -129,63 +129,63 @@ namespace Repository
 
         }
 
-        public SourceDataForExtension getSourceData(string pageURL, long userID)
-        {
-            SourceDataForExtension sourceData = new SourceDataForExtension();
-            try
-            {
-                using (GetDataContext())
-                {
-                    IList<Source> sources = (from Sources in context.Sources
-                                         where Sources.UserID == userID && Sources.Link == pageURL  
-                                         select Sources).ToList();
-                    if(sources.Count > 0){
-                        sourceData.Source = new SourceDetails();
-                        sourceData.Source.id = sources[0].ID;
-                        sourceData.Source.url = sources[0].Link;
-                        sourceData.Source.summary = sources[0].Summary;
-                        IList<Tag> tags = (from Tags in context.Tags
-                                           where Tags.SourceTags.FirstOrDefault().SourceID == sourceData.Source.id
-                                           select Tags).ToList();
-                        if (tags.Count() > 0) {
-                            sourceData.Tags = new List<TagDetails>();
-                            foreach (Tag tag in tags)
-                            {
-                                TagDetails tagDetails = new TagDetails();
-                                tagDetails.id = tag.ID;
-                                tagDetails.tagName = tag.Name;
-                                sourceData.Tags.Add(tagDetails);
-                            }
-                        }
-                        IList<Annotation> annotations = (from Annotations in context.Annotations
-                                                  where Annotations.Source.ID == sourceData.Source.id
-                                                  select Annotations).ToList();
-                        sourceData.Annotations = new List<AnnotationDetails>();
-                        if(annotations.Count() > 0){
-                            foreach (var objAnnotation in annotations)
-                            {
-                                AnnotationDetails annDetails = new AnnotationDetails();
-                                annDetails.annotationID = objAnnotation.ID;
-                                annDetails.quote = objAnnotation.Quote;
-                                annDetails.text = objAnnotation.Text;
-                                annDetails.range = AnnotationRange.AnnotationRangeListFromString(objAnnotation.Ranges).FirstOrDefault() ;
+        //public SourceDataForExtension getSourceData(string pageURL, long userID)
+        //{
+        //    SourceDataForExtension sourceData = new SourceDataForExtension();
+        //    try
+        //    {
+        //        using (GetDataContext())
+        //        {
+        //            IList<Source> sources = (from Sources in context.Sources
+        //                                 where Sources.UserID == userID && Sources.Link == pageURL  
+        //                                 select Sources).ToList();
+        //            if(sources.Count > 0){
+        //                sourceData.Source = new SourceDetails();
+        //                sourceData.Source.id = sources[0].ID;
+        //                sourceData.Source.url = sources[0].Link;
+        //                sourceData.Source.summary = sources[0].Summary;
+        //                IList<Tag> tags = (from Tags in context.Tags
+        //                                   where Tags.SourceTags.FirstOrDefault().SourceID == sourceData.Source.id
+        //                                   select Tags).ToList();
+        //                if (tags.Count() > 0) {
+        //                    sourceData.Tags = new List<TagDetails>();
+        //                    foreach (Tag tag in tags)
+        //                    {
+        //                        TagDetails tagDetails = new TagDetails();
+        //                        tagDetails.id = tag.ID;
+        //                        tagDetails.tagName = tag.Name;
+        //                        sourceData.Tags.Add(tagDetails);
+        //                    }
+        //                }
+        //                IList<Annotation> annotations = (from Annotations in context.Annotations
+        //                                          where Annotations.Source.ID == sourceData.Source.id
+        //                                          select Annotations).ToList();
+        //                sourceData.Annotations = new List<AnnotationDetails>();
+        //                if(annotations.Count() > 0){
+        //                    foreach (var objAnnotation in annotations)
+        //                    {
+        //                        AnnotationDetails annDetails = new AnnotationDetails();
+        //                        annDetails.annotationID = objAnnotation.ID;
+        //                        annDetails.quote = objAnnotation.Quote;
+        //                        annDetails.text = objAnnotation.Text;
+        //                        annDetails.range = AnnotationRange.AnnotationRangeListFromString(objAnnotation.Ranges).FirstOrDefault() ;
 
-                                sourceData.Annotations.Add(annDetails);
-                            }
+        //                        sourceData.Annotations.Add(annDetails);
+        //                    }
  
-                        }
+        //                }
                         
-                    } 
-                }
+        //            } 
+        //        }
 
-            }
-            catch
-            {
-                throw;
-            }
-            return sourceData;
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    return sourceData;
 
-        }
+        //}
 
         public IList<Source> GetSource(long userID)
         {
@@ -209,8 +209,8 @@ namespace Repository
 
         public IList<Source> Search(string keyword, string tagstring, long userID)
         {
-           ;
-           IList<Source> listSources;
+           
+           IList<Source> listSources= null;
             using (GetDataContext())
             {
                 listSources = context.SearchForSource(keyword, tagstring, userID).ToList<Source>();
@@ -220,49 +220,16 @@ namespace Repository
             return listSources;
         }
 
-        private void updateSourceTagMapping(long sourceID, IList<Tag> tags)
-        {
-            try { 
-                using (GetDataContext()) { 
-                    foreach (Tag objTag in tags)
-                    {
-                        SourceTag objSourceTag = new SourceTag();
-                        objSourceTag.SourceID = sourceID;
-                        objSourceTag.TagsID = objTag.ID;
-                        try
-                        {
-                            context.SourceTags.Add(objSourceTag);
-                            context.SaveChanges();
-                        }
-                        catch (Exception)
-                        {
-                            ;
-                            //ignore if duplicate mapping added
-                        }
-                        objSourceTag = null;
-                    }
-                    
-                }
-            }
-            catch (Exception)
-            {
-                throw;
+        
 
-            }
-            finally
-            {
-                DisposeContext();
-            }
- 
-        }
+        //public void UpdateTags(long userID, long sourceID, IList<Tag> tags)
+        //{
+        //    TagRepository objTagRepository = new TagRepository();
+        //    //Create tags that do not exist
+        //    tags = objTagRepository.AddIfNotExistTags(userID, sourceID, tags);
+        //    //Add mappings if they don't exist
+        //    UpdateSourceTagMapping(sourceID, tags);
+        //}
 
-        public void UpdateTags(long userID, long sourceID, IList<Tag> tags)
-        {
-            TagRepository objTagRepository = new TagRepository();
-            //Create tags that do not exist
-            tags = objTagRepository.AddIfNotExistTags(userID, sourceID, tags);
-            //Add mappings if they don't exist
-            updateSourceTagMapping(sourceID, tags);
-        }
     }
 }

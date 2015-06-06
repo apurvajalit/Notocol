@@ -14,13 +14,7 @@ namespace Repository
         {
             CreateDataContext();
         }
-
-        public long addUser(string username, string password, string identifier){
-            User user = new User();
-            long userID = 0;
-            user.Username = username;
-            user.Password = password;
-            user.Identifier = identifier;
+        public long addUser(User user){
             user.ModifiedAt = DateTime.Now;
             try
             {
@@ -28,27 +22,26 @@ namespace Repository
                 {
                     context.Entry(user).State = EntityState.Added ;
                     context.SaveChanges();
-                    userID = user.ID;
+                    
                 }
             }
-            catch (Exception e)
+            catch 
             {
                 return -1;
             }
-            catch
-            {
-                throw;
-            }
+            
             finally
             {
                 DisposeContext();
             }
-            return userID;
+            return user.ID;
         }
 
-        public long checkUser(string username, string password, string identifier){
+        public long checkUser(string username, string password, string identifier, out User userDB)
+        {
 
             User user;
+            userDB = null;
             try
             {
                 using (GetDataContext())
@@ -57,11 +50,6 @@ namespace Repository
                                   where userEntry.Username == username
                                   select userEntry).ToList().FirstOrDefault<User>();
                 }
-            }
-            catch (Exception e)
-            {
-
-                throw;
             }
             catch
             {
@@ -75,14 +63,23 @@ namespace Repository
             {
                 return 0;
             }else{
-                if (password != null) { 
-                 if(user.Password != null && user.Password == password)
-                    return user.ID;
+                if (password != null) {
+                    if (user.Password != null && user.Password == password)
+                    {
+                        userDB = user;
+                        return user.ID;
+                    }
+                    else return -1;
                 }
                 else if (identifier != null)
                 {
                     if (user.Identifier != null && user.Identifier == identifier)
+                    {
+                        userDB = user;
                         return user.ID;
+                    }
+                    else
+                        return -1;
                 }
                 else
                 {
@@ -93,10 +90,9 @@ namespace Repository
  
         }
 
-        public bool deleteUser(long ID)
+        public bool deleteUser(User user)
         {
-            User user = new User();
-            user.ID = ID;
+            
             try
             {
                 using (GetDataContext())
@@ -105,10 +101,6 @@ namespace Repository
                     context.SaveChanges();
                    
                 }
-            }
-            catch (Exception e)
-            {
-                return false;
             }
             catch
             {
@@ -135,11 +127,6 @@ namespace Repository
                                   select userEntry).ToList().FirstOrDefault<User>();
                 }
             }
-            catch (Exception e)
-            {
-
-                throw;
-            }
             catch
             {
                 throw;
@@ -154,5 +141,62 @@ namespace Repository
             }
             return null;
         }
+
+        public User GetExistingUser(string userName, string password)
+        {
+            User user;
+            try
+            {
+                using (GetDataContext())
+                {
+                    user = (from userEntry in context.Users
+                            where userEntry.Username == userName && userEntry.Password == password
+                            select userEntry).ToList().FirstOrDefault<User>();
+                }
+            }
+            
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+
+            return user;
+            
+            
+ 
+        }
+
+        public bool ChangePassword(User user, string newPassword)
+        {
+
+            user.Password = newPassword;
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.Entry(user).State = EntityState.Modified;
+                    context.SaveChanges();
+
+                }
+            }
+            
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return true;
+            
+        }
+
+        
+      
     }
 }

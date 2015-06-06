@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Model;
 using System.Data.Entity;
-using Notocol.Models;
+//using Notocol.Models;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Repository
 {
@@ -16,16 +18,15 @@ namespace Repository
             CreateDataContext();
         }
 
-        public IList<AnnotationDataResponse> getAnnotations(long sourceID)
+        public IList<Annotation> GetAnnotationsForPage(long sourceID)
         {
             IList<Annotation> lstAnnotations = null;
-            IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
             try
             {
 
                 using (GetDataContext())
                 {
-                    SourceRepository sourceRepository = new SourceRepository();
+         
                     if (sourceID != 0)
                     {
 
@@ -45,68 +46,24 @@ namespace Repository
                 DisposeContext();
             }
 
-            if ((lstAnnotations != null) && (lstAnnotations.Count() > 0))
-            {
-                foreach (var annotation in lstAnnotations)
-                {
-                    annData.Add(new AnnotationDataResponse(annotation));
-                }
-            }
-            return annData;
+            
+            return lstAnnotations;
         }
        
-
-        public IList<AnnotationDataResponse> getAnnotations()
+        public List<Annotation> getAnnotations(string uri, long userID)
         {
-            IList<Annotation> lstAnnotations = null;
-            IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
+            List<Annotation> lstAnnotations = null;
+            
             try
             {
-
                 using (GetDataContext())
                 {
-                    
                     lstAnnotations = (from annotations in context.Annotations
-         
-                                      select annotations).ToList();
-
-
-                }
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
-
-            foreach (var annotation in lstAnnotations)
-            {
-                annData.Add(new AnnotationDataResponse(annotation));
-            }
-            return annData;
-        }
-        public IList<AnnotationDataResponse> getAnnotations(string pageURL, long userID)
-        {
-            IList<Annotation> lstAnnotations = null;
-            IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
-            try
-            {
-                
-                using (GetDataContext())
-                {
-                    SourceRepository sourceRepository = new SourceRepository();
-                    long sourceID = sourceRepository.getSourceID(pageURL, userID);
-                    if (sourceID != 0) { 
-
-                      lstAnnotations = (from annotations in context.Annotations
-                                          where annotations.SourceID == sourceID
+                                          where annotations.UserID == userID && annotations.Uri == uri 
                                           select annotations).ToList();
-                    }
-                
                 }
+
+                
             }
             catch
             {
@@ -117,15 +74,79 @@ namespace Repository
                 DisposeContext();
             }
 
-            if ((lstAnnotations != null) && (lstAnnotations.Count() > 0))
-            {
-                foreach (var annotation in lstAnnotations)
-                {
-                    annData.Add(new AnnotationDataResponse(annotation));
-                }
-            }
-            return annData;
+            return lstAnnotations;
         }
+
+        //public IList<AnnotationDataResponse> getAnnotations()
+        //{
+        //    IList<Annotation> lstAnnotations = null;
+        //    IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
+        //    try
+        //    {
+
+        //        using (GetDataContext())
+        //        {
+                    
+        //            lstAnnotations = (from annotations in context.Annotations
+         
+        //                              select annotations).ToList();
+
+
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        DisposeContext();
+        //    }
+
+        //    foreach (var annotation in lstAnnotations)
+        //    {
+        //        annData.Add(new AnnotationDataResponse(annotation));
+        //    }
+        //    return annData;
+        //}
+        //public IList<AnnotationDataResponse> getAnnotations(string pageURL, long userID)
+        //{
+        //    IList<Annotation> lstAnnotations = null;
+        //    IList<AnnotationDataResponse> annData = new List<AnnotationDataResponse>();
+        //    try
+        //    {
+                
+        //        using (GetDataContext())
+        //        {
+        //            SourceRepository sourceRepository = new SourceRepository();
+        //            long sourceID = sourceRepository.getSourceID(pageURL, userID);
+        //            if (sourceID != 0) { 
+
+        //              lstAnnotations = (from annotations in context.Annotations
+        //                                  where annotations.SourceID == sourceID
+        //                                  select annotations).ToList();
+        //            }
+                
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        DisposeContext();
+        //    }
+
+        //    if ((lstAnnotations != null) && (lstAnnotations.Count() > 0))
+        //    {
+        //        foreach (var annotation in lstAnnotations)
+        //        {
+        //            annData.Add(new AnnotationDataResponse(annotation));
+        //        }
+        //    }
+        //    return annData;
+        //}
 
         //public IList<AnnotationData> getAnnotations(long userID)
         //{
@@ -162,18 +183,18 @@ namespace Repository
             
         //}
 
-        public AnnotationDataResponse getAnnotation(long annotationID)
+        public Annotation getAnnotation(long annotationID)
         {
-            
+
             IList<Annotation> annotation;
             try
             {
                 using (GetDataContext())
                 {
                     annotation = (from annotations in context.Annotations
-                                    where annotations.ID == annotationID
-                                    select annotations).ToList();
-                 }
+                                  where annotations.ID == annotationID
+                                  select annotations).ToList();
+                }
             }
             catch
             {
@@ -184,43 +205,53 @@ namespace Repository
                 DisposeContext();
             }
             if (annotation.Count() > 0)
-                return new AnnotationDataResponse(annotation[0]);
+                return annotation[0];
             else
                 return null;
         }
-        public AnnotationDataResponse createAnnotation(NewAnnotationDataFromRequest annDatareq, long userID)
+
+        public int AddAnnotation(Annotation annotation)
         {
-            Annotation annotation = annDatareq.toAnnotation(userID);
-            AnnotationDataResponse response = null;
+            TagRepository tagRepository = new TagRepository();
             try
             {
                 using (GetDataContext())
                 {
                     SourceRepository sourceRepository = new SourceRepository();
-                    long sourceID = sourceRepository.getSourceID(annDatareq.uri, userID);
+                    long sourceID = sourceRepository.GetSourceIDFromSourceURI(annotation.Uri, annotation.UserID);
                     if (sourceID == 0)
                     {
                         //Create the source for this user
                         Source source = new Source();
-                        IList<Tag> tags = new List<Tag>();
-
-                        source.Link = annDatareq.uri;
-                        source.UserID = userID;
-                        source.Title = annDatareq.title;
-
-                        foreach (var tagString in annDatareq.tags)
+                        IList<Tag> tags = new List<Tag>();        
+                        source.SourceURI = annotation.Uri;
+                        source.UserID = annotation.UserID;
+                        dynamic data = JObject.Parse(annotation.Document);
+                        source.Title = data.title;
+                        source.Link = null;
+                        if (annotation.Uri.StartsWith("urn:x-pdf"))
                         {
-                            Tag tag = new Tag();
-                            tag.Name = tagString;
-                            tag.ParentID = 1;
-                            tag.UserID = userID;
-                            tags.Add(tag);
-                        }
 
-                        SourceRepository obSourceRepository = new SourceRepository();
-                        try {
-                            obSourceRepository.SaveSource(userID, source, tags);
-                            sourceID =  source.ID;
+                            foreach (var link in data.link)
+                            {
+                                string value = link.href;
+                                if (value.StartsWith("http"))
+                                {
+                                    source.Link = value;
+                                    break;
+                                }
+                            }
+                            if (source.Link == null)
+                            {
+                                source.Link = "localFile:" + data.filename;
+                            }
+                        }else
+                            source.Link = data.link[0].href;
+                      
+                        try
+                        {
+                            sourceRepository.SaveSource(annotation.UserID, source, tags);
+                            sourceID = source.ID;
                         }
                         catch
                         {
@@ -228,86 +259,13 @@ namespace Repository
                         }
 
                     }
-                    else
-                    {
-                        if (annDatareq.tags.Count > 0)
-                        {
-                            IList<Tag> tags = new List<Tag>();
-                            foreach (var tagString in annDatareq.tags)
-                            {
-                                Tag tag = new Tag();
-                                tag.Name = tagString;
-                                tag.ParentID = 1;
-                                tag.UserID = userID;
-                                tags.Add(tag);
-                            }
-                            SourceRepository objectSourceRepository = new SourceRepository();
-                            objectSourceRepository.UpdateTags(userID, sourceID, tags);
-                            //Add tags to the sourceID if they are not already added to the source
-                        }
-
-                    }
                     
                     annotation.SourceID = sourceID;
-                    annotation.User = userID;
                     context.Entry(annotation).State = EntityState.Added;
                     context.SaveChanges();
 
-                    
-                }
-            }
-            catch 
-            {
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
+                    tagRepository.AddUserTagsToSource(annotation.UserID, sourceID, JsonConvert.DeserializeObject<string[]>(annotation.Tags));
 
-            response = new AnnotationDataResponse(annotation);
-            return response;
-        }
-
-        //public AnnotationDataResponse updateAnnotations(IList<Annotation> lstAnnotation)
-        //{
-        //    using (GetDataContext())
-        //    {
-        //        foreach (Annotation objAnnotation in lstAnnotation)
-        //        {
-        //            context.Entry(objAnnotation).State = objAnnotation.ID == 0 ? EntityState.Added : EntityState.Modified;
-                    
-        //        }
-        //        context.SaveChanges();
-
-        //        // By implementing Bulkinsert plugin
-        //        //using (var transactionScope = new TransactionScope())
-        //        //{
-        //        //    context.BulkInsert(lstTag);
-        //        //    context.SaveChanges();
-        //        //    transactionScope.Complete();
-        //        //}
-        //    }
-        //    return 0;
-        //}
-
-        public AnnotationDataResponse updateAnnotation(AnnotationDataResponse annData, long userID)
-        {
-            IList<Annotation> annotation;
-            try
-            {
-                using (GetDataContext())
-                {
-                    annotation = (from annotations in context.Annotations
-                                  where annotations.ID == annData.id & annotations.User == userID
-                                  select annotations).ToList();
-                    if (annotation.Count() > 0)
-                    {
-                        AnnotationDataResponse.UpdateAnnotationObject(annotation[0], annData);
-                        context.Entry(annotation[0]).State = EntityState.Modified;
-                        context.SaveChanges();
-                    }
-                    
                 }
             }
             catch
@@ -318,31 +276,79 @@ namespace Repository
             {
                 DisposeContext();
             }
-            return annData;
+
+            
+            return annotation.ID;
         }
 
-        //public bool deleteAnnotation(AnnotationData annData)
-        //{
-        //    Annotation objAnnotation = AnnotationData.GetAnnotationObject(annData);
+        ////public AnnotationDataResponse updateAnnotations(IList<Annotation> lstAnnotation)
+        ////{
+        ////    using (GetDataContext())
+        ////    {
+        ////        foreach (Annotation objAnnotation in lstAnnotation)
+        ////        {
+        ////            context.Entry(objAnnotation).State = objAnnotation.ID == 0 ? EntityState.Added : EntityState.Modified;
+                    
+        ////        }
+        ////        context.SaveChanges();
 
-        //    try
-        //    {
-        //        using (GetDataContext())
-        //        {
-        //            context.Entry(objAnnotation).State = EntityState.Deleted;
-        //            context.SaveChanges();
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //    finally
-        //    {
-        //        DisposeContext();
-        //    }
-        //    return true;
-        //}
+        ////        // By implementing Bulkinsert plugin
+        ////        //using (var transactionScope = new TransactionScope())
+        ////        //{
+        ////        //    context.BulkInsert(lstTag);
+        ////        //    context.SaveChanges();
+        ////        //    transactionScope.Complete();
+        ////        //}
+        ////    }
+        ////    return 0;
+        ////}
+
+        public bool UpdateAnnotation(Annotation annotation)
+        {
+            
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.Entry(annotation).State = EntityState.Modified;
+                    context.SaveChanges();
+                }
+
+                
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return true;
+        }
+
+        ////public bool deleteAnnotation(AnnotationData annData)
+        ////{
+        ////    Annotation objAnnotation = AnnotationData.GetAnnotationObject(annData);
+
+        ////    try
+        ////    {
+        ////        using (GetDataContext())
+        ////        {
+        ////            context.Entry(objAnnotation).State = EntityState.Deleted;
+        ////            context.SaveChanges();
+        ////        }
+        ////    }
+        ////    catch
+        ////    {
+        ////        throw;
+        ////    }
+        ////    finally
+        ////    {
+        ////        DisposeContext();
+        ////    }
+        ////    return true;
+        ////}
 
     }
 }
