@@ -27,5 +27,7 @@ namespace Model
         public string User { get; set; }
         public int UserID { get; set; }
         public Nullable<long> SourceID { get; set; }
+    
+        public virtual Source Source { get; set; }
     }
 }

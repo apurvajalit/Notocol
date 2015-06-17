@@ -10,11 +10,20 @@ namespace Notocol.Controllers
     public class SourceController : Controller
     {
         // GET: Source
-        public ActionResult SourceItems(string keywordFilter = "", string tagString = "")
+        public ActionResult SourceItems(string keywordFilter = "", string tagFilter = "")
         {
 
             long userID = Utility.GetCurrentUserID();
-            return PartialView(SourceHelper.GetSourceItems(keywordFilter, tagString, userID));
+            //string[] tags = { "abc", "def" };
+            
+
+            long[] tagIDs = { };
+            if (tagFilter != "")
+            {
+                string[] tags = tagFilter.Split(','); 
+                tagIDs = Array.ConvertAll(tags, s => long.Parse(s));
+            }
+            return PartialView(SourceHelper.GetSourceItems(keywordFilter, tagIDs, userID));
         }
     }
 }

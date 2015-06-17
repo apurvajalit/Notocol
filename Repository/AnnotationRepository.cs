@@ -263,8 +263,8 @@ namespace Repository
                     annotation.SourceID = sourceID;
                     context.Entry(annotation).State = EntityState.Added;
                     context.SaveChanges();
-
-                    tagRepository.AddUserTagsToSource(annotation.UserID, sourceID, JsonConvert.DeserializeObject<string[]>(annotation.Tags));
+                    if(annotation.Tags != null)
+                        tagRepository.AddUserTagsToSource(annotation.UserID, sourceID, JsonConvert.DeserializeObject<string[]>(annotation.Tags));
 
                 }
             }
@@ -281,31 +281,9 @@ namespace Repository
             return annotation.ID;
         }
 
-        ////public AnnotationDataResponse updateAnnotations(IList<Annotation> lstAnnotation)
-        ////{
-        ////    using (GetDataContext())
-        ////    {
-        ////        foreach (Annotation objAnnotation in lstAnnotation)
-        ////        {
-        ////            context.Entry(objAnnotation).State = objAnnotation.ID == 0 ? EntityState.Added : EntityState.Modified;
-                    
-        ////        }
-        ////        context.SaveChanges();
-
-        ////        // By implementing Bulkinsert plugin
-        ////        //using (var transactionScope = new TransactionScope())
-        ////        //{
-        ////        //    context.BulkInsert(lstTag);
-        ////        //    context.SaveChanges();
-        ////        //    transactionScope.Complete();
-        ////        //}
-        ////    }
-        ////    return 0;
-        ////}
-
         public bool UpdateAnnotation(Annotation annotation)
         {
-            
+            TagRepository tagRepository = new TagRepository();
             try
             {
                 using (GetDataContext())
@@ -323,6 +301,9 @@ namespace Repository
             finally
             {
                 DisposeContext();
+            }
+            if (annotation.Tags != null) {
+                tagRepository.UpdateUserTagsForSource(annotation.UserID, (long)annotation.SourceID, JsonConvert.DeserializeObject<string[]>(annotation.Tags));
             }
             return true;
         }

@@ -162,6 +162,7 @@
     <Content Include="app\public\scripts\account.min.js" />
     <Content Include="app\public\scripts\app.min.js" />
     <Content Include="app\public\scripts\hypothesis.min.js" />
+    <Content Include="app\public\scripts\pageTags.js" />
     <Content Include="app\public\scripts\vendor\angular-animate.min.js" />
     <Content Include="app\public\scripts\vendor\angular-bootstrap.min.js" />
     <Content Include="app\public\scripts\vendor\angular-resource.min.js" />

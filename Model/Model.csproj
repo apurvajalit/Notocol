@@ -79,16 +79,12 @@
     <Compile Include="Extended\Extension\ExtensionAnnotationData.cs" />
     <Compile Include="Extended\Extension\ExtensionSearchResponse.cs" />
     <Compile Include="Extended\Extension\ExtensionUser.cs" />
+    <Compile Include="Extended\Extension\SourceDataForBookmark.cs" />
+    <Compile Include="Extended\Extension\TagDataForBookmark.cs" />
     <Compile Include="Extended\NotCol.Context.cs" />
     <Compile Include="Extended\NoteData.cs" />
     <Compile Include="Extended\SourceData.cs" />
     <Compile Include="Extended\SourceItem.cs" />
-    <Compile Include="GetTags1_Result.cs">
-      <DependentUpon>NotCol.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GetTags2_Result.cs">
-      <DependentUpon>NotCol.tt</DependentUpon>
-    </Compile>
     <Compile Include="GetTags_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
@@ -108,19 +104,10 @@
       <DependentUpon>NotCol.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchForSource_Result.cs">
-      <DependentUpon>NotCol.tt</DependentUpon>
-    </Compile>
     <Compile Include="Source.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="SourceTag.cs">
-      <DependentUpon>NotCol.tt</DependentUpon>
-    </Compile>
-    <Compile Include="spTestSourceData1_Result.cs">
-      <DependentUpon>NotCol.tt</DependentUpon>
-    </Compile>
-    <Compile Include="spTestSourceData2_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="spTestSourceData_Result.cs">
@@ -134,7 +121,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <EntityDeploy Include="NotCol.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>NotCol.Designer.cs</LastGenOutput>

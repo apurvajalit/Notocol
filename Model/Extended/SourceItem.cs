@@ -13,5 +13,6 @@ namespace Model.Extended
         public string Link;
         public string Summary;
         public string TagNames;
+        public string TagIDs;
     }
 }

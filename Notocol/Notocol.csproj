@@ -73,6 +73,9 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -221,6 +224,7 @@
     <Compile Include="Controllers\SessionableControllerHandler.cs" />
     <Compile Include="Controllers\SessionStateRouteHandler.cs" />
     <Compile Include="Controllers\SourceController.cs" />
+    <Compile Include="Controllers\TagController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -234,6 +238,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\annotator.min.css" />
+    <Content Include="Content\bootstrap-tagsinput.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -292,6 +297,8 @@
     <Content Include="Scripts\annotator-full.min.js" />
     <Content Include="Scripts\annotator.min.css" />
     <Content Include="Scripts\annotator.min.js" />
+    <Content Include="Scripts\boostrap3-typeahead.min.js" />
+    <Content Include="Scripts\bootstrap-tagsinput.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -318,7 +325,10 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\tag-it.js" />
     <Content Include="Scripts\tag-it.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Scripts\typeahead.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -354,6 +364,7 @@
     <Folder Include="Views\Authentication\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Proxy\" />
+    <Folder Include="Views\Tag\" />
     <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>

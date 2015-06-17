@@ -11,7 +11,7 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Updated" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Target" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Target" Type="nvarchar(max)" />
           <Property Name="Created" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Text" Type="nvarchar(max)" />
           <Property Name="Tags" Type="nvarchar(max)" />
@@ -72,6 +72,18 @@
           <Property Name="ModifiedAt" Type="datetime" />
           <Property Name="Email" Type="varchar" MaxLength="200" />
         </EntityType>
+        <Association Name="FK_Annotaion_Source">
+          <End Role="Source" Type="Self.Source" Multiplicity="0..1" />
+          <End Role="Annotation" Type="Self.Annotation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Annotation">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Source_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
           <End Role="Source" Type="Self.Source" Multiplicity="*" />
@@ -120,16 +132,16 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="GetTagID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa">
-          <Parameter Name="TagName" Type="varchar" Mode="In" />
+        <Function Name="GetTagID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TagName" Type="varchar(max)" Mode="In" />
           <Parameter Name="UserID" Type="int" Mode="In" />
           <Parameter Name="TagID" Type="int" Mode="InOut" />
         </Function>
-        <Function Name="GetTags" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa">
+        <Function Name="GetTags" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="userID" Type="bigint" Mode="In" />
           <Parameter Name="strToSearch" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="SaveSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa">
+        <Function Name="SaveSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tags" Type="varchar(max)" Mode="In" />
           <Parameter Name="UserID" Type="bigint" Mode="In" />
           <Parameter Name="title" Type="varchar" Mode="In" />
@@ -140,18 +152,22 @@
           <Parameter Name="privacy" Type="bit" Mode="In" />
           <Parameter Name="rating" Type="int" Mode="In" />
         </Function>
-        <Function Name="SearchForSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa">
+        <Function Name="SearchForSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="keywordStr" Type="varchar" Mode="In" />
-          <Parameter Name="tagStr" Type="varchar" Mode="In" />
           <Parameter Name="userID" Type="bigint" Mode="In" />
         </Function>
-        <Function Name="spTestSourceData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="nileshgsa" />
+        <Function Name="sp_UseStringList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="spTestSourceData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="NotColModelStoreContainer">
-          <EntitySet Name="Annotation" EntityType="Self.Annotation" Schema="nileshgsa" store:Type="Tables" />
-          <EntitySet Name="Source" EntityType="Self.Source" Schema="nileshgsa" store:Type="Tables" />
-          <EntitySet Name="SourceTag" EntityType="Self.SourceTag" Schema="nileshgsa" store:Type="Tables" />
-          <EntitySet Name="Tag" EntityType="Self.Tag" Schema="nileshgsa" store:Type="Tables" />
-          <EntitySet Name="User" EntityType="Self.User" Schema="nileshgsa" store:Type="Tables" />
+          <EntitySet Name="Annotation" EntityType="Self.Annotation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Source" EntityType="Self.Source" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SourceTag" EntityType="Self.SourceTag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Annotaion_Source" Association="Self.FK_Annotaion_Source">
+            <End Role="Source" EntitySet="Source" />
+            <End Role="Annotation" EntitySet="Annotation" />
+          </AssociationSet>
           <AssociationSet Name="FK_Source_User" Association="Self.FK_Source_User">
             <End Role="User" EntitySet="User" />
             <End Role="Source" EntitySet="Source" />
@@ -179,6 +195,10 @@
           <EntitySet Name="SourceTags" EntityType="NotColModel.SourceTag" />
           <EntitySet Name="Tags" EntityType="NotColModel.Tag" />
           <EntitySet Name="Users" EntityType="NotColModel.User" />
+          <AssociationSet Name="FK_Annotaion_Source" Association="NotColModel.FK_Annotaion_Source">
+            <End Role="Source" EntitySet="Sources" />
+            <End Role="Annotation" EntitySet="Annotations" />
+          </AssociationSet>
           <AssociationSet Name="FK_Source_User" Association="NotColModel.FK_Source_User">
             <End Role="User" EntitySet="Users" />
             <End Role="Source" EntitySet="Sources" />
@@ -195,12 +215,12 @@
             <End Role="User" EntitySet="Users" />
             <End Role="Tag" EntitySet="Tags" />
           </AssociationSet>
-          <FunctionImport Name="SearchForSource" EntitySet="Sources" ReturnType="Collection(NotColModel.Source)">
-            <Parameter Name="keywordStr" Mode="In" Type="String" />
-            <Parameter Name="tagStr" Mode="In" Type="String" />
-            <Parameter Name="userID" Mode="In" Type="Int64" />
+          <FunctionImport Name="GetTagID" ReturnType="Collection(Int32)">
+            <Parameter Name="TagName" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="TagID" Mode="InOut" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="GetTags" EntitySet="Tags" ReturnType="Collection(NotColModel.Tag)">
+          <FunctionImport Name="GetTags" ReturnType="Collection(NotColModel.GetTags_Result)">
             <Parameter Name="userID" Mode="In" Type="Int64" />
             <Parameter Name="strToSearch" Mode="In" Type="String" />
           </FunctionImport>
@@ -215,115 +235,20 @@
             <Parameter Name="privacy" Mode="In" Type="Boolean" />
             <Parameter Name="rating" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="GetTagID" ReturnType="Collection(Int64)">
-            <Parameter Name="TagName" Mode="In" Type="String" />
-            <Parameter Name="UserID" Mode="In" Type="Int32" />
-            <Parameter Name="TagID" Mode="InOut" Type="Int32" />
+          <FunctionImport Name="sp_UseStringList" />
+          <FunctionImport Name="spTestSourceData" ReturnType="Collection(NotColModel.spTestSourceData_Result)" />
+          <FunctionImport Name="SearchForSource">
+            <Parameter Name="keywordStr" Mode="In" Type="String" />
+            <Parameter Name="userID" Mode="In" Type="Int64" />
           </FunctionImport>
-          </EntityContainer>
-        <ComplexType Name="GetTags_Result">
-          <Property Type="Int64" Name="ChildId" Nullable="true" />
-          <Property Type="String" Name="ChildName" Nullable="true" MaxLength="50" />
-          <Property Type="Int64" Name="ParentId" Nullable="true" />
-          <Property Type="String" Name="Parents" Nullable="true" />
-        </ComplexType>
-        <ComplexType Name="spTestSourceData_Result">
-          <Property Type="Int64" Name="ID" Nullable="false" />
-          <Property Type="Int64" Name="UserID" Nullable="false" />
-          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
-          <Property Type="String" Name="Link" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
-          <Property Type="Boolean" Name="ReadLater" Nullable="true" />
-          <Property Type="Boolean" Name="SaveOffline" Nullable="true" />
-          <Property Type="Boolean" Name="Privacy" Nullable="true" />
-          <Property Type="Int32" Name="Rating" Nullable="true" />
-          <Property Type="DateTime" Name="ModifiedAt" Nullable="true" Precision="23" />
-          <Property Type="Int64" Name="ID1" Nullable="false" />
-          <Property Type="Int64" Name="SourceID" Nullable="false" />
-          <Property Type="Int64" Name="TagsID" Nullable="false" />
-          <Property Type="Int64" Name="ID2" Nullable="false" />
-          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
-          <Property Type="Int64" Name="ParentID" Nullable="false" />
-          <Property Type="Int64" Name="UserID1" Nullable="false" />
-          <Property Type="String" Name="Description" Nullable="true" MaxLength="500" />
-        </ComplexType>
-        <ComplexType Name="GetTags1_Result">
-          <Property Type="Int64" Name="ChildId" Nullable="true" />
-          <Property Type="String" Name="ChildName" Nullable="true" MaxLength="50" />
-          <Property Type="Int64" Name="ParentId" Nullable="true" />
-          <Property Type="String" Name="Parents" Nullable="true" />
-        </ComplexType>
-        <ComplexType Name="spTestSourceData1_Result">
-          <Property Type="Int64" Name="ID" Nullable="false" />
-          <Property Type="Int64" Name="UserID" Nullable="false" />
-          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
-          <Property Type="String" Name="Link" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
-          <Property Type="Boolean" Name="ReadLater" Nullable="true" />
-          <Property Type="Boolean" Name="SaveOffline" Nullable="true" />
-          <Property Type="Boolean" Name="Privacy" Nullable="true" />
-          <Property Type="Int32" Name="Rating" Nullable="true" />
-          <Property Type="String" Name="TagNames" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="TagIDs" Nullable="true" MaxLength="1000" />
-          <Property Type="DateTime" Name="ModifiedAt" Nullable="true" Precision="23" />
-          <Property Type="Int64" Name="ID1" Nullable="false" />
-          <Property Type="Int64" Name="SourceID" Nullable="false" />
-          <Property Type="Int64" Name="TagsID" Nullable="false" />
-          <Property Type="Int64" Name="ID2" Nullable="false" />
-          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
-          <Property Type="Int64" Name="ParentID" Nullable="false" />
-          <Property Type="Int64" Name="UserID1" Nullable="false" />
-          <Property Type="String" Name="Description" Nullable="true" MaxLength="500" />
-        </ComplexType>
-        <ComplexType Name="SearchForSource_Result">
-          <Property Type="Int64" Name="ID" Nullable="true" />
-          <Property Type="Int64" Name="UserID" Nullable="true" />
-          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
-          <Property Type="String" Name="Link" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
-          <Property Type="Boolean" Name="ReadLater" Nullable="true" />
-          <Property Type="Boolean" Name="SaveOffline" Nullable="true" />
-          <Property Type="Boolean" Name="Privacy" Nullable="true" />
-          <Property Type="Int32" Name="Rating" Nullable="true" />
-          <Property Type="String" Name="TagNames" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="TagIDs" Nullable="true" MaxLength="1000" />
-          <Property Type="DateTime" Name="ModifiedAt" Nullable="true" Precision="23" />
-          </ComplexType>
-        <ComplexType Name="GetTags2_Result">
-          <Property Type="Int64" Name="ChildId" Nullable="true" />
-          <Property Type="String" Name="ChildName" Nullable="true" MaxLength="50" />
-          <Property Type="Int64" Name="ParentId" Nullable="true" />
-          <Property Type="String" Name="Parents" Nullable="true" />
-        </ComplexType>
-        <ComplexType Name="spTestSourceData2_Result">
-          <Property Type="Int64" Name="ID" Nullable="false" />
-          <Property Type="Int64" Name="UserID" Nullable="false" />
-          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
-          <Property Type="String" Name="Link" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
-          <Property Type="Boolean" Name="ReadLater" Nullable="true" />
-          <Property Type="Boolean" Name="SaveOffline" Nullable="true" />
-          <Property Type="Boolean" Name="Privacy" Nullable="true" />
-          <Property Type="Int32" Name="Rating" Nullable="true" />
-          <Property Type="String" Name="TagNames" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="TagIDs" Nullable="true" MaxLength="1000" />
-          <Property Type="DateTime" Name="ModifiedAt" Nullable="true" Precision="23" />
-          <Property Type="Int64" Name="ID1" Nullable="false" />
-          <Property Type="Int64" Name="SourceID" Nullable="false" />
-          <Property Type="Int64" Name="TagsID" Nullable="false" />
-          <Property Type="Int64" Name="ID2" Nullable="false" />
-          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
-          <Property Type="Int64" Name="ParentID" Nullable="false" />
-          <Property Type="Int64" Name="UserID1" Nullable="false" />
-          <Property Type="String" Name="Description" Nullable="true" MaxLength="500" />
-        </ComplexType>
+        </EntityContainer>
         <EntityType Name="Annotation">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Updated" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Target" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Target" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Tags" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -334,6 +259,7 @@
           <Property Name="User" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="UserID" Type="Int32" Nullable="false" />
           <Property Name="SourceID" Type="Int64" />
+          <NavigationProperty Name="Source" Relationship="NotColModel.FK_Annotaion_Source" FromRole="Annotation" ToRole="Source" />
         </EntityType>
         <EntityType Name="Source">
           <Key>
@@ -351,11 +277,12 @@
           <Property Name="TagNames" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Name="TagIDs" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="User" Relationship="NotColModel.FK_Source_User" FromRole="Source" ToRole="User" />
-          <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Source" FromRole="Source" ToRole="SourceTag" />
           <Property Name="SourceURI" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ImpliedTagNames" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ImpliedTagIDs" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Annotations" Relationship="NotColModel.FK_Annotaion_Source" FromRole="Source" ToRole="Annotation" />
+          <NavigationProperty Name="User" Relationship="NotColModel.FK_Source_User" FromRole="Source" ToRole="User" />
+          <NavigationProperty Name="SourceTags" Relationship="NotColModel.FK_SourceTags_Source" FromRole="Source" ToRole="SourceTag" />
         </EntityType>
         <EntityType Name="SourceTag">
           <Key>
@@ -392,6 +319,18 @@
           <NavigationProperty Name="Sources" Relationship="NotColModel.FK_Source_User" FromRole="User" ToRole="Source" />
           <NavigationProperty Name="Tags" Relationship="NotColModel.FK_Tag_User" FromRole="User" ToRole="Tag" />
         </EntityType>
+        <Association Name="FK_Annotaion_Source">
+          <End Type="NotColModel.Source" Role="Source" Multiplicity="0..1" />
+          <End Type="NotColModel.Annotation" Role="Annotation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Annotation">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Source_User">
           <End Type="NotColModel.User" Role="User" Multiplicity="1" />
           <End Type="NotColModel.Source" Role="Source" Multiplicity="*" />
@@ -440,6 +379,37 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetTags_Result">
+          <Property Type="Int64" Name="ChildId" Nullable="true" />
+          <Property Type="String" Name="ChildName" Nullable="true" MaxLength="50" />
+          <Property Type="Int64" Name="ParentId" Nullable="true" />
+          <Property Type="String" Name="Parents" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="spTestSourceData_Result">
+          <Property Type="Int64" Name="ID" Nullable="false" />
+          <Property Type="Int64" Name="UserID" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Link" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
+          <Property Type="Boolean" Name="ReadLater" Nullable="true" />
+          <Property Type="Boolean" Name="SaveOffline" Nullable="true" />
+          <Property Type="Boolean" Name="Privacy" Nullable="true" />
+          <Property Type="Int32" Name="Rating" Nullable="true" />
+          <Property Type="String" Name="TagNames" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="TagIDs" Nullable="true" MaxLength="1000" />
+          <Property Type="DateTime" Name="ModifiedAt" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SourceURI" Nullable="false" />
+          <Property Type="String" Name="ImpliedTagNames" Nullable="true" />
+          <Property Type="String" Name="ImpliedTagIDs" Nullable="true" />
+          <Property Type="Int64" Name="ID1" Nullable="false" />
+          <Property Type="Int64" Name="SourceID" Nullable="false" />
+          <Property Type="Int64" Name="TagsID" Nullable="false" />
+          <Property Type="Int64" Name="ID2" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int64" Name="ParentID" Nullable="false" />
+          <Property Type="Int64" Name="UserID1" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" MaxLength="500" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -518,10 +488,49 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="SearchForSource" FunctionName="NotColModel.Store.SearchForSource" />
-          <FunctionImportMapping FunctionImportName="GetTags" FunctionName="NotColModel.Store.GetTags" />
-          <FunctionImportMapping FunctionImportName="SaveSource" FunctionName="NotColModel.Store.SaveSource" />
           <FunctionImportMapping FunctionImportName="GetTagID" FunctionName="NotColModel.Store.GetTagID" />
+          <FunctionImportMapping FunctionImportName="GetTags" FunctionName="NotColModel.Store.GetTags">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="NotColModel.GetTags_Result">
+                <ScalarProperty Name="ChildId" ColumnName="ChildId" />
+                <ScalarProperty Name="ChildName" ColumnName="ChildName" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Parents" ColumnName="Parents" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SaveSource" FunctionName="NotColModel.Store.SaveSource" />
+          <FunctionImportMapping FunctionImportName="sp_UseStringList" FunctionName="NotColModel.Store.sp_UseStringList" />
+          <FunctionImportMapping FunctionImportName="spTestSourceData" FunctionName="NotColModel.Store.spTestSourceData">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="NotColModel.spTestSourceData_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Link" ColumnName="Link" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
+                <ScalarProperty Name="ReadLater" ColumnName="ReadLater" />
+                <ScalarProperty Name="SaveOffline" ColumnName="SaveOffline" />
+                <ScalarProperty Name="Privacy" ColumnName="Privacy" />
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="TagNames" ColumnName="TagNames" />
+                <ScalarProperty Name="TagIDs" ColumnName="TagIDs" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+                <ScalarProperty Name="SourceURI" ColumnName="SourceURI" />
+                <ScalarProperty Name="ImpliedTagNames" ColumnName="ImpliedTagNames" />
+                <ScalarProperty Name="ImpliedTagIDs" ColumnName="ImpliedTagIDs" />
+                <ScalarProperty Name="ID1" ColumnName="ID1" />
+                <ScalarProperty Name="SourceID" ColumnName="SourceID" />
+                <ScalarProperty Name="TagsID" ColumnName="TagsID" />
+                <ScalarProperty Name="ID2" ColumnName="ID2" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
+                <ScalarProperty Name="UserID1" ColumnName="UserID1" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SearchForSource" FunctionName="NotColModel.Store.SearchForSource" />
         </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

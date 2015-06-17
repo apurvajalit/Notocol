@@ -5,73 +5,95 @@
     int count = 0;
     foreach (var source in Model)
     {
-     
-      
-            if (count % 4 == 0){ 
-                @:<div class="row">
-            }
-            count++;
 
-            <div class="col-sm-3 pageBoxContainer">
-                <div class="pagebox">
-                    
+
+        if (count % 4 == 0)
+        { 
+            @:<div class="row table-row">
+        }
+        count++;
+
+        <div class="col-sm-3 table-col">
+            
+                <div style="padding-bottom:15px">
                     @if (!(source.Link.StartsWith("localFile")))
                     {
                         <a href="@source.Link" class="page-title text-info">@source.Title</a>
+                    
                     }
                     else
                     {
-                        <p class="page-title text-info">@source.Title</p>                                              
+                        <p class="page-title text-info">@source.Title</p>
                     }
-                    
+
                     <p>@source.Summary</p>
-                    <div>
-                        @if (!(@String.IsNullOrEmpty(source.TagNames)))
-                        {
-                            <div class="tagsText"><span class="glyphicon glyphicon-tag"></span> @source.TagNames </div>
-                        }
-                        <div class="viewNotesButton">
-                            <button class="btn btn-default btn-xs " href="@Url.Action("NoteList", "Notes", new { sourceID = @source.ID })" data-toggle="modal" data-target='#notesModal'>View Notes</button>
-
-
-                        </div>
+                    <div id="pageTags">
+                        <ul class="list-inline">
+                            @{if (!(@String.IsNullOrEmpty(source.TagNames) || @String.IsNullOrEmpty(source.TagIDs)))
+                            {
+                                string[] tagNames = source.TagNames.Split(',');
+                                string[] tagIDs = source.TagIDs.Split(',');
+                                int i = 0;
+                                if (tagNames.Length == tagIDs.Length)
+                                {
+                                    for (i = 0; i < tagNames.Length; i++)
+                                    {
+                                        <li><a href=@tagIDs[i]><span class="label label-default"> @tagNames[i]</span></a> </li>
+    
+                                    }
+                                }
+                            }
+                            }
+                       </ul>
                     </div>
                 </div>
-
-
-            </div>
+                <div class="viewNotesButton">
+                    <button class="btn btn-default btn-xs " href="@Url.Action("NoteList", "Notes", new { sourceID = @source.ID })" data-toggle="modal" data-target='#notesModal'>View Notes</button>
+                </div>
+            
+        </div>
 
         if (((count) % 4 == 0) || count == Model.Count)
         {
-                @: </div>
-            }
+            @:</div>
+
+        }
 
 
-      }
+     }
 }
 
+<div class="modal" id="notesModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="mymodallabel">Notes</h4>
+            </div>
+            <div class="modal-body"></div>
+        </div>
 
-                <div class="modal" id="notesModal">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h4 class="modal-title" id="mymodallabel">Notes</h4>
-                            </div>
-                            <div class="modal-body"></div>
-                        </div>
+        <div class="modal-footer">
 
-                        <div class="modal-footer">
+        </div>
 
-                        </div>
+    </div>
+</div>
+<script>
+    $('body').on('hidden.bs.modal', '.modal', function () {
+        $(this).removeData('bs.modal').find(".modal-content").empty();;
+    });
+</script>
 
-                    </div>
-                </div>
-                <script>
-                    $('body').on('hidden.bs.modal', '.modal', function () {
-                        $(this).removeData('bs.modal').find(".modal-content").empty();;
-                    });
-                </script>
+
+
+
+
+
+
+
+
+                
 
 
 

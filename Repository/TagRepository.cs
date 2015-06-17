@@ -6,6 +6,10 @@ using Model;
 using System.Transactions;
 using System.Data.Entity.Core.Objects;
 using System;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using System.Data.Entity.Core.EntityClient;
 namespace Repository
 {
     public class TagRepository : BaseRepository
@@ -90,6 +94,7 @@ namespace Repository
         /// <returns></returns>
         public Tag SaveTag(Tag objTag)
         {
+            objTag.Name = objTag.Name.Trim();
             try
             {
                 using (GetDataContext())
@@ -123,6 +128,7 @@ namespace Repository
                     {
                         if (objTag.ID == 0) { 
                             objTag.UserID = userID;
+                            objTag.Name = objTag.Name.Trim();
                             context.Entry(objTag).State = EntityState.Added;
                         }
 
@@ -205,20 +211,24 @@ namespace Repository
                         objSourceTag.SourceID = sourceID;
                         objSourceTag.TagsID = tagID;
                         context.SourceTags.Add(objSourceTag);
-                        
-                        
-                    }
-                    try
-                    {
+                        try
+                        {
 
-                        context.SaveChanges();
-                    }
-                    catch (Exception)
-                    {
-                        
-                        //ignore if duplicate mapping added
-                    }
+                            context.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            
+                            //ignore if duplicate mapping added
+                        }
+                        finally
+                        {
+                            context.SourceTags.Remove(objSourceTag);
+                        }
 
+                        
+                    }
+                    
                 }
             }
             catch (Exception)
@@ -232,22 +242,34 @@ namespace Repository
             }
 
         }
+     
         public void AddUserTagsToSource(long userID, long sourceID, string[] tags)
         {
             List<long> tagIDs = new List<long>();
-
+            if (tags == null) return;
             try{
-                using(GetDataContext()){
+                using (SqlConnection conn = new SqlConnection(GetDataContext().Database.Connection.ConnectionString)) {
+                    conn.Open();
+                           
                     foreach (string tag in tags)
                     {
-                        ObjectParameter objParam = new ObjectParameter("TagID", typeof(long));
+                        SqlCommand cmd = new SqlCommand("GetTagID", conn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        SqlParameter outputIdParam = new SqlParameter("@TagID", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
                         
-                        Object id = context.GetTagID(tag, (int)userID, objParam);
-                        context.SaveChanges();
-                        var tagID = Convert.ToInt64(objParam.Value);
-                        //tagIDs.Add(Convert.ToInt64(Convert.ToInt64(id)));
-                      
+                        cmd.Parameters.Add(outputIdParam);
+                        cmd.Parameters.AddWithValue("@UserID", userID);
+                        cmd.Parameters.AddWithValue("@TagName",  tag.Trim());
+
+                        cmd.ExecuteNonQuery();
+                        tagIDs.Add(outputIdParam.Value as int? ?? default(int));
+                        
+                     
                     }
+                    conn.Close();
                     UpdateSourceTagMapping(sourceID, tagIDs);
 
                 }
@@ -256,5 +278,36 @@ namespace Repository
             }
             
         }
-    }
-}
+
+
+        public void UpdateUserTagsForSource(long userID, long sourceID, string[] tags)
+        {
+            AddUserTagsToSource(userID, sourceID, tags);
+        }
+
+
+        public IList<Tag> GetTagsForSource(long sourceID)
+        {
+            IList<Tag> tagList = null;
+            try
+            {
+                using(GetDataContext()){
+                    tagList = (from tags in context.Tags join sourceTags in context.SourceTags
+                                                    on tags.ID equals sourceTags.TagsID
+                                                    where sourceTags.SourceID == sourceID
+                                                    select tags).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return tagList;
+        }
+
+     }
+}   

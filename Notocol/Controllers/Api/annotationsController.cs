@@ -24,7 +24,9 @@ namespace h_store.Controllers
         public JObject storeInfo()
         {
             //TODO Change the hardcoded server details
-            string info = "{\"message\": \"Annotator Store API\",\"links\": {\"search\": {\"url\": \"https://localhost:44301//api/annotations/search\", \"method\": \"GET\", \"desc\": \"Basic search API\"}, \"annotation\": {\"read\": {\"url\": \"https://localhost:44301//api/annotations/:id\", \"method\": \"GET\", \"desc\": \"Get an existing annotation\"}, \"create\": {\"url\": \"https://localhost:44301//api/annotations\", \"method\": \"POST\", \"desc\": \"Create a new annotation\"}, \"update\": {\"url\": \"https://localhost:44301//api/annotations/:id\", \"method\": \"PUT\", \"desc\": \"Update an existing annotation\"}, \"delete\": {\"url\": \"https://localhost:44301//api/annotations/:id\", \"method\": \"DELETE\", \"desc\": \"Delete an annotation\"}}}}";
+            string baseServerName = System.Configuration.ConfigurationManager.AppSettings["serverName"];
+
+            string info = "{\"message\": \"Annotator Store API\",\"links\": {\"search\": {\"url\": \"" + baseServerName + "/api/annotations/search\", \"method\": \"GET\", \"desc\": \"Basic search API\"}, \"annotation\": {\"read\": {\"url\": \"" + baseServerName + "/api/annotations/:id\", \"method\": \"GET\", \"desc\": \"Get an existing annotation\"}, \"create\": {\"url\": \"" + baseServerName + "/api/annotations\", \"method\": \"POST\", \"desc\": \"Create a new annotation\"}, \"update\": {\"url\": \"" + baseServerName + "/api/annotations/:id\", \"method\": \"PUT\", \"desc\": \"Update an existing annotation\"}, \"delete\": {\"url\": \"" + baseServerName + "/api/annotations/:id\", \"method\": \"DELETE\", \"desc\": \"Delete an annotation\"}}}}";
             JObject json = JObject.Parse(info);
             return json;
         }
@@ -86,9 +88,21 @@ namespace h_store.Controllers
         {
          
             AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-            Annotation annotation = Utility.ExtensionAnnotationToAnnotation(extAnnotation);
+            Annotation updatedannotation = Utility.ExtensionAnnotationToAnnotation(extAnnotation);
+            Annotation annotation = objAnnotationRepository.getAnnotation(id);
+            if (annotation == null)
+                return null;
+
+            annotation.Updated = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            annotation.Text = updatedannotation.Text;
+            annotation.Tags = updatedannotation.Tags;
+            annotation.Permissions = updatedannotation.Permissions;
+            annotation.Document = updatedannotation.Document;
+
             annotation.UserID = (int)Utility.GetCurrentUserID();
             annotation.ID = (int)id;
+            
+
             if(objAnnotationRepository.UpdateAnnotation(annotation))
                 return extAnnotation;
 

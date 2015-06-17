@@ -11,6 +11,7 @@ using Model;
 //using Notocol.Models;
 using System.Data.SqlClient;
 using System.Data;
+using System.Collections;
 
 namespace Repository
 {
@@ -207,15 +208,60 @@ namespace Repository
             return lstSources;
         }
 
-        public IList<Source> Search(string keyword, string tagstring, long userID)
+        public IList<Source> Search(string keyword, long[] tagIDs, long userID)
         {
            
-           IList<Source> listSources= null;
-            using (GetDataContext())
+           IList<Source> listSources = new List<Source>();
+            
+            using (var con = new SqlConnection(GetDataContext().Database.Connection.ConnectionString))
             {
-                listSources = context.SearchForSource(keyword, tagstring, userID).ToList<Source>();
-                 
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand("SearchForSource", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@keywordStr", keyword);
+                    cmd.Parameters.AddWithValue("@userID", userID);
+
+
+                    var table = new DataTable();
+                    table.Columns.Add("TagID", typeof(long));
+
+                    for (int i = 0; i < tagIDs.Length; i++)
+                        table.Rows.Add(tagIDs[i]);
+
+                    var pList = new SqlParameter("@TagIDList", SqlDbType.Structured);
+                    pList.TypeName = "dbo.TagIDList";
+                    pList.Value = table;
+
+                    cmd.Parameters.Add(pList);
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            Source source = new Source();
+                            source.ID = Convert.ToInt64(dr["ID"].ToString());
+                            source.Link = dr["Link"].ToString();
+                            source.SourceURI = dr["SourceURI"].ToString();
+                            source.TagNames = dr["TagNames"].ToString();
+                            source.TagIDs = dr["TagIDs"].ToString();
+                            source.UserID = Convert.ToInt64(dr["UserID"].ToString());
+                            source.Title = dr["Title"].ToString();
+                            source.Summary = dr["Summary"].ToString();
+
+                            listSources.Add(source);
+                                
+                        }
+
+                    }
+                }
             }
+                    
+                    //listSources = context.SearchForSource(keyword, tagstring, userID).ToList<Source>();
+                
+                 
+            
             
             return listSources;
         }
@@ -231,5 +277,30 @@ namespace Repository
         //    UpdateSourceTagMapping(sourceID, tags);
         //}
 
+
+        public long AddSourceIfNotFound(Source source)
+        {
+            long sourceID = GetSourceIDFromSourceURI(source.SourceURI, source.UserID);
+            if (sourceID <= 0)
+            {
+                try
+                {
+                    using (GetDataContext())
+                    {
+                        context.Entry(source).State = EntityState.Added;
+                        context.SaveChanges();
+                        sourceID = source.ID;
+                    }
+                }catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
+            }
+            return sourceID;
+        }
     }
 }

@@ -14,5 +14,19 @@ namespace Notocol.Models
 
             return new TagRepository().SearchTags("", userID);
         }
+
+        public static IList<string> GetAllUserTagNames(long userID, string searchStr = "")
+        {
+            IList<Tag> tagList = new TagRepository().SearchTags(searchStr, userID);
+            IList<string> tagNames = new List<string>();
+
+            foreach (Tag tag in tagList)
+            {
+                tagNames.Add(tag.Name);
+            }
+            return tagNames;
+
+
+        }
     }
 }

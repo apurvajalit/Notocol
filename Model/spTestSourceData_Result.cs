@@ -22,7 +22,12 @@ namespace Model
         public Nullable<bool> SaveOffline { get; set; }
         public Nullable<bool> Privacy { get; set; }
         public Nullable<int> Rating { get; set; }
+        public string TagNames { get; set; }
+        public string TagIDs { get; set; }
         public Nullable<System.DateTime> ModifiedAt { get; set; }
+        public string SourceURI { get; set; }
+        public string ImpliedTagNames { get; set; }
+        public string ImpliedTagIDs { get; set; }
         public long ID1 { get; set; }
         public long SourceID { get; set; }
         public long TagsID { get; set; }

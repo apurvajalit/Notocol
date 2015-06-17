@@ -7,7 +7,7 @@ using Notocol.Models;
 
 namespace Notocol.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         //long userID = 0;
 
@@ -32,7 +32,8 @@ namespace Notocol.Controllers
         }
         public ActionResult Index(bool refresh = false)
         {
-            
+            Debug("Home Loaded");
+            //throw (new Exception("File not found"));
             ViewBag.Title = "Home Page";
            // SaveSource(null, null);
             
@@ -99,7 +100,8 @@ namespace Notocol.Controllers
 
             return View(TagHelper.GetAllUserTags(Convert.ToInt64(Session["userID"])));
         }
-        
+
+
 
         //public ActionResult MyTags()
         //{

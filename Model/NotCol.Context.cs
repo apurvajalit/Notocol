@@ -34,41 +34,20 @@ namespace Model
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
     
-        public virtual ObjectResult<Source> SearchForSource(string keywordStr, string tagStr, Nullable<long> userID)
+        public virtual ObjectResult<Nullable<int>> GetTagID(string tagName, Nullable<int> userID, ObjectParameter tagID)
         {
-            var keywordStrParameter = keywordStr != null ?
-                new ObjectParameter("keywordStr", keywordStr) :
-                new ObjectParameter("keywordStr", typeof(string));
-    
-            var tagStrParameter = tagStr != null ?
-                new ObjectParameter("tagStr", tagStr) :
-                new ObjectParameter("tagStr", typeof(string));
+            var tagNameParameter = tagName != null ?
+                new ObjectParameter("TagName", tagName) :
+                new ObjectParameter("TagName", typeof(string));
     
             var userIDParameter = userID.HasValue ?
-                new ObjectParameter("userID", userID) :
-                new ObjectParameter("userID", typeof(long));
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Source>("SearchForSource", keywordStrParameter, tagStrParameter, userIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetTagID", tagNameParameter, userIDParameter, tagID);
         }
     
-        public virtual ObjectResult<Source> SearchForSource(string keywordStr, string tagStr, Nullable<long> userID, MergeOption mergeOption)
-        {
-            var keywordStrParameter = keywordStr != null ?
-                new ObjectParameter("keywordStr", keywordStr) :
-                new ObjectParameter("keywordStr", typeof(string));
-    
-            var tagStrParameter = tagStr != null ?
-                new ObjectParameter("tagStr", tagStr) :
-                new ObjectParameter("tagStr", typeof(string));
-    
-            var userIDParameter = userID.HasValue ?
-                new ObjectParameter("userID", userID) :
-                new ObjectParameter("userID", typeof(long));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Source>("SearchForSource", mergeOption, keywordStrParameter, tagStrParameter, userIDParameter);
-        }
-    
-        public virtual ObjectResult<Tag> GetTags(Nullable<long> userID, string strToSearch)
+        public virtual ObjectResult<GetTags_Result> GetTags(Nullable<long> userID, string strToSearch)
         {
             var userIDParameter = userID.HasValue ?
                 new ObjectParameter("userID", userID) :
@@ -78,20 +57,7 @@ namespace Model
                 new ObjectParameter("strToSearch", strToSearch) :
                 new ObjectParameter("strToSearch", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Tag>("GetTags", userIDParameter, strToSearchParameter);
-        }
-    
-        public virtual ObjectResult<Tag> GetTags(Nullable<long> userID, string strToSearch, MergeOption mergeOption)
-        {
-            var userIDParameter = userID.HasValue ?
-                new ObjectParameter("userID", userID) :
-                new ObjectParameter("userID", typeof(long));
-    
-            var strToSearchParameter = strToSearch != null ?
-                new ObjectParameter("strToSearch", strToSearch) :
-                new ObjectParameter("strToSearch", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Tag>("GetTags", mergeOption, userIDParameter, strToSearchParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTags_Result>("GetTags", userIDParameter, strToSearchParameter);
         }
     
         public virtual int SaveSource(string tags, Nullable<long> userID, string title, string link, string summary, Nullable<bool> readLater, Nullable<bool> saveOffline, Nullable<bool> privacy, Nullable<int> rating)
@@ -135,17 +101,27 @@ namespace Model
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SaveSource", tagsParameter, userIDParameter, titleParameter, linkParameter, summaryParameter, readLaterParameter, saveOfflineParameter, privacyParameter, ratingParameter);
         }
     
-        public virtual ObjectResult<Nullable<long>> GetTagID(string tagName, Nullable<int> userID, ObjectParameter tagID)
+        public virtual int sp_UseStringList()
         {
-            var tagNameParameter = tagName != null ?
-                new ObjectParameter("TagName", tagName) :
-                new ObjectParameter("TagName", typeof(string));
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_UseStringList");
+        }
+    
+        public virtual ObjectResult<spTestSourceData_Result> spTestSourceData()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spTestSourceData_Result>("spTestSourceData");
+        }
+    
+        public virtual int SearchForSource(string keywordStr, Nullable<long> userID)
+        {
+            var keywordStrParameter = keywordStr != null ?
+                new ObjectParameter("keywordStr", keywordStr) :
+                new ObjectParameter("keywordStr", typeof(string));
     
             var userIDParameter = userID.HasValue ?
-                new ObjectParameter("UserID", userID) :
-                new ObjectParameter("UserID", typeof(int));
+                new ObjectParameter("userID", userID) :
+                new ObjectParameter("userID", typeof(long));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<long>>("GetTagID", tagNameParameter, userIDParameter, tagID);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SearchForSource", keywordStrParameter, userIDParameter);
         }
     }
 }

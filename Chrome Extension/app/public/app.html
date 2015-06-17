@@ -51,16 +51,32 @@
       <a class="pull-right" href=""
          ng-click="login()"
          ng-switch-when="null">Sign in</a>
+        
+      <!--<input type="text" id="tags" style="border:hidden; height:26px" placeholder="Enter page tags"/>-->
+        <!--<div ng-controller="pageTagsCtrl">
+            <tags-input ng-model="pageTags">
+                <auto-complete source="loadTags($query)"></auto-complete>
+            </tags-input>
+            <p>Model: {{tags}}</p>
+        </div>-->
 
+            
+        
       <!-- Searchbar -->
-      <div class="simple-search"
+      <!--<div class="simple-search"
            query="search.query"
            on-search="search.update(query)"
-           on-clear="search.clear()"></div>
+           on-clear="search.clear()"></div>-->
       <!-- / Searchbar -->
     </div>
   </div>
+    <br />
   <!-- / Toolbar -->
+    <div class="simple-search"
+               query="search.query"
+               on-search="search.update(query)"
+               on-clear="search.clear()"></div>
+
 
   <!-- Wrapper -->
   <div id="wrapper" whenscrolled="loadMore(10)">
@@ -806,6 +822,7 @@
     <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/app.min.js?0e8a6f58"></script>
   
     <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/account.min.js?e471e393"></script>
+    
   
 
   </body>
