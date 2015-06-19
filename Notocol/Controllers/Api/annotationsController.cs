@@ -110,12 +110,20 @@ namespace h_store.Controllers
         }
 
 
-        //[System.Web.Http.HttpDelete]
-        ////[Route("api/Annotation/annotations/{id}")]
-        //public System.Web.Mvc.ActionResult annotationsDelete(long id, [FromBody] Annotation req)
-        //{
-        //    return new System.Web.Mvc.HttpStatusCodeResult(HttpStatusCode.NoContent);
-        //}
+        [System.Web.Http.HttpDelete]
+        //[Route("api/Annotation/annotations/{id}")]
+        public JObject annotationsDelete(long id)
+        {
+            AnnotationRepository annotationRespository = new AnnotationRepository();
+            string successResult = "{\"deleted\": true, \"id\": \""+id+"\"}";
+            string failedResult = "{\"deleted\": false, \"id\": \""+id+"\"}";
+
+            if(annotationRespository.DeleteAnnotation(id, Utility.GetCurrentUserID()))
+                return JObject.Parse(successResult);
+            else
+                return JObject.Parse(failedResult);
+
+        }
 
       }
 }

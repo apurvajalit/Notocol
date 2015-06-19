@@ -38,7 +38,8 @@
                                 {
                                     for (i = 0; i < tagNames.Length; i++)
                                     {
-                                        <li><a href=@tagIDs[i]><span class="label label-default"> @tagNames[i]</span></a> </li>
+                                        var tagName = "\""+tagNames[i]+"\"";
+                                        <li><a href="#" onclick="AddTagToTagInput(@tagName)"><span class="label label-default"> @tagNames[i]</span></a> </li>
     
                                     }
                                 }

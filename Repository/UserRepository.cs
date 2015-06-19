@@ -20,9 +20,19 @@ namespace Repository
             {
                 using (GetDataContext())
                 {
-                    context.Entry(user).State = EntityState.Added ;
-                    context.SaveChanges();
-                    
+                    List<long> existingUsers = (from users in context.Users
+                                   where users.Email == user.Email || users.Username == user.Username
+                                   select users.ID).ToList();
+
+                    if (existingUsers.Count == 0)
+                    {
+                        context.Entry(user).State = EntityState.Added;
+                        context.SaveChanges();
+
+                    }
+                    else return -1;
+ 
+                                        
                 }
             }
             catch 
@@ -37,7 +47,7 @@ namespace Repository
             return user.ID;
         }
 
-        public long checkUser(string username, string password, string identifier, out User userDB)
+        public long GetAuthorisedUser(string username, string password, string identifier, out User userDB)
         {
 
             User user;
@@ -47,7 +57,7 @@ namespace Repository
                 using (GetDataContext())
                 {
                     user = (from userEntry in context.Users
-                                  where userEntry.Username == username
+                                  where userEntry.Username == username 
                                   select userEntry).ToList().FirstOrDefault<User>();
                 }
             }

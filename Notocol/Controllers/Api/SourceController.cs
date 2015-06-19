@@ -8,6 +8,7 @@ using Model;
 using Notocol.Models;
 using Repository;
 using Model.Extended.Extension;
+using Model.Extended;
 
 namespace Notocol.Controllers.Api
 {
@@ -36,15 +37,15 @@ namespace Notocol.Controllers.Api
         //}
 
 
-        [HttpGet]
-        [Route("api/Source/Search/")]
-        public IList<Source> Search(string keyword="", long[] tagIDs=null)
-        {
-            long userID = Convert.ToInt64(Request.Properties["userID"]);
-            SourceRepository obSourceRepository = new SourceRepository();
-            return obSourceRepository.Search(keyword, tagIDs, userID);
+        //[HttpGet]
+        //[Route("api/Source/Search/")]
+        //public IList<SourceItem> Search(string keyword="", long[] tagIDs=null)
+        //{
+        //    long userID = Convert.ToInt64(Request.Properties["userID"]);
+        //    SourceRepository obSourceRepository = new SourceRepository();
+        //    return obSourceRepository.Search(keyword, tagIDs, userID);
              
-        }
+        //}
 
         [HttpPost]
         public long UpdateSource([FromBody]SourceDataForBookmark sourceData)

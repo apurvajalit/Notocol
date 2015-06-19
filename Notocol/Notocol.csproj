@@ -353,8 +353,11 @@
     <Content Include="Views\Home\LogIn.cshtml" />
     <None Include="Views\Account\Login.cshtml" />
     <None Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Notes\Note.cshtml" />
+    <Content Include="Views\Home\Welcome.cshtml" />
     <None Include="Views\oauth2\LogOn.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Source\SourceItemsWithUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -54,31 +54,49 @@ namespace Repository
             return 0;
         }
         
-        public IList<Tag> SearchTags(string charactersToSearch,long userID)
+
+        public IList<String> SearchTags(string charactersToSearch, long userID = -1)
         {
-            IList<Tag> lstTags = null;
+            IList<String> lstTags = null;
             try
             {
                 using (GetDataContext())
                 {
                     if (charactersToSearch == "")
                     {
-                        lstTags = (from tags in context.Tags
-                                   where tags.UserID == userID
-                                   orderby tags.Name
-                                   select tags).ToList();
+                        if(userID > -1){
+                            lstTags = (from tags in context.Tags
+                                       where tags.UserID == userID && tags.Name.Contains(charactersToSearch)
+                                       orderby tags.Name
+
+                                       select tags.Name)
+                                       .ToList();
+                        }
+                        else
+                        {
+                            lstTags = (from tags in context.Tags
+                                       where tags.Name.Contains(charactersToSearch)
+                                       orderby tags.Name
+                                       select tags.Name).Distinct().ToList();
+                        }
                     }
                     else
                     {
-                        lstTags = (from tags in context.Tags
+                        if (userID > 1) { 
+                            lstTags = (from tags in context.Tags
                                    where tags.Name.Contains(charactersToSearch) && tags.UserID == userID
-                                   select tags).ToList();
+                                   select tags.Name).ToList();
+                        }
+                        else
+                        {
+                            lstTags = (from tags in context.Tags
+                                       where tags.Name.Contains(charactersToSearch)
+                                       select tags.Name).Distinct().ToList();
+                        }
                     }
 
                 }
-            }
-            catch
-            {
+            }catch{
                 throw;
             }
             finally
@@ -203,10 +221,9 @@ namespace Repository
         {
             try
             {
-                using (GetDataContext())
+                foreach (long tagID in tagIDs)          
                 {
-                    foreach (long tagID in tagIDs)
-                    {
+                    using (GetDataContext()){
                         SourceTag objSourceTag = new SourceTag();
                         objSourceTag.SourceID = sourceID;
                         objSourceTag.TagsID = tagID;
@@ -223,10 +240,8 @@ namespace Repository
                         }
                         finally
                         {
-                            context.SourceTags.Remove(objSourceTag);
+                            
                         }
-
-                        
                     }
                     
                 }
@@ -309,5 +324,35 @@ namespace Repository
             return tagList;
         }
 
-     }
+
+        public IList<long> GetTagIDs(string[] tagStrings, long userID = -1)
+        {
+            IList<long> tagIDList = null;
+            try
+            {
+                using (GetDataContext())
+                {
+                    if (userID > -1) {
+                        tagIDList = (from tags in context.Tags.Where(t => t.UserID == userID && tagStrings.Contains(t.Name))
+                               select tags.ID).ToList();
+                    }
+                    else
+                    {
+                        tagIDList = (from tags in context.Tags.Where(t => tagStrings.Contains(t.Name))
+                                     select tags.ID).ToList();
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return tagIDList;
+            
+        }
+    }
 }   

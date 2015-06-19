@@ -174,7 +174,7 @@ namespace h_store.Controllers.Api
                 Model.User userDB = null;
                 // user.username = "acct:" + user.username + "@hypothes.is";
                 //Request has come from the application
-                long ret = objUserRepository.checkUser(user.Username, user.Password, null, out userDB);
+                long ret = objUserRepository.GetAuthorisedUser(user.Username, user.Password, null, out userDB);
                 if (ret <= 0)
                 {
 

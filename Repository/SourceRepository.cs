@@ -12,6 +12,7 @@ using Model;
 using System.Data.SqlClient;
 using System.Data;
 using System.Collections;
+using Model.Extended;
 
 namespace Repository
 {
@@ -48,6 +49,7 @@ namespace Repository
                 using (GetDataContext())
                 {
                     objSource.TagNames = tagNames;
+                    objSource.ModifiedAt = DateTime.Now;
                     context.Entry(objSource).State = objSource.ID == 0 ? EntityState.Added : EntityState.Modified;
                     context.SaveChanges();
                     sourceID = objSource.ID;
@@ -130,6 +132,35 @@ namespace Repository
 
         }
 
+        public Source GetSourceFromSourceURI(string sourceURI, long userID)
+        {
+            
+            IList<Source> lstSource = null;
+
+            try
+            {
+                using (GetDataContext())
+                {
+                    lstSource = (from sources in context.Sources
+                                 where sources.UserID == userID && sources.SourceURI == sourceURI
+                                 select sources).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+
+            }
+
+            if (lstSource.Count() > 0)
+                return lstSource.First();
+
+            return null;
+
+        }
         //public SourceDataForExtension getSourceData(string pageURL, long userID)
         //{
         //    SourceDataForExtension sourceData = new SourceDataForExtension();
@@ -208,11 +239,10 @@ namespace Repository
             return lstSources;
         }
 
-        public IList<Source> Search(string keyword, long[] tagIDs, long userID)
+        public IList<SourceItem> Search(string keyword, IList<long> tagIDs, long userID = -1)
         {
-           
-           IList<Source> listSources = new List<Source>();
-            
+
+            IList<SourceItem> sourceList = new List<SourceItem>();           
             using (var con = new SqlConnection(GetDataContext().Database.Connection.ConnectionString))
             {
                 con.Open();
@@ -221,14 +251,14 @@ namespace Repository
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@keywordStr", keyword);
-                    cmd.Parameters.AddWithValue("@userID", userID);
+                    if(userID > -1)cmd.Parameters.AddWithValue("@userID", userID);
 
 
                     var table = new DataTable();
                     table.Columns.Add("TagID", typeof(long));
 
-                    for (int i = 0; i < tagIDs.Length; i++)
-                        table.Rows.Add(tagIDs[i]);
+                    foreach(long id in tagIDs)
+                        table.Rows.Add(id);
 
                     var pList = new SqlParameter("@TagIDList", SqlDbType.Structured);
                     pList.TypeName = "dbo.TagIDList";
@@ -240,30 +270,22 @@ namespace Repository
                     {
                         while (dr.Read())
                         {
-                            Source source = new Source();
+                            SourceItem source = new SourceItem();
                             source.ID = Convert.ToInt64(dr["ID"].ToString());
+                            source.Title = dr["Title"].ToString();
                             source.Link = dr["Link"].ToString();
-                            source.SourceURI = dr["SourceURI"].ToString();
+                            source.Summary = dr["Summary"].ToString();
                             source.TagNames = dr["TagNames"].ToString();
                             source.TagIDs = dr["TagIDs"].ToString();
-                            source.UserID = Convert.ToInt64(dr["UserID"].ToString());
-                            source.Title = dr["Title"].ToString();
-                            source.Summary = dr["Summary"].ToString();
-
-                            listSources.Add(source);
+                            source.UserName = (dr["Username"].ToString());
+                            sourceList.Add(source);
                                 
                         }
 
                     }
                 }
             }
-                    
-                    //listSources = context.SearchForSource(keyword, tagstring, userID).ToList<Source>();
-                
-                 
-            
-            
-            return listSources;
+            return sourceList;
         }
 
         
@@ -287,6 +309,7 @@ namespace Repository
                 {
                     using (GetDataContext())
                     {
+                        source.ModifiedAt = DateTime.Now;
                         context.Entry(source).State = EntityState.Added;
                         context.SaveChanges();
                         sourceID = source.ID;
@@ -301,6 +324,31 @@ namespace Repository
                 }
             }
             return sourceID;
+        }
+
+        public void UpdateSourcePrivacy(Source source, bool pagePrivate)
+        {
+            try
+            {
+                using (GetDataContext())
+                {
+                    
+                        source.ModifiedAt = DateTime.Now;
+                        source.Privacy = pagePrivate;
+                        context.Entry(source).State = source.ID == 0 ? EntityState.Added : EntityState.Modified;
+                        context.SaveChanges();
+                    
+                    
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
         }
     }
 }

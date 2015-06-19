@@ -12,18 +12,26 @@ namespace Notocol.Controllers
     public class TagController : Controller
     {
         // GET: Tag
-        public JsonResult GetCurrentUserTagNames(string searchStr = "")
+        //public JsonResult GetCurrentUserTagNames(string q = "")
+        //{
+
+        //    long userID = Utility.GetCurrentUserID(); 
+        //    return Json(TagHelper.GetCurrentUserTagNames(userID, q), JsonRequestBehavior.AllowGet);
+
+        //}
+
+        public JsonResult GetAllUserTags(string q = "")
         {
 
-            long userID = Utility.GetCurrentUserID(); 
-            return Json(TagHelper.GetAllUserTagNames(userID, searchStr), JsonRequestBehavior.AllowGet);
+           
+            return Json(TagHelper.GetAllUserTag(q), JsonRequestBehavior.AllowGet);
 
         }
 
-        public JsonResult GetCurrentUserTags()
+        public JsonResult GetCurrentUserTags(string q = "")
         {
-            long userID = Convert.ToInt64(Session["userID"]);
-            return Json(TagHelper.GetAllUserTags(userID), JsonRequestBehavior.AllowGet);
+            
+            return Json(TagHelper.GetCurrentUserTag(Utility.GetCurrentUserID(),q), JsonRequestBehavior.AllowGet);
             
 
         }

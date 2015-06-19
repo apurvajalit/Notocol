@@ -12,10 +12,10 @@ namespace Notocol.Controllers.Api
     {
         
         [HttpGet]
-        public IList<Tag> Tags(string strSearch="")
+        public IList<String> Tags(string strSearch="")
         {
             TagRepository objTagRepository = new TagRepository();
-            IList<Tag> searchTags = objTagRepository.SearchTags(strSearch,  Convert.ToInt64(Request.Properties["userID"]));
+            IList<String> searchTags = objTagRepository.SearchTags(strSearch,  Convert.ToInt64(Request.Properties["userID"]));
             return searchTags;
         }
 
@@ -36,17 +36,18 @@ namespace Notocol.Controllers.Api
         }
 
         [HttpGet]
-        public string GetPageTags(string uri)
+        public TagDataForBookmark GetPageTags(string uri)
         {
             TagRepository tagRepository = new TagRepository();
             SourceRepository sourceRepository = new SourceRepository();
             string tagStringValues = "";
-            long sourceID = 0, userID = 0;
-
+            long userID = 0;
+            Source source = null;
+            TagDataForBookmark returnValues = new TagDataForBookmark();
             if((userID = Utility.GetCurrentUserID()) > 0 
-                && ((sourceID = sourceRepository.GetSourceIDFromSourceURI(uri, userID)) > 0)) 
+                && ((source = sourceRepository.GetSourceFromSourceURI(uri, userID)) != null)) 
             {
-                IList<Tag> tagList = tagRepository.GetTagsForSource(sourceID);
+                IList<Tag> tagList = tagRepository.GetTagsForSource(source.ID);
                 if(tagList != null){
                     foreach (Tag tag in tagList)
                     {
@@ -59,16 +60,22 @@ namespace Notocol.Controllers.Api
                 }
             
             }
-            return tagStringValues;
+            returnValues.tag = tagStringValues;
+            returnValues.isPrivate = source.Privacy== true?true:false;
+            return returnValues;
         }
 
         [HttpPost]
         public bool UpdatePageTags(TagDataForBookmark tagData)
         {
-            long sourceID = new SourceRepository().GetSourceIDFromSourceURI(tagData.source, Utility.GetCurrentUserID());
-            if(sourceID > 0){
+            SourceRepository sourceRepository = new SourceRepository();
+            Source source = sourceRepository.GetSourceFromSourceURI(tagData.source, Utility.GetCurrentUserID());
+            if(source != null){
+                if (source.Privacy != tagData.isPrivate)
+                    sourceRepository.UpdateSourcePrivacy(source, tagData.isPrivate);
+
                 TagRepository tagRepository = new TagRepository();
-                tagRepository.UpdateUserTagsForSource(Utility.GetCurrentUserID(),sourceID, tagData.tag.Split(','));
+                tagRepository.UpdateUserTagsForSource(Utility.GetCurrentUserID(),source.ID, tagData.tag.Split(','));
                 
             }
             return true;

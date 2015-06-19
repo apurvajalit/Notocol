@@ -1,6 +1,4 @@
-﻿@using Model
-@model IList<Tag>
-@{
+﻿@{
     
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -71,6 +69,16 @@
         left: 5px;
         font-size:12px ;
         /*background-color:#F9F9F9;*/
+        
+    }
+    .page-box-footer{
+        
+        
+    }
+    .page-user-info{
+        position: absolute;
+        bottom: -5px;
+        left: 5px;
         
     }
     .viewNotesButton{
@@ -145,54 +153,45 @@
     }*/
 </style>
 <link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
-<div id="searchBar" >
-    <div class="row top-buffer">
+<div>
+    <div id="searchBar" class="row top-buffer">
         <div class="col-sm-12">
             <div class="col-sm-12 text-center">
                 <form class="form-inline" role="form" id="searchParamters" style="min-width:100%">
                     <label class="sr-only" id="keywordlabel"></label>
-                    <input type="text" class="form-control" id="keyword" placeholder="Enter keywords for search">
+                    <input type="text" class="form-control" id="keyword" placeholder="Enter keywords for search" value=@ViewBag.QueryFilter>
                     <label id="tag-tree">under</label>
-                    <input type="text" id="filterTag" data-provide="typeahead" placeholder="Enter tags to filter">
+                    <input type="text" id="filterTag"  data-provide="typeahead" placeholder="Enter tags to filter">
                     @*<button class="btn btn-default" id="searchForPages">Search</button>*@
                 </form>
                 <br />
-            </div> 
+            </div>
         </div>
-</div>
-    
-<hr size="2" />
+    </div>
+    <hr size="2" />
 
-    <div class="row">
+    <div class="row" id="tabs">
         <div class="col-sm-12">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#">My Collection</a></li>
-                <li><a href="#">Others</a></li>
+                <li class="active" data-toggle="tab" value=0><a href="#">My Collection</a></li>
+                <li data-toggle="tab" value=1><a href="#">Others</a></li>
              </ul>
         </div>
     </div>
 
-<div id="dashboard-data" >
-    <div class="row">
-        <div class="top-buffer">
-            
+    <div id="dashboard-data" >
+        <div class="row top-buffer">
             <div class="col-sm-12">
                 <button type="button" class="btn btn-default" style="float:right" id="refreshPages"><span class="glyphicon glyphicon-refresh"></span></button>
             </div>
-        </div>
-    </div>
-
-    <br />
-    <div class="row top-buffer" style="min-height: 100vh">
-        <div class="col-sm-12 min-content-height ">
-            <div id="pages" class="container table-container">
-
-
+       </div>
+        <br />
+        <div class="row top-buffer" style="min-height: 100vh">
+            <div class="col-sm-12 min-content-height ">
+                <div id="pages" class="container table-container"></div>
             </div>
-
         </div>
     </div>
-
 </div>
 
 @section scripts
@@ -201,46 +200,22 @@
     <script src="~/Scripts/bootstrap-tagsinput.js" type="text/javascript"></script>
     
     <script>
-        //var baseServerName = '<%=ConfigurationManager.AppSettings["serverName"]%>';
-        //alert(serverName);
-        var tagNamesUrl = "/Tag/GetCurrentUserTags";
-        $.get(tagNamesUrl, function(tagData){
-     
-            $('#filterTag').tagsinput({
-                itemValue: 'ID',
-                itemText: 'Name',
-                typeahead: {
-                    displayKey: 'Name',
-                    source: tagData,
-                    afterSelect: function (val) {
-                       this.$element.val("");
-                    },
-                    displayText:function(a) {
-                        return a
-                    },
-                    autoSelect: true
-                }
-            });
-        },'json');
+    var getOwnTagNamesUrl = "/Tag/GetCurrentUserTags";
+    var getAllTagNamesUrl = "/Tag/GetAllUserTags";
+    var searchTagString= "";
+    var sourceListUrl = "/Source/SourceItems";
+    var urlToUse = getOwnTagNamesUrl;
+    var tabSelected = 0;
 
-      
-
-    </script>
-    
-    <script>
-
-
-        var searchTagString= "";
-        function getPages() {
-            var keywordsEntered = $('#keyword').val();
-            var tagsEntered = $('#filterTag').val();
-            
-            var userID = '@Session["userID"]';
+    function GetPages() {
+        var keywordsEntered = $('#keyword').val();
+        var tagsEntered = $('#filterTag').val();
+        var userID = '@Session["userID"]';
             $.ajax({
                 // Reload the pages based on current given filter
-                url: "/Source/SourceItems",
+                url: sourceListUrl,
                 type: 'Get',
-                data: { "keywordFilter": keywordsEntered, "tagFilter": tagsEntered, "userID": userID},
+                data: { "keywordFilter": keywordsEntered, "tagFilter": tagsEntered,"tab": tabSelected},
                 datatype: 'html'
             })
             .success(function (data) {
@@ -250,32 +225,87 @@
             })
             .error(function(xhr, status){
                 console.log("something seems wrong with status " + status + " " + xhr);
-                setTimeout(getPages, 5000);
+                setTimeout(GetPages, 5000);
 
             });
         }
 
+        function UpdateTagNameSource(){
+            urlToUse = (tabSelected == "0")?getOwnTagNamesUrl:getAllTagNamesUrl;
+
+            //$.get(urlToUse, function(tagData){
+            //    alert("Tag data fetched!");
+            var autocomplete = $('#filterTag').typeahead();
+            autocomplete.data('typeahead').source = function (query, process) {
+                return $.get(urlToUse+'?q=' + query);
+            }
+        }
+
+        function AddTagToTagInput(value){
+            //var element = {};
+            //element.Name = value;
+            $('#filterTag').tagsinput('add', value);
+        };
+
         $(function(){
-            //Fetch all user tags
-            getPages();
-            $("#refreshPages").on("click", function () {
-                getPages();
+
+            var prefilledTags = '@(ViewBag.TagFilter)';
+            
+            $('#filterTag').tagsinput({
+                //itemValue: 'Name',
+                //itemText: 'Name',
+                typeahead: {
+                    source: function (query, process) {
+                        return $.get(urlToUse+'?q=' + query);
+                    },
+                    //displayKey: 'Name',
+                    //source: tagData,
+                    afterSelect: function (val) {
+                    this.$element.val("");
+                },
+                displayText:function(a) {
+                    return a
+                },
+                autoSelect: true,
+                
+                }
             });
 
-            $("#searchForPages").on("click", function () {
-                getPages();
-            });
-            
-            $("#filterTag").on("change", getPages);
-            $('#keyword').on("keyup", getPages);
-            $(".dropdown-menu li a").click(function(){
-                var selText = $(this).text();
-                $(this).parents('.btn-group').find('.dropdown-toggle').html(selText+' <span class="caret"></span>');
-                if(selText == "All tags") searchTagString = "";
-                else searchTagString=selText;
-                getPages();
-            });
+            if(prefilledTags){
+                $.each(prefilledTags.split(','), function(index, value) {
+                    AddTagToTagInput(value);
+                });
+                
+            }
+        GetPages();
+        $('[data-toggle="tab"]').click(function(e) {
+            var $this = $(this);
+            tabSelected = $this.attr('value');
+            GetPages();
+            UpdateTagNameSource();
+            $this.tab('show');
+
+            return false;
         });
+
+        $("#refreshPages").on("click", function () {
+            GetPages();
+        });
+
+        $("#searchForPages").on("click", function () {
+            GetPages();
+        });
+
+        $("#filterTag").on("change", GetPages);
+        $('#keyword').on("keyup", GetPages);
+
+    });
+
+
+
+    </script>
+    
+    <script>
 
         
 

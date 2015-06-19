@@ -9,24 +9,25 @@ namespace Notocol.Models
 {
     public class TagHelper
     {
-        public static IList<Tag> GetAllUserTags(long userID)
+        public static IList<String> GetAllUserTag(string searchStr = "")
         {
+            return new TagRepository().SearchTags(searchStr);
+            
+        }
+        public static IList<String> GetCurrentUserTag(long userID, string searchStr = "")
+        {
+           return new TagRepository().SearchTags(searchStr, userID);
 
-            return new TagRepository().SearchTags("", userID);
         }
 
-        public static IList<string> GetAllUserTagNames(long userID, string searchStr = "")
+        public static IList<long> GetCurrentUserIDs(long userID, string[] tagStrings)
         {
-            IList<Tag> tagList = new TagRepository().SearchTags(searchStr, userID);
-            IList<string> tagNames = new List<string>();
-
-            foreach (Tag tag in tagList)
-            {
-                tagNames.Add(tag.Name);
-            }
-            return tagNames;
-
-
+            return new TagRepository().GetTagIDs(tagStrings, userID);
         }
+        public static IList<long> GetAllUserTagIDs(string[] tagStrings)
+        {
+            return new TagRepository().GetTagIDs(tagStrings);
+        }
+        
     }
 }

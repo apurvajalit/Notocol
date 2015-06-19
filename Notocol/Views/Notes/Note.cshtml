@@ -1,0 +1,44 @@
+﻿@model Model.Extended.NoteData
+
+@{
+    ViewBag.Title = "Note";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .noteBox {
+        border-style: groove;
+        padding-top: 10px;
+        background-color: lightgrey;
+        border-width: thin;
+        border-radius: 10px;
+        font-style: italic;
+    }
+</style>
+
+
+@{if (Model == null){
+      <p>Note not found</p>
+  }
+  else
+  {
+      var quotedText = "\"" + Model.QuotedText + "\"";
+
+    
+    <div class="panel panel-info">  
+        <div class="panel-heading">
+            Note from <a href=@Model.pageURL>@Model.pageTitle </a>
+        </div>
+        
+        <div class="panel-body " >
+            <div class="well well-sm" style="font-style:italic"> @quotedText </div>
+            @Model.NoteText
+        </div>
+
+        <div class="panel-footer">
+            
+        </div>
+    </div>
+    
+    
+}}

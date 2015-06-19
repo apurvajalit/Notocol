@@ -10,5 +10,8 @@ namespace Model.Extended
     {
         public string NoteText;
         public string QuotedText;
+        public string pageTitle;
+        public string pageURL;
+        
     }
 }

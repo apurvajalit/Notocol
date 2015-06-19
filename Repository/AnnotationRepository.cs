@@ -331,5 +331,30 @@ namespace Repository
         ////    return true;
         ////}
 
+
+        public bool DeleteAnnotation(long id, long userID)
+        {
+            Annotation annotation = getAnnotation(id);
+            if (annotation == null || annotation.UserID != userID)
+                return false;
+
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.Entry(annotation).State = EntityState.Deleted;
+                    context.SaveChanges();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return true;
+        }
     }
 }

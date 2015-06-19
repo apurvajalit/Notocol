@@ -11,70 +11,37 @@
         
      }
 </style>
-<div class="jumbotron">
-    <h1>@ConfigurationManager.AppSettings["proj"]</h1>
-    <p class="lead">Your Smart Study Assistant </p>
-    <p><a href="@Url.Action("AboutUs")" class="btn btn-primary btn-lg">Get started &raquo;</a></p>
-</div>
+
+    <div class="row">
+        
+        <div class="col-sm-12">
+            <div class="jumbotron">
+                <h1>@ConfigurationManager.AppSettings["proj"]</h1>
+                <p class="lead"></p>
+                <p><a href="@Url.Action("AboutUs")" class="btn btn-primary btn-lg">Download the tool &raquo;</a></p>
+            </div>
+        </div>
+        
+    </div>
+
 <div class="row">
     <div class="col-md-4">
         <h2>Annotate</h2>
         <p>Highlight, comment or add notes. Annotate for your own reference later</p>
-        <p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>
+        @*<p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>*@
     </div>
 
     <div class="col-md-4">
         <h2>Organize</h2>
-        <p>Compile and organize the content you find useful by mantaining tags and ratings you associate with it</p>
-        <p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>
+        <p>Compile and organize the content you find useful by tagging pages as you like</p>
+        @*<p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>*@
     </div>
  
     <div class="col-md-4">
         <h2>Share and Discover</h2>
         <p>Easily share your content compilations and also discover relevant content that others loved</p>
-        <p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>
+        @*<p><a class="btn btn-default" href="@Url.Action("AboutUs")">Learn more &raquo;</a></p>*@
     </div>
 </div>
-<div>
-    <p> Action link below!</p>
-    <button class="btn btn-group-xs btn-xs" data-toggle="modal" data-target="#myModal">View notes</button>
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Hello world!</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-@section scripts
-{
-    <script>
-        $(document).ready(function () {
-            $("#MyModal").modal();
-        });
-    </script>
 
-    <script>
-        $(function () {
-            //if (@ViewBag.RefreshExtension ) {
-                // The ID of the extension we want to talk to.
-                var editorExtensionId = "kdnpencneajimjghgpodkjilppipomop";
-                // Make a simple request:
-                chrome.runtime.sendMessage(editorExtensionId, { reloadExtension: "true" },
-                  function (response) {
-                  });
-            //}
-        });
-     </script>
-
-
-}
 

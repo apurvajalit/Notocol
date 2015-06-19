@@ -14,5 +14,6 @@ namespace Model.Extended
         public string Summary;
         public string TagNames;
         public string TagIDs;
+        public string UserName;
     }
 }

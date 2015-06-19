@@ -1,4 +1,5 @@
 ﻿using Notocol.Models;
+using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +11,22 @@ namespace Notocol.Controllers
     public class SourceController : Controller
     {
         // GET: Source
-        public ActionResult SourceItems(string keywordFilter = "", string tagFilter = "")
+        public ActionResult SourceItems(string keywordFilter = "", string tagFilter = "", int tab = 0)
         {
 
             long userID = Utility.GetCurrentUserID();
-            //string[] tags = { "abc", "def" };
-            
+             
 
-            long[] tagIDs = { };
+            IList<long> tagIDs = new List<long>();
             if (tagFilter != "")
             {
-                string[] tags = tagFilter.Split(','); 
-                tagIDs = Array.ConvertAll(tags, s => long.Parse(s));
+                string[] tags = tagFilter.Split(',');
+                tagIDs = (tab == 0) ? TagHelper.GetCurrentUserIDs(userID, tagFilter.Split(',')) : TagHelper.GetAllUserTagIDs(tagFilter.Split(','));
             }
-            return PartialView(SourceHelper.GetSourceItems(keywordFilter, tagIDs, userID));
+            if(tab == 0)
+                return PartialView(SourceHelper.GetSourceItems(keywordFilter, tagIDs, userID, true));
+            else
+                return PartialView("SourceItemsWithUser",SourceHelper.GetSourceItems(keywordFilter, tagIDs, userID, false));
         }
     }
 }

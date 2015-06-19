@@ -10,6 +10,8 @@ namespace Model.Extended.Extension
     {
         public string source { get; set; }
         public string tag { get; set; }
+        public bool isPrivate { get; set; }
+        
 
     }
 }

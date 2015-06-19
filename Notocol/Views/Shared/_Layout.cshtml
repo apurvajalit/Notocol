@@ -61,9 +61,8 @@
                     }
                     @if (user == null)
                     {
-                        <li>@Html.ActionLink("Register", "Login", "Home", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "glyphicon glyphicon-user" })</li>
-                        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "glyphicon glyphicon-log-in" })</li>
-                    }
+                        <li>@Html.ActionLink("Login", "Login", "Home", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "glyphicon glyphicon-user" })</li>
+                     }
                     else
                     {
                         <li class="dropdown">
