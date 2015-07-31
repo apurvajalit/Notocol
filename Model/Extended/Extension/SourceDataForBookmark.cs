@@ -11,5 +11,7 @@ namespace Model.Extended.Extension
         public string sourceLink { get; set; }
         public string sourceURI { get; set; }
         public string title { get; set; }
+        public string summary { get; set; }
+        public string[] tags { get; set; }
     }
 }

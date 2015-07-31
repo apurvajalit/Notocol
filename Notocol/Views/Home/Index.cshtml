@@ -1,6 +1,9 @@
 ﻿@using System.Configuration
+@section header{
+<link rel="chrome-webstore-item"
+      href="https://chrome.google.com/webstore/detail/bcdabflpgoedlefkdiaedmeokndnfafa">
+}
 
-<link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.2.5/annotator.min.css">
 <style>
     .pageBox{
         border: 1px solid gray ;
@@ -18,7 +21,9 @@
             <div class="jumbotron">
                 <h1>@ConfigurationManager.AppSettings["proj"]</h1>
                 <p class="lead"></p>
-                <p><a href="@Url.Action("AboutUs")" class="btn btn-primary btn-lg">Download the tool &raquo;</a></p>
+               <p><a href="https://chrome.google.com/webstore/detail/notocol-bookmarktags-anno/bcdabflpgoedlefkdiaedmeokndnfafa" class="btn btn-primary btn-lg">Download the tool &raquo;</a></p>
+                @*<button onclick="chrome.webstore.install()" id="install-button">Add to Chrome</button>*@
+
             </div>
         </div>
         
@@ -45,3 +50,10 @@
 </div>
 
 
+@section scripts{
+<script>
+    $(function(){
+        
+    })
+</script>
+}

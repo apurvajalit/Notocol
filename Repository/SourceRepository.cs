@@ -50,6 +50,7 @@ namespace Repository
                 {
                     objSource.TagNames = tagNames;
                     objSource.ModifiedAt = DateTime.Now;
+                    if (objSource.Privacy == null) objSource.Privacy = false;
                     context.Entry(objSource).State = objSource.ID == 0 ? EntityState.Added : EntityState.Modified;
                     context.SaveChanges();
                     sourceID = objSource.ID;
@@ -310,6 +311,7 @@ namespace Repository
                     using (GetDataContext())
                     {
                         source.ModifiedAt = DateTime.Now;
+                        if (source.Privacy == null) source.Privacy = false;
                         context.Entry(source).State = EntityState.Added;
                         context.SaveChanges();
                         sourceID = source.ID;
@@ -349,6 +351,56 @@ namespace Repository
             {
                 DisposeContext();
             }
+        }
+
+        public bool DeleteSource(Source source)
+        {
+            AnnotationRepository annRepo = new AnnotationRepository();
+            TagRepository tagRepo = new TagRepository();
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.DeleteSource(source.ID);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return true;
+        }
+
+        public Source GetExistingSource(long sourceID)
+        {
+            IList<Source> lstSource = null;
+
+            try
+            {
+                using (GetDataContext())
+                {
+                    lstSource = (from sources in context.Sources
+                                 where sources.ID == sourceID
+                                 select sources).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+
+            }
+
+            if (lstSource.Count() > 0)
+                return lstSource.First();
+
+            return null;
         }
     }
 }

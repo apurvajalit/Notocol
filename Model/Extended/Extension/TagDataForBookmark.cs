@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace Model.Extended.Extension
 {
+    public class TagEntity
+    {
+        public string text { get; set; }
+    }
     public class TagDataForBookmark
     {
         public string source { get; set; }
-        public string tag { get; set; }
+        public TagEntity[] tag { get; set; }
         public bool isPrivate { get; set; }
         
 

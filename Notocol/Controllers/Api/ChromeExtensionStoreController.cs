@@ -64,7 +64,7 @@ namespace h_store.Controllers.Api
 
             if (newCookieToken != null)
             {
-                addCookie("XSRF-TOKEN", newCookieToken);
+                Utility.AddCookie("XSRF-TOKEN", newCookieToken);
                 System.Web.HttpContext.Current.Session["XSRF-TOKEN"] = newCookieToken;
       
             }
@@ -87,17 +87,7 @@ namespace h_store.Controllers.Api
 
             //System.Web.HttpContext.Current.Session["userID"] = null;
         }
-        private void addCookie(string name, string value)
-        {
-            var resp = new HttpResponseMessage();
-
-            var cookie = new HttpCookie(name, value);
-            cookie.Expires = DateTime.Now.AddDays(30);
-            cookie.Domain = null;
-            cookie.Path = "/";
-
-            HttpContext.Current.Response.Cookies.Add(cookie);
-        }
+        
         private HttpResponseMessage appDisableUser(ExtensionUser user)
         {
             UserRepository objUserRepository = new UserRepository();
@@ -158,7 +148,8 @@ namespace h_store.Controllers.Api
             //Invalidate the existing token
             //TODO Set flash message to notify user that they have logged out
 
-            ResetUserSession();
+            Utility.ResetUserSession();
+            Utility.RemoveCookie("TOKEN-INFO");
             ApplicationStatus response = GetAppResponseWithTokens();
             response.flash.success = new string[1] { "You have been successfully logged out" };
             return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -190,8 +181,8 @@ namespace h_store.Controllers.Api
                 }
                 user.ID = ret;
             }
-
-            SetUserSession(user.ID, user.Username);
+            Utility.AddCookie("TOKEN-INFO", Utility.GenerateUserInfoCookieData(user.ID, user.Username));
+            Utility.SetUserSession(user.ID, user.Username);
 
             return Request.CreateResponse(HttpStatusCode.OK, GetAppResponseWithTokens(user.Username));
         }
@@ -206,8 +197,12 @@ namespace h_store.Controllers.Api
             }
             else
             {
-                HttpError err = new HttpError("Could not add user");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, GetAppResponseWithTokens());
+                ApplicationStatus status = GetAppResponseWithTokens();
+                status.status = "failure";
+                status.errors = new ApplicationErrors();
+                status.errors.username = "Username already exists, try another";
+
+                return Request.CreateResponse(HttpStatusCode.BadRequest, status);
             }
 
         }
@@ -217,7 +212,25 @@ namespace h_store.Controllers.Api
         {
             ApplicationStatus applicationStatus = null;
             string userName = Utility.GetCurrentUserName();
+            if (userName == null || userName == "")
+            {
+                CookieHeaderValue tokenInfoCookie = null;
+                tokenInfoCookie = Request.Headers.GetCookies
+                                    ("TOKEN-INFO").SingleOrDefault();
 
+                string data = (tokenInfoCookie != null) ? tokenInfoCookie["TOKEN-INFO"].Value : null;
+                //Check if tokenInfo cookie exists, if found set session with values found in that
+
+                if (data != null)
+                {
+                    long userID = 0;
+                    if (Utility.GetUserInfoFromCookieData(data, out userID, out userName))
+                    {
+                        Utility.SetUserSession(userID, userName);
+                    }
+                }
+
+            }
             applicationStatus = GetAppResponseWithTokens(userName);
             
             

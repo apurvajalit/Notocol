@@ -1,4 +1,5 @@
-﻿using Notocol.Models;
+﻿using Model;
+using Notocol.Models;
 using Repository;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,20 @@ namespace Notocol.Controllers
                 return PartialView(SourceHelper.GetSourceItems(keywordFilter, tagIDs, userID, true));
             else
                 return PartialView("SourceItemsWithUser",SourceHelper.GetSourceItems(keywordFilter, tagIDs, userID, false));
+        }
+
+        public bool DeleteSource(long sourceID)
+        {
+            SourceRepository sourceRepository = new SourceRepository();
+
+            Source source = sourceRepository.GetExistingSource(sourceID);
+
+            if (source != null && source.UserID == Utility.GetCurrentUserID())
+            {
+                return sourceRepository.DeleteSource(source);
+
+            }
+            return false;
         }
     }
 }

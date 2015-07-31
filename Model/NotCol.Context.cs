@@ -123,5 +123,14 @@ namespace Model
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SearchForSource", keywordStrParameter, userIDParameter);
         }
+    
+        public virtual int DeleteSource(Nullable<long> sourceID)
+        {
+            var sourceIDParameter = sourceID.HasValue ?
+                new ObjectParameter("SourceID", sourceID) :
+                new ObjectParameter("SourceID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteSource", sourceIDParameter);
+        }
     }
 }

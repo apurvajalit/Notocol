@@ -69,7 +69,7 @@ namespace h_store.Controllers.Api
 
             };
 
-            Lifetime lifetime = new Lifetime(DateTime.UtcNow, DateTime.UtcNow.AddMinutes(10));
+            Lifetime lifetime = new Lifetime(DateTime.UtcNow, DateTime.UtcNow.AddDays(30));
             SecurityKey securityKey = new InMemorySymmetricSecurityKey(System.Text.ASCIIEncoding.UTF8.GetBytes("00000000-0000-0000-0000-000000000000"));
             SigningCredentials signingCredentials = new SigningCredentials(securityKey,
                 "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",

@@ -132,6 +132,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="DeleteSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SourceID" Type="bigint" Mode="In" />
+        </Function>
         <Function Name="GetTagID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TagName" Type="varchar(max)" Mode="In" />
           <Parameter Name="UserID" Type="int" Mode="In" />
@@ -240,6 +243,9 @@
           <FunctionImport Name="SearchForSource">
             <Parameter Name="keywordStr" Mode="In" Type="String" />
             <Parameter Name="userID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="DeleteSource">
+            <Parameter Name="SourceID" Mode="In" Type="Int64" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Annotation">
@@ -531,6 +537,7 @@
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="SearchForSource" FunctionName="NotColModel.Store.SearchForSource" />
+          <FunctionImportMapping FunctionImportName="DeleteSource" FunctionName="NotColModel.Store.DeleteSource" />
         </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

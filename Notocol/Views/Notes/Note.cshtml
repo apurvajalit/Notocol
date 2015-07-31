@@ -23,20 +23,26 @@
   else
   {
       var quotedText = "\"" + Model.QuotedText + "\"";
+      string pattern = @"!\[Image Description\]\((?<link>.*)\)";
+      string replacement = "<img src=\"${link}\">";
+      
+      string note = "";
+      if (Model.NoteText != null) { 
+          note = System.Text.RegularExpressions.Regex.Replace(Model.NoteText, pattern, replacement);
+      }
 
-    
     <div class="panel panel-info">  
         <div class="panel-heading">
-            Note from <a href=@Model.pageURL>@Model.pageTitle </a>
+            Note from <a target="_blank" href=@Model.pageURL>@Model.pageTitle </a>
         </div>
         
         <div class="panel-body " >
             <div class="well well-sm" style="font-style:italic"> @quotedText </div>
-            @Model.NoteText
+            @note
         </div>
 
         <div class="panel-footer">
-            
+          
         </div>
     </div>
     

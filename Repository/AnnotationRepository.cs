@@ -356,5 +356,37 @@ namespace Repository
             }
             return true;
         }
+
+        //public bool DeleteAnnotationForPage(long sourceID)
+        //{
+        //    IList<Annotation> annotationsToDelete;
+        //    try
+        //    {
+        //        using (GetDataContext())
+        //        {
+        //            annotationsToDelete = (from annotations in context.Annotations
+        //                          where annotations.SourceID == sourceID
+        //                          select annotations).ToList();
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        DisposeContext();
+        //    }
+        //    if (annotationsToDelete.Count() > 0) {
+        //        foreach (Annotation annotation in annotationsToDelete)
+        //        {
+        //            context.Entry(annotation).State = EntityState.Deleted;
+                    
+        //        }
+        //        context.SaveChanges();
+        //        return true;
+        //    }else return true;
+
+        //}
     }
 }

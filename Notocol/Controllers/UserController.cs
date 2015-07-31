@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Repository;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
+using Notocol.Models;
 
 namespace Notocol.Controllers
 {
@@ -21,13 +22,14 @@ namespace Notocol.Controllers
             return userID;
         }
 
-        private void SetUserSession(long userID, string userName)
+        public void SetUserSession(long userID, string userName)
         {
+            
             Session["userName"] = userName;
             Session["userID"] = userID;
 
         }
-        private void ResetUserSession()
+        public void ResetUserSession()
         {
             Session["userName"] = null;
             Session["userID"] = null;
@@ -42,8 +44,9 @@ namespace Notocol.Controllers
             userDB.ModifiedAt = DateTime.Now;
 
             if((userDB.ID = objUserRepository.addUser(userDB)) > 0)
-            {            
-                SetUserSession(userDB.ID, userDB.Username);
+            {
+                Utility.AddCookie("TOKEN-INFO",Utility.GenerateUserInfoCookieData(userDB.ID, userDB.Username));
+                Utility.SetUserSession(userDB.ID, userDB.Username);
                 return RedirectToAction("Home", "Home");
             }
             else
@@ -59,7 +62,8 @@ namespace Notocol.Controllers
             long userID = 0;
             if ((userID = CheckLoginUser(userName, password, identifier)) > 0)
             {
-                SetUserSession(userID, userName);
+                Utility.AddCookie("TOKEN-INFO", Utility.GenerateUserInfoCookieData(userID, userName));
+                Utility.SetUserSession(userID, userName);
                 TempData["RefreshExtension"] = true;
                 return RedirectToAction("Home", "Home");
             }
@@ -79,8 +83,8 @@ namespace Notocol.Controllers
 
         public ActionResult SignOutUser()
         {
-
-            ResetUserSession();
+            Utility.RemoveCookie("TOKEN-INFO");
+            Utility.ResetUserSession();
             return RedirectToAction("Index", "Home", new  {refresh = true }); 
         }
         

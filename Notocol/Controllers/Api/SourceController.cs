@@ -57,9 +57,15 @@ namespace Notocol.Controllers.Api
             source.SourceURI = sourceData.sourceURI;
             source.Link = sourceData.sourceLink;
             source.Title = sourceData.title;
+            source.Summary = sourceData.summary;
 
-            return new SourceRepository().AddSourceIfNotFound(source);
+            long sourceID = new SourceRepository().AddSourceIfNotFound(source);
+
+
+            return sourceID;
         }
+
+        
 
     }
 }

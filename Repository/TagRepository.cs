@@ -354,5 +354,36 @@ namespace Repository
             return tagIDList;
             
         }
+
+        //public bool DeleteSourceTagForSource(long sourceID)
+        //{
+        //    IList<SourceTag> mappedTagList = null;
+        //    try
+        //    {
+        //        using (GetDataContext())
+        //        {
+        //                mappedTagList = (from sourceTag in context.SourceTags
+        //                                    where sourceTag.SourceID == sourceID
+        //                                     select sourceTag).ToList();
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        DisposeContext();
+        //    }
+        //    if(mappedTagList.Count > 0){
+        //        foreach(SourceTag tag in mappedTagList){
+        //            context.Entry(tag).State = EntityState.Deleted;
+        //        }
+        //        context.SaveChanges();
+        //        return true;
+        //    }
+
+        //    return true;
+        //}
     }
 }   

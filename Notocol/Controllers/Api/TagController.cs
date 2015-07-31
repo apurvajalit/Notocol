@@ -40,6 +40,7 @@ namespace Notocol.Controllers.Api
         {
             TagRepository tagRepository = new TagRepository();
             SourceRepository sourceRepository = new SourceRepository();
+            List<TagEntity> tagEntities = new List<TagEntity>();
             string tagStringValues = "";
             long userID = 0;
             Source source = null;
@@ -51,7 +52,9 @@ namespace Notocol.Controllers.Api
                 if(tagList != null){
                     foreach (Tag tag in tagList)
                     {
-                        
+                        TagEntity tagEntity = new TagEntity();
+                        tagEntity.text = tag.Name;
+                        tagEntities.Add(tagEntity);
                         tagStringValues += tag.Name+",";
 
                     }
@@ -60,8 +63,8 @@ namespace Notocol.Controllers.Api
                 }
             
             }
-            returnValues.tag = tagStringValues;
-            returnValues.isPrivate = source.Privacy== true?true:false;
+            returnValues.tag = tagEntities.ToArray();
+            returnValues.isPrivate = (source!=null && source.Privacy== true)?true:false;
             return returnValues;
         }
 
@@ -69,13 +72,26 @@ namespace Notocol.Controllers.Api
         public bool UpdatePageTags(TagDataForBookmark tagData)
         {
             SourceRepository sourceRepository = new SourceRepository();
+            List<TagEntity> tagEntities = null;
+            List<string> tagStrings = new List<string>();
             Source source = sourceRepository.GetSourceFromSourceURI(tagData.source, Utility.GetCurrentUserID());
             if(source != null){
                 if (source.Privacy != tagData.isPrivate)
                     sourceRepository.UpdateSourcePrivacy(source, tagData.isPrivate);
 
                 TagRepository tagRepository = new TagRepository();
-                tagRepository.UpdateUserTagsForSource(Utility.GetCurrentUserID(),source.ID, tagData.tag.Split(','));
+                if (tagData.tag != null)
+                {
+                    //tagEntities = tagData.tag.ToObject<List<TagEntity>>();
+
+                    foreach (var tagEntity in tagData.tag)
+                        tagStrings.Add(tagEntity.text);
+                        
+                    //if(tagData.tag != "")
+                        tagRepository.UpdateUserTagsForSource(Utility.GetCurrentUserID(),source.ID, tagStrings.ToArray());
+                }
+                
+                    
                 
             }
             return true;

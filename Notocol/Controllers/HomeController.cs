@@ -4,16 +4,33 @@ using Model;
 using Notocol.Controllers.Api;
 using System;
 using Notocol.Models;
+using System.Web;
 
 namespace Notocol.Controllers
 {
     public class HomeController : BaseController
     {
         //long userID = 0;
+        private bool GetUserFromCookie()
+        {
+            string cookieData;
 
+            if (Request.Cookies["TOKEN-INFO"] != null)
+            {
+                string userName = null;
+                long userID = 0;
+                if ((cookieData = Request.Cookies["TOKEN-INFO"].Value) != null &&
+                    Utility.GetUserInfoFromCookieData(HttpUtility.UrlDecode(cookieData), out userID, out userName))
+                {
+                    Utility.SetUserSession(userID, userName);
+                    return true;
+                }
+            }
+            return false;
+        }
         private bool checkSession(){
 
-            if (Session["userID"] != null && Convert.ToInt64(Session["userID"]) != 0) return true;
+            if (Utility.GetCurrentUserID() != 0  || GetUserFromCookie()) return true;
 
             return false;
         }
@@ -46,10 +63,17 @@ namespace Notocol.Controllers
            // return Redirect("default.htm");
 
         }
+
+        class apiData
+        {
+            public string token;
+            public string secret;
+        };
+        
         public ActionResult TestPopup()
         {
             ViewBag.Title = "Testing the working of our extension UI";
-            
+               
             return View();
 
         }
@@ -98,6 +122,24 @@ namespace Notocol.Controllers
             ViewBag.QueryFilter = queryFilter;
             ViewBag.TagFilter = tagFilter;
             return View();
+        }
+
+        public ActionResult DownloadChromeExtension()
+        {
+            string filename = "chrome.crx";
+            string filepath = AppDomain.CurrentDomain.BaseDirectory + "/Content/DownloadFiles/" + filename;
+            byte[] filedata = System.IO.File.ReadAllBytes(filepath);
+            string contentType = MimeMapping.GetMimeMapping(filepath);
+
+            System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = filename,
+                Inline = true,
+            };
+
+            Response.AppendHeader("Content-Disposition", cd.ToString());
+
+            return File(filedata, contentType);
         }
     }
 }
