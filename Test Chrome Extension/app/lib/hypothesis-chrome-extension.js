@@ -48,37 +48,6 @@
      */
     this.listen = function (window) {
       //chromeBrowserAction.onClicked.addListener(onBrowserActionClicked);
-
-      //Following listener is used to serve infomation requested by NotocolPopup
-      chrome.extension.onMessage.addListener(function(request,sender,sendResponse){
-            console.log("Recieved a message with greeting:" + request.greeting);
-            if (request.greeting === "PageDetails") {
-                chrome.tabs.query({ active: true }, function (tabs) {
-                    if (!(tabs.length === 0)) {
-                        sendResponse({
-                            status: true,
-                            title: tabs[0].title,
-                            url: tabs[0].url,
-                            faviconUrl: tabs[0].favIconUrl});
-                    } else 
-                        sendResponse({status: false});
-                    
-                    console.log("Sent page details Response");
-                });
-                console.log("Sending Page Response");
-
-            } else if (request.greeting === "ToggleAnnotation") {
-                chrome.tabs.query({ active: true }, function (tabs) {
-                    if (!(tabs.length === 0)) onBrowserActionClicked(tabs[0]);
-                });
-
-                console.log("Sending Response");
-                sendResponse({ message: "Toggled Annotation" });
-
-            }
-            return true;
-        });
-
       chromeTabs.onCreated.addListener(onTabCreated);
       chromeTabs.onUpdated.addListener(onTabUpdated);
       chromeTabs.onRemoved.addListener(onTabRemoved);
@@ -148,6 +117,8 @@
       }
     }
 
+    this.onBrowserActionClicked = onBrowserActionClicked;
+
     function onTabUpdated(tabId, changeInfo, tab) {
 
       // This function will be called multiple times as the tab reloads.
@@ -156,15 +127,6 @@
         return;
       }
 
-      //Function to fetch source summary
-      console.log(tabId);
-      console.log(changeInfo);
-      console.log(tab);
-      if (tab.url.toLowerCase().indexOf('.pdf') > 0) {
-          console.log("Enabling hypothesis");
-          state.activateTab(tabId);
-      }
-      //###########################################
      
       if (state.isTabErrored(tabId)) {
         state.restorePreviousState(tabId);

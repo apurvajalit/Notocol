@@ -252,6 +252,7 @@
     <Content Include="Content\jquery.orgchart.css" />
     <Content Include="Content\jquery.tagit.css" />
     <Content Include="Content\magnific-popup.css" />
+    <Content Include="Content\notocol-home.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -359,6 +360,7 @@
     <None Include="Views\oauth2\LogOn.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Source\SourceItemsWithUser.cshtml" />
+    <Content Include="Views\Source\test.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -52,7 +52,8 @@ var baseURL = "https://localhost:44301/";
                         pageDetails = {
                             title: pageDetailResponse.title,
                             url: pageDetailResponse.url,
-                            faviconurl: pageDetailResponse.faviconUrl
+                            faviconurl: pageDetailResponse.faviconUrl,
+                            tabID:pageDetailResponse.tabID
                         };
 
                         PageProperties.store('pageDetails', pageDetails);
@@ -72,8 +73,29 @@ var baseURL = "https://localhost:44301/";
         var vm = this;
         $scope.$on('pageDetailsUpdated', function () {
             vm.pageDetails = PageProperties.get('pageDetails');
+            console.log(vm.pageDetails);
         });
-        
+
+        this.GetPageImages = function () {
+            var filePath = 'public/scripts/notocol/sendImageList.js';
+            var jqueryFile = 'public/scripts/vendor/jquery.min.js';
+            var embedlyFile = 'public/scripts/vendor/embedly.js';
+            var inputVariables = {
+                sourceURI: vm.pageDetails.url,
+                tabID: vm.pageDetails.tabID,
+                imageListURl: "https://localhost:44302/Home/ThumbNailData"
+            };
+            
+            chrome.tabs.executeScript(vm.pageDetails.tabID, { file: jqueryFile }
+                , function () {
+                    chrome.tabs.executeScript(vm.pageDetails.tabID, {
+                        code: 'var inputVariables = ' + JSON.stringify(inputVariables)
+                    }, function () {
+                        chrome.tabs.executeScript(vm.pageDetails.tabID, { file: filePath });
+                    });
+                });
+        }
+
         this.savePage = function () {
             console.log("title: " + vm.pageDetails.title + " url: " + vm.pageDetails.url + " faviconurl: " + vm.pageDetails.faviconurl + " summary: " + vm.pageSummary);
             var pageTags = vm.pagetags?vm.pagetags.split(','):null;
@@ -88,11 +110,15 @@ var baseURL = "https://localhost:44301/";
             $http.post(baseURL + "api/Source/UpdateSource", sourceDetails).
                 success(function (data, status, headers, config) {
                     console.log("Saved page");
-                }).
-                error(function (data, status, headers, config) {
+                    
+                })
+                .error(function (data, status, headers, config) {
                     console.log("Failed to save the page");
                 });
+
+            this.GetPageImages();
         }
+        
          
     }]);
 
