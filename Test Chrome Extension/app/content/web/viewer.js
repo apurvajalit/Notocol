@@ -6308,7 +6308,7 @@ var PDFViewerApplication = {
 
       urn = "urn:x-pdf:" + PDFViewerApplication.documentFingerprint;
       console.log("Sending URN: " + urn);
-      window.postMessage({ type: "FROM_PAGE", text: "Hello from the webpage!", urn: urn }, "*");
+      window.postMessage({ type: "PDFInformation", urn: urn }, "*");
 
       var pdfTitle;
       if (metadata && metadata.has('dc:title')) {

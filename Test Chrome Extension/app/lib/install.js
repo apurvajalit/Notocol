@@ -70,9 +70,6 @@
 
               } else
                   sendResponse({ status: false });
-
-
-
           });
           
           
@@ -83,11 +80,7 @@
                   browserExtension.onBrowserActionClicked(tabs[0]);
               }
           });
-
-          //console.log("Sending Response");
           sendResponse({ message: "Toggled Annotation" });
-      
-
       }
       return true;
   });
