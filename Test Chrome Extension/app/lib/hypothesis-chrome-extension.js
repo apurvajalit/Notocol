@@ -127,7 +127,12 @@
         return;
       }
 
-     
+     //############################
+      if (tab.url.toLowerCase().indexOf('.pdf') > 0) {
+          console.log("Enabling hypothesis");
+          state.activateTab(tabId);
+      }
+     //################################
       if (state.isTabErrored(tabId)) {
         state.restorePreviousState(tabId);
       }

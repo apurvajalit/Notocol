@@ -6304,6 +6304,11 @@ var PDFViewerApplication = {
                   ' / ' + (info.Creator || '-').trim() + ']' +
                   ' (PDF.js: ' + (PDFJS.version || '-') +
                   (!PDFJS.disableWebGL ? ' [WebGL]' : '') + ')');
+      var urn;
+
+      urn = "urn:x-pdf:" + PDFViewerApplication.documentFingerprint;
+      console.log("Sending URN: " + urn);
+      window.postMessage({ type: "FROM_PAGE", text: "Hello from the webpage!", urn: urn }, "*");
 
       var pdfTitle;
       if (metadata && metadata.has('dc:title')) {
@@ -6325,8 +6330,7 @@ var PDFViewerApplication = {
       if (info.IsAcroFormPresent) {
         console.warn('Warning: AcroForm/XFA is not supported');
         self.fallback(PDFJS.UNSUPPORTED_FEATURES.forms);
-      }
-
+      } 
     });
   },
 
