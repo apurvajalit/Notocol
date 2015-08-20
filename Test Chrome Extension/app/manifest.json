@@ -1,0 +1,57 @@
+{
+  "name": "Hypothesis - Web & PDF Annotation",
+  "short_name": "Hypothesis",
+  "version": "0.4.2.170",
+  "manifest_version": 2,
+
+  "description": "Collaboratively annotate, highlight, and tag web pages and PDF documents.",
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrHOmAA0B1dDZN4PSkokSBq1ckGVbxGCteOWUx8rkD8DhSxnq6bV89sH9py8tDNrRmt4oG7uJ8AWNFT17uDDVMI+cl2OAN5qn88g89Mlvj04BXZdv1X2Y4gKJj6/9ZdyJL7hh8gitjRkYtTUSPUFZi1v8IPoFcJiAgseAT4LQ9LPq+1u4LBZhMxwjhbO6h353BR6Lva1Y2mURvoOHePH9PfFcR+1ZVKdGmSC1efrvNbqvD1YlxXdKU8xT7r++28Ar2aKlB2KSI22nVHYUPso4/zcVVzXQN8tSGRQazscOCDdeZp0Uu0gpGDn6gT94ArIh3UihciLH9C/1mjV7njEFQIDAQAB",
+  "homepage_url": "https://hypothes.is/",
+  "incognito": "split",
+
+  "offline_enabled": false,
+  "permissions": [
+    "<all_urls>",
+    "contentSettings",
+    "tabs"
+  ],
+  "content_security_policy":
+    "script-src 'self' 'unsafe-eval' chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public https://cdn.mathjax.org; object-src 'self'; font-src 'self' data:;",
+
+    "background": {
+        "persistent": true,
+        "scripts": [
+            "lib/tab-store.js",
+            "lib/tab-state.js",
+            "lib/tab-error-cache.js",
+            "lib/sidebar-injector.js",
+            "lib/browser-action.js",
+            "lib/help-page.js",
+            "lib/errors.js",
+            "lib/hypothesis-chrome-extension.js",
+            "public/scripts/notocol/notocol-util.js",
+            "lib/install.js",
+            "lib/blocklist.js"
+        ]
+    },
+
+  "browser_action": {
+    "default_icon": {
+      "19": "images/browser-icon-inactive.png",
+      "38": "images/browser-icon-inactive@2x.png"
+    },
+    "default_popup": "public/popup.html"
+  },
+  "web_accessible_resources": [
+    "public/*",
+    "content/*",
+    "lib/*",
+    "help/*",
+    "content/web/viewer.html"
+  ]
+}
