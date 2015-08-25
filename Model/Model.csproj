@@ -79,12 +79,17 @@
     <Compile Include="Extended\Extension\ExtensionAnnotationData.cs" />
     <Compile Include="Extended\Extension\ExtensionSearchResponse.cs" />
     <Compile Include="Extended\Extension\ExtensionUser.cs" />
-    <Compile Include="Extended\Extension\SourceDataForBookmark.cs" />
+    <Compile Include="Extended\Extension\PageImageInfo.cs" />
+    <Compile Include="Extended\Extension\SourceDataForExtension.cs" />
     <Compile Include="Extended\Extension\TagDataForBookmark.cs" />
+    <Compile Include="Extended\Extension\ThumbnailDataFromSource.cs" />
     <Compile Include="Extended\NotCol.Context.cs" />
     <Compile Include="Extended\NoteData.cs" />
     <Compile Include="Extended\SourceData.cs" />
     <Compile Include="Extended\SourceItem.cs" />
+    <Compile Include="Folder.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
     <Compile Include="GetTags_Result.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>

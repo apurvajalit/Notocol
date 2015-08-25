@@ -12,24 +12,22 @@ namespace Model
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class Folder
     {
-        public User()
+        public Folder()
         {
-            this.Folders = new HashSet<Folder>();
             this.Sources = new HashSet<Source>();
-            this.Tags = new HashSet<Tag>();
         }
     
+        public byte[] name { get; set; }
         public long ID { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Identifier { get; set; }
-        public Nullable<System.DateTime> ModifiedAt { get; set; }
-        public string Email { get; set; }
+        public string description { get; set; }
+        public long parentID { get; set; }
+        public System.DateTime created { get; set; }
+        public System.DateTime updated { get; set; }
+        public Nullable<long> userID { get; set; }
     
-        public virtual ICollection<Folder> Folders { get; set; }
         public virtual ICollection<Source> Sources { get; set; }
-        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual User User { get; set; }
     }
 }

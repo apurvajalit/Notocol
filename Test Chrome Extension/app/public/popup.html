@@ -26,12 +26,14 @@
 
         <div ng-controller="BookmarkCtrl as bookmark" class="popup-body" ng-show="tabs.isSet(1)">
             <h1>{{bookmark.pageDetails.title}}</h1>
-            <textarea ng-model="bookmark.pageSummary" placeholder="Enter notes for the page..."></textarea>
-            <input type="text" ng-model="bookmark.pagetags" placeholder="Enter comma separated tags.." />
+            <textarea ng-model="bookmark.pageDetails.summary" placeholder="Enter notes for the page..."></textarea>
+            <input type="text" ng-model="bookmark.pageDetails.tags" placeholder="Enter comma separated tags.." />
+            <input type="text" ng-model="bookmark.pageDetails.folder" placeholder="Enter folder" />
             <div>
-                <img ng-src="{{bookmark.pageDetails.faviconurl}}" />
+                <img ng-src="{{bookmark.pageDetails.faviconUrl}}" />
                 <p>{{bookmark.pageDetails.url}}</p>
             </div>
+
 
             <input type="button" value="Save" ng-click="bookmark.savePage()" />
             <input type="button" value="Cancel" ng-click="page.closePopup()" />

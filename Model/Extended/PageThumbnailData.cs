@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model.Extended
 {
-    public class NoteData
+    public class PageThumbnailData
     {
-        public string NoteText;
-        public string QuotedText;
-        public string pageTitle;
-        public string pageURL;
+        public string thumbNailImage { get; set; }
+        public string thumbNailText { get; set; }
     }
 }

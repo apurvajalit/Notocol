@@ -29,6 +29,7 @@ namespace Model
         }
     
         public virtual DbSet<Annotation> Annotations { get; set; }
+        public virtual DbSet<Folder> Folders { get; set; }
         public virtual DbSet<Source> Sources { get; set; }
         public virtual DbSet<SourceTag> SourceTags { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }

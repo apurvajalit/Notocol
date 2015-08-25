@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 
 namespace Model.Extended.Extension
 {
-    public class SourceDataForBookmark
+    public class SourceDataForExtension
     {
-        public string sourceLink { get; set; }
-        public string sourceURI { get; set; }
+        public string link { get; set; }
+        public string url { get; set; }
         public string title { get; set; }
         public string summary { get; set; }
+        public string faviconUrl { get; set; }
         public string[] tags { get; set; }
+        public long folder { get; set; }
+        public long sourceID { get; set; }
+
+        public int noteCount { get; set; }
     }
 }

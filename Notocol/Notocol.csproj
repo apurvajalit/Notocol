@@ -92,6 +92,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Swashbuckle.Core">
+      <HintPath>..\packages\Swashbuckle.Core.5.0.1\lib\net40\Swashbuckle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -168,6 +171,9 @@
     <Reference Include="WebActivator">
       <HintPath>..\packages\WebActivator.1.0.0.0\lib\WebActivator.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx">
+      <HintPath>..\packages\WebActivatorEx.2.0.6\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -206,8 +212,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\GooglePlusClient.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\ThumbnailDataController.cs" />
     <Compile Include="Controllers\NotesController.cs" />
     <Compile Include="Controllers\Api\AnnotationControllerBackup.cs" />
     <Compile Include="Controllers\Api\annotationsController.cs" />
@@ -231,9 +239,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ObjectTypeConverter.cs" />
-    <Compile Include="Models\SourceHelper.cs" />
-    <Compile Include="Models\TagHelper.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Models\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -371,6 +376,7 @@
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Proxy\" />
     <Folder Include="Views\Tag\" />
+    <Folder Include="Views\ThumbnailData\" />
     <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
@@ -378,6 +384,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj">
+      <Project>{2764862f-31dd-405a-a2e0-28520d8ecb04}</Project>
+      <Name>Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{0aea8ac7-73da-4371-8eb1-916939e08209}</Project>
       <Name>Model</Name>

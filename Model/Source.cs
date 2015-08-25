@@ -35,8 +35,14 @@ namespace Model
         public string SourceURI { get; set; }
         public string ImpliedTagNames { get; set; }
         public string ImpliedTagIDs { get; set; }
+        public string FaviconURL { get; set; }
+        public string thumbnailImageUrl { get; set; }
+        public string thumbnailText { get; set; }
+        public Nullable<long> FolderID { get; set; }
+        public int noteCount { get; set; }
     
         public virtual ICollection<Annotation> Annotations { get; set; }
+        public virtual Folder Folder { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<SourceTag> SourceTags { get; set; }
     }

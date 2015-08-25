@@ -18,106 +18,15 @@ namespace Repository
         {
             CreateDataContext();
         }
-        /// <summary>
-        /// Method to search Tags. Used for autocomplete.
-        /// </summary>
-        /// <param name="charactersToSearch"></param>
-        /// <param name="userID"></param>
-        /// <returns></returns>
-        /// 
-        public long checkTag(long userID, string tagString){
-            IList<Tag> lstTags = null;
-          
-            try
-            {
-                using (GetDataContext())
-                {
-                    if (tagString != "")
-                    {
-                        
-                        lstTags = (from tags in context.Tags
-                                   where tags.Name.Equals(tagString) && tags.UserID == userID
-                                   select tags).ToList();
-                    }
-
-                }
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
-            if(lstTags != null && lstTags.Count !=0 ) return lstTags[0].ID;
-            return 0;
-        }
-        
-
-        public IList<String> SearchTags(string charactersToSearch, long userID = -1)
-        {
-            IList<String> lstTags = null;
-            try
-            {
-                using (GetDataContext())
-                {
-                    if (charactersToSearch == "")
-                    {
-                        if(userID > -1){
-                            lstTags = (from tags in context.Tags
-                                       where tags.UserID == userID && tags.Name.Contains(charactersToSearch)
-                                       orderby tags.Name
-
-                                       select tags.Name)
-                                       .ToList();
-                        }
-                        else
-                        {
-                            lstTags = (from tags in context.Tags
-                                       where tags.Name.Contains(charactersToSearch)
-                                       orderby tags.Name
-                                       select tags.Name).Distinct().ToList();
-                        }
-                    }
-                    else
-                    {
-                        if (userID > 1) { 
-                            lstTags = (from tags in context.Tags
-                                   where tags.Name.Contains(charactersToSearch) && tags.UserID == userID
-                                   select tags.Name).ToList();
-                        }
-                        else
-                        {
-                            lstTags = (from tags in context.Tags
-                                       where tags.Name.Contains(charactersToSearch)
-                                       select tags.Name).Distinct().ToList();
-                        }
-                    }
-
-                }
-            }catch{
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
-            return lstTags;
-        }
-        /// <summary>
-        /// Method used to Save Tags
-        /// </summary>
-        /// <param name="objTag"></param>
-        /// <returns></returns>
-        public Tag SaveTag(Tag objTag)
+        private Tag AddTag(Tag objTag)
         {
             objTag.Name = objTag.Name.Trim();
             try
             {
                 using (GetDataContext())
                 {
-                    context.Entry(objTag).State = objTag.ID == 0 ? EntityState.Added : EntityState.Modified;
+                    objTag.updated = DateTime.Now;
+                    context.Entry(objTag).State = EntityState.Added;
                     context.SaveChanges();
                 }
             }
@@ -131,35 +40,22 @@ namespace Repository
             }
             return objTag;
         }
-
-        /// <summary>
-        /// Save collection of tags with bulkinsert
-        /// </summary>
-        /// <param name="lstTag"></param>
-        /// <returns></returns>
-        public IList<Tag> SaveTags(long userID, IList<Tag> lstTag)
+        public IList<Tag> AddTags(long userID, IList<string> lstTagNames)
         {
-            try {
+            IList<Tag> listTag = new List<Tag>();
+            try
+            {
                 using (GetDataContext())
                 {
-                    foreach (Tag objTag in lstTag)
+                    foreach (string tagName in lstTagNames)
                     {
-                        if (objTag.ID == 0) { 
-                            objTag.UserID = userID;
-                            objTag.Name = objTag.Name.Trim();
-                            context.Entry(objTag).State = EntityState.Added;
-                        }
-
+                        Tag objTag = new Tag();
+                        objTag.updated = DateTime.Now;
+                        objTag.UserID = userID;
+                        objTag.Name = tagName.Trim();
+                        context.Entry(objTag).State = EntityState.Added;
                     }
                     context.SaveChanges();
-
-                    // By implementing Bulkinsert plugin
-                    // using (var transactionScope = new TransactionScope())
-                    // {
-                    //    context.BulkInsert(lstTag);
-                    //    context.SaveChanges();
-                    //    transactionScope.Complete();
-                    // }
                 }
             }
             catch
@@ -167,14 +63,8 @@ namespace Repository
                 throw;
                 //Duplicate Tags handling here
             }
-            return lstTag;
+            return listTag;
         }
-
-        /// <summary>
-        /// Method used to Delete Tags
-        /// </summary>
-        /// <param name="objTag"></param>
-        /// <returns></returns>
         public bool DeleteTag(Tag objTag)
         {
             try
@@ -195,112 +85,181 @@ namespace Repository
             {
                 DisposeContext();
             }
-
         }
 
-        public IList<Tag> AddIfNotExistTags(long userID, long sourceID, IList<Tag> tagList)
+        public bool DeleteSourceTagMapping(long sourceID)
         {
-
-            for (int i = 0; i < tagList.Count; i++)
+            using (GetDataContext())
             {
-                if (tagList[i].ID == 0)
+                try
                 {
-                    long ID = 0;
-                    //Add the tag
-                    //TODO Currentl all IDs are 0, hence checking string for all tags
-                    if ((ID = checkTag(userID, tagList[i].Name)) == 0) tagList[i] = SaveTag(tagList[i]);
-                    else tagList[i].ID = ID;
+                    var remove = from sourceTag in context.SourceTags
+                                 where sourceTag.SourceID == sourceID
+                                 select sourceTag;
 
+                    foreach (var sourceTag in remove)
+                    {
+                        context.Entry(sourceTag).State = EntityState.Deleted;
+                    }
+                    context.SaveChanges();
+                }catch{
+
+                }finally{
+                    DisposeContext();
                 }
-                
             }
-            return tagList;
+            return true;
         }
-
-        private void UpdateSourceTagMapping(long sourceID, IList<long> tagIDs)
+        private long GetTagID(long userID, string tagString)
         {
+            IList<Tag> lstTags = null;
+
             try
             {
-                foreach (long tagID in tagIDs)          
+                using (GetDataContext())
                 {
-                    using (GetDataContext()){
-                        SourceTag objSourceTag = new SourceTag();
-                        objSourceTag.SourceID = sourceID;
-                        objSourceTag.TagsID = tagID;
-                        context.SourceTags.Add(objSourceTag);
-                        try
-                        {
+                    if (tagString != "")
+                    {
 
-                            context.SaveChanges();
-                        }
-                        catch (Exception)
-                        {
-                            
-                            //ignore if duplicate mapping added
-                        }
-                        finally
-                        {
-                            
-                        }
+                        lstTags = (from tags in context.Tags
+                                   where tags.UserID == userID && tags.Name.Equals(tagString)
+                                   select tags).ToList();
                     }
-                    
                 }
             }
-            catch (Exception)
+            catch
             {
                 throw;
-
             }
             finally
             {
                 DisposeContext();
             }
 
+            if (lstTags != null && lstTags.Count != 0) return lstTags[0].ID;
+            return 0;
         }
-     
-        public void AddUserTagsToSource(long userID, long sourceID, string[] tags)
+        public IList<String> SearchTagNames(string charactersToSearch, long userID = -1)
+        {
+            IList<String> lstTags = null;
+            try{
+                using (GetDataContext()){
+                    if (charactersToSearch == ""){
+                        if (userID > -1){
+                            lstTags = (from tags in context.Tags
+                                       where tags.UserID == userID && tags.Name.Contains(charactersToSearch)
+                                       orderby tags.Name
+
+                                       select tags.Name)
+                                       .ToList();
+                        }
+                        else{
+                            lstTags = (from tags in context.Tags
+                                       where tags.Name.Contains(charactersToSearch)
+                                       orderby tags.Name
+                                       select tags.Name).Distinct().ToList();
+                        }
+                    }
+                    else{
+                        if (userID > 1){
+                            lstTags = (from tags in context.Tags
+                                       where tags.Name.Contains(charactersToSearch) && tags.UserID == userID
+                                       select tags.Name).ToList();
+                        }else{
+                            lstTags = (from tags in context.Tags
+                                       where tags.Name.Contains(charactersToSearch)
+                                       select tags.Name).Distinct().ToList();
+                        }
+                    }
+                }
+            }
+            catch{
+                throw;
+            }finally{
+                DisposeContext();
+            }
+            return lstTags;
+        }
+
+        private void UpdateSourceTagMapping(long sourceID, IList<long> tagIDs)
+        {
+            try
+            {
+                foreach (long tagID in tagIDs)
+                {
+                    using (GetDataContext())
+                    {
+                        SourceTag objSourceTag = new SourceTag();
+                        objSourceTag.SourceID = sourceID;
+                        objSourceTag.TagsID = tagID;
+                        context.SourceTags.Add(objSourceTag);
+                        try
+                        {
+                            context.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            //ignore if duplicate mapping added
+                        }
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+        }
+
+        public void AddTagsToSource(long userID, long sourceID, string[] tags)
         {
             List<long> tagIDs = new List<long>();
             if (tags == null) return;
-            try{
-                using (SqlConnection conn = new SqlConnection(GetDataContext().Database.Connection.ConnectionString)) {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(GetDataContext().Database.Connection.ConnectionString))
+                {
                     conn.Open();
-                           
+
                     foreach (string tag in tags)
                     {
+                        //Following stored procedur get tagIDs for each of the tagnames in tags list
+                        //If the tag exists, it simply returns
+                        //else creates a tag and gets the ID
                         SqlCommand cmd = new SqlCommand("GetTagID", conn);
                         cmd.CommandType = CommandType.StoredProcedure;
                         SqlParameter outputIdParam = new SqlParameter("@TagID", SqlDbType.Int)
                         {
                             Direction = ParameterDirection.Output
                         };
-                        
+
                         cmd.Parameters.Add(outputIdParam);
                         cmd.Parameters.AddWithValue("@UserID", userID);
-                        cmd.Parameters.AddWithValue("@TagName",  tag.Trim());
+                        cmd.Parameters.AddWithValue("@TagName", tag.Trim());
 
                         cmd.ExecuteNonQuery();
                         tagIDs.Add(outputIdParam.Value as int? ?? default(int));
-                        
-                     
+
+
                     }
                     conn.Close();
+                    DeleteSourceTagMapping(sourceID);
                     UpdateSourceTagMapping(sourceID, tagIDs);
 
                 }
-            }catch{
+            }
+            catch
+            {
                 throw;
             }
-            
+
         }
-
-
-        public void UpdateUserTagsForSource(long userID, long sourceID, string[] tags)
-        {
-            AddUserTagsToSource(userID, sourceID, tags);
-        }
-
-
+                
+        /* Gets all the tags associated with a source */
         public IList<Tag> GetTagsForSource(long sourceID)
         {
             IList<Tag> tagList = null;
@@ -354,6 +313,63 @@ namespace Repository
             return tagIDList;
             
         }
+
+
+        //public IList<String> GetTagNames(string charactersToSearch, long userID = -1)
+        //{
+        //    IList<String> lstTags = null;
+        //    try
+        //    {
+        //        using (GetDataContext())
+        //        {
+        //            if (charactersToSearch == "")
+        //            {
+        //                if(userID > -1){
+        //                    lstTags = (from tags in context.Tags
+        //                               where tags.UserID == userID && tags.Name.Contains(charactersToSearch)
+        //                               orderby tags.Name
+
+        //                               select tags.Name)
+        //                               .ToList();
+        //                }
+        //                else
+        //                {
+        //                    lstTags = (from tags in context.Tags
+        //                               where tags.Name.Contains(charactersToSearch)
+        //                               orderby tags.Name
+        //                               select tags.Name).Distinct().ToList();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (userID > 1) { 
+        //                    lstTags = (from tags in context.Tags
+        //                           where tags.Name.Contains(charactersToSearch) && tags.UserID == userID
+        //                           select tags.Name).ToList();
+        //                }
+        //                else
+        //                {
+        //                    lstTags = (from tags in context.Tags
+        //                               where tags.Name.Contains(charactersToSearch)
+        //                               select tags.Name).Distinct().ToList();
+        //                }
+        //            }
+
+        //        }
+        //    }catch{
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        DisposeContext();
+        //    }
+        //    return lstTags;
+        //}
+        /// <summary>
+        /// Method used to Save Tags
+        /// </summary>
+        /// <param name="objTag"></param>
+        /// <returns></returns>
 
         //public bool DeleteSourceTagForSource(long sourceID)
         //{

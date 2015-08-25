@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Extended
 {
-    public class SourceItem
+    public class SourceData
     {
         public long ID;
         public string Title;

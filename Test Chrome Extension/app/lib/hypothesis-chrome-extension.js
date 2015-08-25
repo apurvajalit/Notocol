@@ -119,6 +119,11 @@
 
     this.onBrowserActionClicked = onBrowserActionClicked;
 
+    this.enableHypothesis = function () {
+        console.log("Enabling hypothesis");
+        state.activateTab(tabId);
+    }
+
     function onTabUpdated(tabId, changeInfo, tab) {
 
       // This function will be called multiple times as the tab reloads.
@@ -127,12 +132,7 @@
         return;
       }
 
-     //############################
-      if (tab.url.toLowerCase().indexOf('.pdf') > 0) {
-          console.log("Enabling hypothesis");
-          state.activateTab(tabId);
-      }
-     //################################
+
       if (state.isTabErrored(tabId)) {
         state.restorePreviousState(tabId);
       }

@@ -49,30 +49,30 @@
       },
       isAllowedFileSchemeAccess: function (fn) {
           return chrome.extension.isAllowedFileSchemeAccess(fn);
-      }
+      },
+      hypothesis: browserExtension
   })
   notocolUtil.listen();
   
   //Notocol Specifici Action Handlers
   chrome.extension.onMessage.addListener(function (request, sender, sendResponse) {
-       if (request.greeting === "PageDetails") {
+      if (request.greeting === "PageDetails") {
           chrome.tabs.query({ active: true }, function (tabs) {
               if (!(tabs.length === 0)) {
                   var tabInfo = notocolUtil.getTabInfo(tabs[0]);
-                  sendResponse({
-                    tabID: tabs[0].id,
-                    status: true,
-                    title: tabInfo.title,
-                    url: tabInfo.url.url,
-                    link: tabInfo.url.link,
-                    faviconUrl: tabs[0].favIconUrl
-                  });
-
-              } else
-                  sendResponse({ status: false });
+                  
+                  if (typeof tabInfo != "undefined") {
+                      sendResponse(tabInfo);
+                  }
+              } 
+              sendResponse({ status: false });
           });
           
+      } else if (request.greeting === "PageDetailsUpdated") {
           
+          if (typeof request.pageInfo.tabID != undefined && request.pageInfo.tabID > 0) {
+              notocolUtil.setTabInfo({ id: request.pageInfo.tabID }, request.pageInfo);
+          }
       } else if (request.greeting === "ToggleAnnotation") {
           chrome.tabs.query({ active: true }, function (tabs) {
               if (!(tabs.length === 0)) {

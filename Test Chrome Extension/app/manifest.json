@@ -34,6 +34,7 @@
             "lib/help-page.js",
             "lib/errors.js",
             "lib/hypothesis-chrome-extension.js",
+            "public/scripts/vendor/jquery.min.js",
             "public/scripts/notocol/notocol-util.js",
             "lib/install.js",
             "lib/blocklist.js"

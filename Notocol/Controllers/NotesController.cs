@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Business;
+using Model;
 using Model.Extended;
 using Model.Extended.Extension;
 using Newtonsoft.Json.Linq;
@@ -28,8 +29,8 @@ namespace Notocol.Controllers
         {
             NoteData note = new NoteData();
             note.NoteText = annotation.Text;
-
-            ExtensionAnnotationData extAnnData = Utility.AnnotationToExtensionAnnotation(annotation);
+            AnnotationHelper annotationHelper = new AnnotationHelper();
+            ExtensionAnnotationData extAnnData = annotationHelper.AnnotationToExtensionAnnotation(annotation);
             if (extAnnData.target != null)
             {
                 foreach (Selector selector in extAnnData.target[0].selector)
@@ -68,7 +69,7 @@ namespace Notocol.Controllers
 
         public ActionResult Note(long ID = 0)
         {
-            Annotation annotation = new AnnotationRepository().getAnnotation(ID);
+            Annotation annotation = new AnnotationRepository().GetAnnotation(ID);
             if (annotation == null)
                 return View(annotation);   //passing null
             return View(GetNoteData(annotation));

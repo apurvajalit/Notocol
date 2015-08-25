@@ -41,24 +41,21 @@ var baseURL = "https://localhost:44301/";
     });
 
     app.controller('PageCtrl', ['$scope', '$timeout', 'PageProperties', function ($scope, $timeout, PageProperties) {
-        //var vm = this;
+        var vm = this;
         chrome.extension.sendMessage({
             greeting: "PageDetails"
         },
             function (pageDetailResponse) {
                 $timeout(function () {
-                    console.log(pageDetailResponse);
+                    //console.log(pageDetailResponse);
                     if (pageDetailResponse.status) {
-                        pageDetails = {
-                            title: pageDetailResponse.title,
-                            url: pageDetailResponse.url,
-                            faviconurl: pageDetailResponse.faviconUrl,
-                            tabID:pageDetailResponse.tabID
-                        };
-
+                        pageDetails = pageDetailResponse;
                         PageProperties.store('pageDetails', pageDetails);
                         PageProperties.store('pageDetailsStatus', true);
-                        $scope.$broadcast('pageDetailsUpdated');
+                        $scope.$broadcast('pageDetails');
+                    } else {
+                        //TODO Better way of asking
+                        if(!alert("Please refresh the page since the page was opened before Notocol was installed")) vm.closePopup();
                     }
                 })
 
@@ -71,55 +68,65 @@ var baseURL = "https://localhost:44301/";
 
     app.controller("BookmarkCtrl", ['$scope', '$timeout', 'PageProperties', '$http', function ($scope, $timeout, PageProperties, $http) {
         var vm = this;
-        $scope.$on('pageDetailsUpdated', function () {
+        $scope.$on('pageDetails', function () {
             vm.pageDetails = PageProperties.get('pageDetails');
-            console.log(vm.pageDetails);
+            if (vm.pageDetails.tags != null) {
+                var tag = "";
+                for (var i = 0; i < vm.pageDetails.tags.length; i++)
+                    tag += vm.pageDetails.tags[i] + ",";
+
+                tag = tag.substring(0, tag.length - 1);
+
+            }
+            console.log("Received vm.pageDetails as "+JSON.stringify(vm.pageDetails));
         });
 
-        this.GetPageImages = function () {
+        GetPageImages = function () {
             var filePath = 'public/scripts/notocol/sendImageList.js';
             var jqueryFile = 'public/scripts/vendor/jquery.min.js';
-            var embedlyFile = 'public/scripts/vendor/embedly.js';
+            
             var inputVariables = {
                 sourceURI: vm.pageDetails.url,
                 tabID: vm.pageDetails.tabID,
-                imageListURl: "https://localhost:44302/Home/ThumbNailData"
+                ThumbNailDataURl: "https://localhost:44301/Api/ThumbnailData"
             };
             
-            chrome.tabs.executeScript(vm.pageDetails.tabID, { file: jqueryFile }
-                , function () {
-                    chrome.tabs.executeScript(vm.pageDetails.tabID, {
-                        code: 'var inputVariables = ' + JSON.stringify(inputVariables)
-                    }, function () {
-                        chrome.tabs.executeScript(vm.pageDetails.tabID, { file: filePath });
-                    });
+            chrome.tabs.executeScript(vm.pageDetails.tabID, {
+                code: 'var inputVariables = ' + JSON.stringify(inputVariables)
+            }, function () {
+                chrome.tabs.executeScript(vm.pageDetails.tabID, { file: filePath }, function () {
+
                 });
+            });
+            
+                    
+            
         }
 
+
         this.savePage = function () {
-            console.log("title: " + vm.pageDetails.title + " url: " + vm.pageDetails.url + " faviconurl: " + vm.pageDetails.faviconurl + " summary: " + vm.pageSummary);
-            var pageTags = vm.pagetags?vm.pagetags.split(','):null;
-            var sourceDetails = {
-                sourceLink: vm.pageDetails.url,
-                sourceURI: vm.pageDetails.url,
-                title: vm.pageDetails.title,
-                summary: vm.pageSummary,
-                tags: pageTags
-            };
+            
+            var sourceDetails = vm.pageDetails
+            if (sourceDetails.tags != null && typeof sourceDetails.tags.split != "undefined")
+                sourceDetails.tags = sourceDetails.tags.split(',');
+            
 
             $http.post(baseURL + "api/Source/UpdateSource", sourceDetails).
                 success(function (data, status, headers, config) {
                     console.log("Saved page");
+                    chrome.extension.sendMessage({
+                        greeting: "PageDetailsUpdated",
+                        
+                        pageInfo: pageDetails
+                    }, function () { alert("Message Send");});
+                    if (vm.pageDetails.url.indexOf(".pdf") < 0)
+                       GetPageImages();
                     
                 })
                 .error(function (data, status, headers, config) {
                     console.log("Failed to save the page");
                 });
-
-            this.GetPageImages();
         }
-        
-         
     }]);
 
     app.controller("SnapshotCtrl", 'PageProperties', ['$scope', 'PageProperties', function ($scope, PageProperties) {

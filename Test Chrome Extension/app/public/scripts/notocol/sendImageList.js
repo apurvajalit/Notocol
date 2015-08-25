@@ -1,14 +1,16 @@
 ﻿function GetAllImageURLs() {
     
     var imageObjects = [];
-    $('img').each(function () {
+    var images = document.getElementsByTagName('img')
+    for(var i = 0; i< images.length; i++){
+        
         imageObjects.push({
-            url: this.currentSrc,
-            height: this.clientHeight,
-            width: this.clientWidth,
-            hidden: this.hidden
+            url: images[i].currentSrc,
+            height: images[i].clientHeight,
+            width: images[i].clientWidth,
+            hidden: images[i].hidden
         });
-    })
+    }
     
     return imageObjects;
 }
@@ -16,28 +18,40 @@
 function GetPageText() {
     
     var pageTextElements = [];
-    $("p").slice(0, 10).each(function() {
-        pageTextElements.push(this.innerText);
-    });
+
+    var pElements = document.getElementsByTagName('p');
+
+    for(var i = 0; (i < 10) && (i< pElements.length); i++){
+            pageTextElements.push(pElements[i].innerText);
+    }
    
     return pageTextElements;
 
 }
 
-
+console.log("I am running to send thumbnailData");
 var imageObjects = JSON.stringify(GetAllImageURLs());
 var pageText = JSON.stringify(GetPageText());
+var thumbnailData = {
+    pageURI: inputVariables.sourceURI,
+    imageObjects: imageObjects,
+    textData: pageText
+}
+var xhr = new XMLHttpRequest();
 
-$.ajax({
-    url: inputVariables.imageListURl,
-    type: "POST",
-    data: {
-        "pageURL": inputVariables.sourceURI,
-        "imageObjects": imageObjects,
-        "textData": pageText
-    },
-    dataType: "json",
-    success: function (data) {
-        console.log(data);
-    }
-})
+xhr.open("POST", inputVariables.ThumbNailDataURl, true);
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("dataType", "json");
+xhr.send(JSON.stringify(thumbnailData));
+
+
+//$.ajax({
+//    url: inputVariables.ThumbNailDataURl,
+//    type: "POST",
+//    data: JSON.stringify(thumbnailData),
+//    contentType:"application/json",
+//    dataType: "json",
+//    success: function (data) {
+//        console.log(data);
+//    }
+//})

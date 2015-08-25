@@ -1,10 +1,11 @@
 ﻿(function (h) {
     'use strict';
     function NotocolUtil(dependencies) {
-
+        var vm = this;
         var chromeTabs = dependencies.chromeTabs;
         var isAllowedFileSchemeAccess = dependencies.isAllowedFileSchemeAccess;
         var extensionURL = dependencies.extensionURL;
+        var hypothesis = dependencies.hypothesis;
         var tabInfo = tabInfo || {};;
 
         var TAB_STATUS_COMPLETE = 'complete';
@@ -12,13 +13,13 @@
         var WEB_HTML_URL = 2;
         var LOCAL_PDF_URL = 3;
         var WEB_PDF_URL = 4;
-
+        var SERVER_BASE_URL = "https://localhost:44301/";
 
         function isPDFURL(url) {
             return url.toLowerCase().indexOf('.pdf') > 0;
         }
         function isFileURL(url) {
-            return url.indexOf("file:") === 0;
+            return url.indexOf("file:") === 0 || url.indexOf("file=") === 0;
         }
 
         function getURLType(url) {
@@ -35,7 +36,7 @@
         }
         
         function isLocalPDFUrl(url) {
-            return url.indexOf("chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/content/web/viewer.html?file=file") === 0;
+            return url.indexOf(extentionsURL("content/web/viewer.html?file=file")) === 0;
         }
 
         this.isURLSupported = function(tab) {
@@ -46,23 +47,61 @@
                 return true;
             }else return false;
         }
-           
-        function setTabInfo(tab) {
-            var urlInfo = {}, link = tab.url;
+        var checkForUserPageData = function (tabId) {
+            //if (typeof tabInfo[tabId].pageCheckRequest != "undefined")
+              //  tabInfo[tabId].pageCheckRequest.abort();
 
-            if (isPDFURL(link)) link = unescape(tab.url.substring(tab.url.indexOf("=") + 1));
-            if (isFileURL(link))link = unescape(link);
+            //tabInfo[tabId].pageCheckRequest =
+            $.ajax({
+                url: SERVER_BASE_URL + "Api/Source/SourceData",
+                type: 'Get',
+                data: {
+                    pageURL: tabInfo[tabId].url
+                },
 
-            urlInfo.link = urlInfo.url = link;
-            tabInfo[tab.id] = {
-                title : tab.title,
-                url : urlInfo,
-                faviconUrl : tab.favIconUrl
-            };
-            
-            console.log("Setting tabinfo for "+tab.id+" as "+JSON.stringify(tabInfo[tab.id]));
+                success: function (pageData) {
+                    if (pageData != null)
+                        if (typeof pageData.sourceID != "undefined" && pageData.sourceID != 0) {
+                            if (pageData.noteCount > 0) {
+                                hypothesis.enableHypothesis();
+                            }
 
-            
+                            tabInfo[tabId] = pageData;
+                            tabInfo[tabId].status = true;
+                            tabInfo[tabId].tabID = tabId;
+                            console.log("Setting tabinfo for " + tabId + " as " + JSON.stringify(tabInfo[tabId]));
+                        }
+                    tabInfo[tabId].status = true;
+                    tabInfo[tabId].tabID = tabId;
+                },
+
+                failure: function () {
+                    console.log("Failed to get info for tabID "+tabId);
+                }
+
+            });
+            return;
+        }
+        
+        this.setTabInfo = function(tab, info) {
+            if (typeof info != "undefined") {
+                tabInfo[tab.id] = info;
+            }else{
+                var link = tab.url;
+
+                if (isPDFURL(link)) link = unescape(tab.url.substring(tab.url.indexOf("=") + 1));
+                if (isFileURL(link))link = unescape(link);
+
+                tabInfo[tab.id] = {
+                    title : tab.title,
+                    url: link,
+                    link: link,
+                    faviconUrl: tab.favIconUrl,
+                    
+
+                };
+            }
+            checkForUserPageData(tab.id);
         }
 
         function unsetTabInfo(tabId) {
@@ -70,7 +109,7 @@
         }
 
         this.getTabInfo = function (tab) {
-            //console.log("Request for tabInfo for " + tab.id);
+            console.log("Request for tabInfo for " + tab.id);
             return tabInfo[tab.id];
         }
 
@@ -80,11 +119,15 @@
         }
 
         function onTabUpdated(tabId, changeInfo, tab) {
-            //if (changeInfo.status !== TAB_STATUS_COMPLETE) {
-            //    return;
-            //}
             
-            setTabInfo(tab);
+            vm.setTabInfo(tab);
+            if (changeInfo.status !== TAB_STATUS_COMPLETE) {
+                return;
+            }
+
+            if (isPDFURL(tab.url)) {
+                hypothesis.enableHypothesis();
+            }
         }
 
         function onTabRemoved(tabId) {
@@ -97,16 +140,18 @@
             chromeTabs.onRemoved.addListener(onTabRemoved);
 
             chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-                //console.log(sender.tab);
+                
                 if (request.greeting == "pdfUrn") {
-                    //console.log("Received data from script at tab:" + sender.tab.id + " as " + request.data);
+                
                     if (typeof tabInfo[sender.tab.id] != "undefined") {
-                        tabInfo[sender.tab.id].url.url = request.data;
-                        console.log("Updated tabInfo for "+sender.tab.id+" as "+ JSON.stringify(tabInfo[sender.tab.id]));
+                        var info = tabInfo[sender.tab.id]
+                        info.url = request.data;
+                        vm.setTabInfo(sender.tab, info);
+                        
                     } else {
                         console.log("Did not find tab with ID " + sender.tab.id);
                     }
-                    //sendResponse({ farewell: "goodbye" });
+                
                 }
             });
         }

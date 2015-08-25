@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test Chrome Extension", "Test Chrome Extension\Test Chrome Extension.csproj", "{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{2764862F-31DD-405A-A2E0-28520D8ECB04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,11 +54,16 @@ Global
 		{EEE21EE8-D5C2-4F87-A2D8-162C3A2262C3}.Release|x64.ActiveCfg = Release|x64
 		{EEE21EE8-D5C2-4F87-A2D8-162C3A2262C3}.Release|x64.Build.0 = Release|x64
 		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|x64.ActiveCfg = Release|Any CPU
+		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

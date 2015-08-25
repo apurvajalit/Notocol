@@ -12,6 +12,7 @@ using Repository;
 using Model;
 using Notocol.Models;
 using AutoMapper;
+using Business;
 
 namespace h_store.Controllers
 {
@@ -34,50 +35,21 @@ namespace h_store.Controllers
         [HttpGet]
         public ExtensionSearchResponse Search(int limit, int offset, string order, string sort, string uri)
         {
-            ExtensionSearchResponse res = new ExtensionSearchResponse();
-            AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-
-            List<Annotation> annotationList = objAnnotationRepository.getAnnotations(uri, Utility.GetCurrentUserID());
-           
-            res.total = annotationList.Count;
-            foreach (var annotation in annotationList)
-                res.rows.Add(Utility.AnnotationToExtensionAnnotation(annotation));
-
-            return res;
+            return new AnnotationHelper().GetAnnotationsForPage(Utility.GetCurrentUserID(), uri);
         }
 
         [HttpPost]
         public ExtensionAnnotationData annotations(ExtensionAnnotationData extAnnotation)
         {
-            AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-            extAnnotation.created = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
-            extAnnotation.updated = extAnnotation.created;
-            extAnnotation.consumer = Utility.GetCurrentUserName();
-            Annotation annotation = Utility.ExtensionAnnotationToAnnotation(extAnnotation);
 
-            //TODO Take care of the following
-            annotation.UserID = (int)Utility.GetCurrentUserID();
-
-            if ((annotation.ID = objAnnotationRepository.AddAnnotation(annotation)) <= 0)
-            {
-                return null; //TODO add a more informative error
-            }
-
-            extAnnotation.id = annotation.ID;
-            return extAnnotation;
-
+            return new AnnotationHelper().AddAnnotation(extAnnotation, Utility.GetCurrentUserName(), Utility.GetCurrentUserID());
         }
 
 
         [HttpGet]
         public ExtensionAnnotationData annotations(long id)
         {
-            AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-            Annotation annotation = null;
-            if ((annotation = objAnnotationRepository.getAnnotation(id)) != null)
-                return Utility.AnnotationToExtensionAnnotation(annotation);
-             
-            return null;
+            return new AnnotationHelper().GetAnnotation(id);
            
         }
 
@@ -86,27 +58,9 @@ namespace h_store.Controllers
         //[Route("api/Annotation/annotations/{id}")]
         public ExtensionAnnotationData annotations(long id, ExtensionAnnotationData extAnnotation)
         {
-         
-            AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-            Annotation updatedannotation = Utility.ExtensionAnnotationToAnnotation(extAnnotation);
-            Annotation annotation = objAnnotationRepository.getAnnotation(id);
-            if (annotation == null)
-                return null;
 
-            annotation.Updated = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
-            annotation.Text = updatedannotation.Text;
-            annotation.Tags = updatedannotation.Tags;
-            annotation.Permissions = updatedannotation.Permissions;
-            annotation.Document = updatedannotation.Document;
-
-            annotation.UserID = (int)Utility.GetCurrentUserID();
-            annotation.ID = (int)id;
+            return new AnnotationHelper().UpdateAnnotation(id, extAnnotation, Utility.GetCurrentUserID());
             
-
-            if(objAnnotationRepository.UpdateAnnotation(annotation))
-                return extAnnotation;
-
-            return null;
         }
 
 
@@ -118,7 +72,7 @@ namespace h_store.Controllers
             string successResult = "{\"deleted\": true, \"id\": \""+id+"\"}";
             string failedResult = "{\"deleted\": false, \"id\": \""+id+"\"}";
 
-            if(annotationRespository.DeleteAnnotation(id, Utility.GetCurrentUserID()))
+            if(new AnnotationHelper().DeleteAnnotation(id, Utility.GetCurrentUserID()))
                 return JObject.Parse(successResult);
             else
                 return JObject.Parse(failedResult);

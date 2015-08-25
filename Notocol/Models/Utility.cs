@@ -55,51 +55,7 @@ namespace Notocol.Models
             return extUser;
         }
 
-        public static ExtensionAnnotationData AnnotationToExtensionAnnotation(Annotation annotation)
-        {
-            ExtensionAnnotationData extAnnData = new ExtensionAnnotationData();
-         
-            extAnnData.updated = annotation.Updated;
-
-            if(annotation.Target != null)
-                extAnnData.target = JsonConvert.DeserializeObject<Target[]>(annotation.Target);
-            extAnnData.created = annotation.Created;
-            extAnnData.text = annotation.Text;
-            
-            if(annotation.Tags != null)
-                extAnnData.tags = JsonConvert.DeserializeObject<string[]>(annotation.Tags);
-            extAnnData.uri = annotation.Uri;
-            extAnnData.document = JsonConvert.DeserializeObject(annotation.Document);
-            extAnnData.consumer = annotation.Consumer;
-            extAnnData.id = annotation.ID;
-            extAnnData.user = annotation.User;
-            extAnnData.permissions = JsonConvert.DeserializeObject(annotation.Permissions);
-
-            return extAnnData;
-        }
-
-        public static Annotation ExtensionAnnotationToAnnotation(ExtensionAnnotationData extAnnotation)
-        {
-            
-            Annotation annotation = new Annotation();
-            annotation.Updated = extAnnotation.updated;
-            if (extAnnotation.target != null && extAnnotation.target.Count() > 0)
-                annotation.Target = JsonConvert.SerializeObject(extAnnotation.target);
-
-            annotation.Created = extAnnotation.created;
-            annotation.Text = extAnnotation.text;
-            annotation.Uri = extAnnotation.uri;
-            if (extAnnotation.tags != null && extAnnotation.tags.Count() > 0)
-                annotation.Tags = JsonConvert.SerializeObject(extAnnotation.tags);
-
-            annotation.Document = JsonConvert.SerializeObject(extAnnotation.document);
-            annotation.Consumer = extAnnotation.consumer;
-            annotation.ID = extAnnotation.id;
-            annotation.Permissions = JsonConvert.SerializeObject(extAnnotation.permissions);
-            annotation.User = extAnnotation.user;
-
-            return annotation;
-        }
+        
 
         public static string GenerateUserInfoCookieData(long userID, string userName)
         {
