@@ -79,6 +79,7 @@
     <Compile Include="Extended\Extension\ExtensionAnnotationData.cs" />
     <Compile Include="Extended\Extension\ExtensionSearchResponse.cs" />
     <Compile Include="Extended\Extension\ExtensionUser.cs" />
+    <Compile Include="Extended\Extension\Features.cs" />
     <Compile Include="Extended\Extension\PageImageInfo.cs" />
     <Compile Include="Extended\Extension\SourceDataForExtension.cs" />
     <Compile Include="Extended\Extension\TagDataForBookmark.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Extended\NoteData.cs" />
     <Compile Include="Extended\SourceData.cs" />
     <Compile Include="Extended\SourceItem.cs" />
+    <Compile Include="Extended\UserRegistration.cs" />
     <Compile Include="Folder.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
@@ -124,6 +126,7 @@
     <Compile Include="User.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
+    <Compile Include="UserRegistration.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

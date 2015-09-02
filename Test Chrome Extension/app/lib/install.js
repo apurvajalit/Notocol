@@ -12,7 +12,6 @@
     },
   });
 
-
   browserExtension.listen(window);
   chrome.runtime.onInstalled.addListener(onInstalled);
   chrome.runtime.requestUpdateCheck(function (status) {
@@ -78,6 +77,7 @@
               if (!(tabs.length === 0)) {
                   //Toggle Hypothesis Sidebar
                   browserExtension.onBrowserActionClicked(tabs[0]);
+                  notocolUtil.updateAnnotatorStatus(tabs[0].id);
               }
           });
           sendResponse({ message: "Toggled Annotation" });

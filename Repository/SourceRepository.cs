@@ -243,7 +243,7 @@ namespace Repository
                             SourceData source = new SourceData();
                             source.ID = Convert.ToInt64(dr["ID"].ToString());
                             source.Title = dr["Title"].ToString();
-                            source.Link = dr["Link"].ToString();
+                            source.Url = dr["SourceURI"].ToString();
                             source.Summary = dr["Summary"].ToString();
                             source.TagNames = dr["TagNames"].ToString();
                             source.TagIDs = dr["TagIDs"].ToString();
@@ -258,5 +258,33 @@ namespace Repository
             return sourceList;
         }
 
+
+        public Source GetSourceFromSourceURN(string sourceURN, int userID)
+        {
+            IList<Source> lstSource = null;
+
+            try
+            {
+                using (GetDataContext())
+                {
+                    lstSource = (from sources in context.Sources
+                                 where sources.UserID == userID && sources.URN == sourceURN
+                                 select sources).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+
+            }
+
+            if (lstSource.Count() > 0)
+                return lstSource.First();
+
+            return null;
+        }
     }
 }

@@ -1,7 +1,8 @@
 {
   "name": "Hypothesis - Web & PDF Annotation",
   "short_name": "Hypothesis",
-  "version": "0.4.2.170",
+  "version": "0.7.2.0",
+  "version_name": "0.7.2.0 (g12ed30e.dirty)",
   "manifest_version": 2,
 
   "description": "Collaboratively annotate, highlight, and tag web pages and PDF documents.",
@@ -17,11 +18,12 @@
   "offline_enabled": false,
   "permissions": [
     "<all_urls>",
+
     "contentSettings",
     "tabs"
   ],
   "content_security_policy":
-    "script-src 'self' 'unsafe-eval' chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public https://cdn.mathjax.org; object-src 'self'; font-src 'self' data:;",
+    "script-src 'self' 'unsafe-eval' https://localhost:44301/ https://cdn.mathjax.org; object-src 'self'; font-src 'self' data:;",
 
     "background": {
         "persistent": true,
@@ -43,16 +45,19 @@
 
   "browser_action": {
     "default_icon": {
-      "19": "images/browser-icon-inactive.png",
-      "38": "images/browser-icon-inactive@2x.png"
+      "19": "images/notocol-inactive.png",
+      "38": "images/notocol-inactive.png"
     },
     "default_popup": "public/popup.html"
   },
-  "web_accessible_resources": [
-    "public/*",
-    "content/*",
-    "lib/*",
-    "help/*",
-    "content/web/viewer.html"
-  ]
+    "web_accessible_resources": [
+        "public/*",
+        "content/*",
+        "lib/*",
+        "help/*",
+        "content/web/viewer.html"
+    ],
+    "externally_connectable": {
+     "matches": ["chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/content/web/viewer.html"]
+    }
 }

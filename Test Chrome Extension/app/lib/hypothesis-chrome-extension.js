@@ -33,9 +33,10 @@
   function HypothesisChromeExtension(dependencies) {
     var chromeTabs = dependencies.chromeTabs;
     var chromeBrowserAction = dependencies.chromeBrowserAction;
+    
     var help  = new h.HelpPage(chromeTabs, dependencies.extensionURL);
     var store = new h.TabStore(localStorage);
-    var state = new h.TabState(store.all(), onTabStateChange);
+    this.state = new h.TabState(store.all(), onTabStateChange);
     var browserAction = new h.BrowserAction(chromeBrowserAction);
     var sidebar = new h.SidebarInjector(chromeTabs, {
       extensionURL: dependencies.extensionURL,
@@ -43,6 +44,7 @@
     });
     var tabErrors = new h.TabErrorCache();
 
+    var vm = this;
     /* Sets up the extension and binds event listeners. Requires a window
      * object to be passed so that it can listen for localStorage events.
      */
@@ -62,7 +64,7 @@
         // actually changed externally by validating the new value.
         if (isState && isUpdate && event.newValue !== JSON.stringify(store.all())) {
           store.reload();
-          state.load(store.all());
+          vm.state.load(store.all());
         }
       });
     };
@@ -74,9 +76,9 @@
       chromeTabs.query({}, function (tabs) {
         tabs.forEach(function (tab) {
           if (state.isTabActive(tab.id)) {
-            state.activateTab(tab.id, {force: true});
+            vm.state.activateTab(tab.id, {force: true});
           } else {
-            state.deactivateTab(tab.id, {force: true});
+            vm.state.deactivateTab(tab.id, {force: true});
           }
         });
       });
@@ -85,7 +87,7 @@
     /* Opens the onboarding page */
     this.firstRun = function () {
       chromeTabs.create({url: 'https://hypothes.is/welcome'}, function (tab) {
-        state.activateTab(tab.id);
+        vm.state.activateTab(tab.id);
       });
     };
 
@@ -93,7 +95,7 @@
       if (current) {
         browserAction.setState(tabId, current);
 
-        if (!state.isTabErrored(tabId)) {
+        if (!vm.state.isTabErrored(tabId)) {
           store.set(tabId, current);
           tabErrors.unsetTabError(tabId);
           chromeTabs.get(tabId, updateTabDocument);
@@ -106,22 +108,24 @@
 
     function onBrowserActionClicked(tab) {
       var tabError = tabErrors.getTabError(tab.id);
-      if (state.isTabErrored(tab.id) && tabError) {
+      if (vm.state.isTabErrored(tab.id) && tabError) {
         help.showHelpForError(tab, tabError);
       }
-      else if (state.isTabActive(tab.id)) {
-        state.deactivateTab(tab.id);
+      else if (vm.state.isTabActive(tab.id)) {
+          vm.state.deactivateTab(tab.id);
+          
       }
       else {
-        state.activateTab(tab.id);
+          vm.state.activateTab(tab.id);
       }
     }
 
     this.onBrowserActionClicked = onBrowserActionClicked;
 
-    this.enableHypothesis = function () {
+    this.enableHypothesis = function (tabId) {
         console.log("Enabling hypothesis");
-        state.activateTab(tabId);
+        vm.state.activateTab(tabId);
+        
     }
 
     function onTabUpdated(tabId, changeInfo, tab) {
@@ -133,16 +137,16 @@
       }
 
 
-      if (state.isTabErrored(tabId)) {
-        state.restorePreviousState(tabId);
+      if (vm.state.isTabErrored(tabId)) {
+          vm.state.restorePreviousState(tabId);
       }
 
-      if (state.isTabActive(tabId)) {
+      if (vm.state.isTabActive(tabId)) {
         browserAction.activate(tabId);
       } else {
         // Clear the state to express that the user has no preference.
         // This allows the publisher embed to persist without us destroying it.
-        state.clearTab(tabId);
+          vm.state.clearTab(tabId);
         browserAction.deactivate(tabId);
       }
 
@@ -151,11 +155,11 @@
 
     function onTabCreated(tab) {
       // Clear the state in case there is old, conflicting data in storage.
-      state.clearTab(tab.id);
+        vm.state.clearTab(tab.id);
     }
 
     function onTabRemoved(tabId) {
-      state.clearTab(tabId);
+        vm.state.clearTab(tabId);
     }
 
     function updateTabDocument(tab) {
@@ -164,13 +168,13 @@
         return Promise.resolve();
       }
 
-      if (state.isTabActive(tab.id)) {
+      if (vm.state.isTabActive(tab.id)) {
         return sidebar.injectIntoTab(tab).catch(function (err) {
           tabErrors.setTabError(tab.id, err);
           state.errorTab(tab.id);
         });
       }
-      else if (state.isTabInactive(tab.id)) {
+      else if (vm.state.isTabInactive(tab.id)) {
         return sidebar.removeFromTab(tab);
       }
     }

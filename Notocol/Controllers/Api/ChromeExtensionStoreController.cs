@@ -91,8 +91,8 @@ namespace h_store.Controllers.Api
         private HttpResponseMessage appDisableUser(ExtensionUser user)
         {
             UserRepository objUserRepository = new UserRepository();
-            Model.User userDB = objUserRepository.GetExistingUser(user.Username, user.pwd);
-            if (userDB == null || !objUserRepository.deleteUser(userDB))
+            Model.User userDB = objUserRepository.GetOwnRegisteredUser(user.Username, user.pwd);
+            if (userDB == null || !objUserRepository.DeleteUser(userDB))
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, GetAppResponseWithTokens());
             }
@@ -111,7 +111,7 @@ namespace h_store.Controllers.Api
                 //Password Change
                 string oldPassword = user.pwd;
                 string newPassword = user.Password;
-                Model.User userDB = objUserRepository.GetExistingUser(user.Username, oldPassword);
+                Model.User userDB = objUserRepository.GetOwnRegisteredUser(user.Username, oldPassword);
                 //user.Username = "acct:" + user.Username + "@hypothes.is";
                 long current_ID = Utility.GetCurrentUserID();
                 if (userDB != null && userDB.ID == current_ID)
@@ -165,17 +165,16 @@ namespace h_store.Controllers.Api
                 Model.User userDB = null;
                 // user.username = "acct:" + user.username + "@hypothes.is";
                 //Request has come from the application
-                long ret = objUserRepository.GetAuthorisedUser(user.Username, user.Password, null, out userDB);
-                if (ret <= 0)
-                {
+                long ret = objUserRepository.AuthenticateOwnUser(user.Username, user.Password, out userDB);
+                if (ret != UserRepository.AUTH_USER_AUTHENTICATED){
 
                     ApplicationStatus appErrorStatus = GetAppResponseWithTokens();
                     appErrorStatus.status = "failure";
                     appErrorStatus.errors = new ApplicationErrors();
 
-                    if (ret == 0)
+                    if (ret == UserRepository.AUTH_USER_NOT_FOUND)
                         appErrorStatus.errors.username = "User does not exist";
-                    else if (ret == -1)
+                    else if (ret == UserRepository.AUTH_USER_PASSWORD_INCORRECT)
                         appErrorStatus.errors.username = "Incorrect password. Please try again";
                     return Request.CreateResponse(HttpStatusCode.BadRequest, appErrorStatus);
                 }
@@ -190,8 +189,8 @@ namespace h_store.Controllers.Api
         {
             //user.Username = "acct:" + user.Username + "@hypothes.is";
             UserRepository objUserRepository = new UserRepository();
-
-            if ((user.ID = objUserRepository.addUser(Utility.ExtensionUserToUser(user))) > 0)
+            User userDB = Utility.ExtensionUserToUser(user);
+            if ((user.ID = objUserRepository.AddUser(ref userDB)) > 0)
             {
                 return appLogIn(user);
             }
@@ -208,7 +207,7 @@ namespace h_store.Controllers.Api
         }
                 
         [HttpGet]
-        public HttpResponseMessage appStatus(string __formid__=null)//Possible types: status, profile 
+        public HttpResponseMessage app(string __formid__=null)//Possible types: status, profile 
         {
             ApplicationStatus applicationStatus = null;
             string userName = Utility.GetCurrentUserName();
@@ -259,8 +258,24 @@ namespace h_store.Controllers.Api
             throw new NotImplementedException();
         }
 
+
+        [HttpGet]
+        public HttpResponseMessage Features()
+        {
+            Features features = new Features();
+            features.claim = true;
+            features.notification = true;
+            features.queue = true;
+            features.streamer = true;
+            features.groups = false;
+            features.search_normalized = false;
+
+
+            return Request.CreateResponse(HttpStatusCode.OK, features);
+
+        }
         [HttpPost]
-        public HttpResponseMessage accountAction(string __formid__, ExtensionUser user)//Possible actions: login, logout
+        public HttpResponseMessage app(string __formid__, ExtensionUser user)//Possible actions: login, logout
         {
             if (!CheckXSRFToken())
             {

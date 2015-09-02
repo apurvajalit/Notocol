@@ -27,6 +27,12 @@ namespace Model
         public string Identifier { get; set; }
         public Nullable<System.DateTime> ModifiedAt { get; set; }
         public string Email { get; set; }
+        public string Provider { get; set; }
+        public string Gender { get; set; }
+        public Nullable<System.DateTime> DOB { get; set; }
+        public string Address { get; set; }
+        public string Name { get; set; }
+        public string Photo { get; set; }
     
         public virtual ICollection<Folder> Folders { get; set; }
         public virtual ICollection<Source> Sources { get; set; }

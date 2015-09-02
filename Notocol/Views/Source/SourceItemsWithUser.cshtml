@@ -1,5 +1,5 @@
 ﻿@using Model.Extended
-@model IList<SourceItem>
+@model IList<SourceData>
 
 @{
     int count = 0;
@@ -16,9 +16,9 @@
         <div class="col-sm-3 table-col">
 
             <div style="padding-bottom:15px">
-                @if (!(source.Link.StartsWith("localFile")))
+                @if (!(source.Url.StartsWith("localFile")))
                 {
-                    <a href="@source.Link" target="_blank" class="page-title text-info">@source.Title</a>
+                    <a href="@source.Url" target="_blank" class="page-title text-info">@source.Title</a>
 
                 }
                 else

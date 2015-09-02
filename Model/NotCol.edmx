@@ -42,7 +42,7 @@
           <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserID" Type="bigint" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="500" />
-          <Property Name="Link" Type="nvarchar" MaxLength="1000" />
+          <Property Name="URN" Type="nvarchar" MaxLength="1000" />
           <Property Name="Summary" Type="nvarchar" MaxLength="2000" />
           <Property Name="ReadLater" Type="bit" />
           <Property Name="SaveOffline" Type="bit" />
@@ -83,10 +83,16 @@
           </Key>
           <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Username" Type="varchar" MaxLength="200" Nullable="false" />
-          <Property Name="Password" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
           <Property Name="Identifier" Type="varchar" MaxLength="500" />
           <Property Name="ModifiedAt" Type="datetime" />
           <Property Name="Email" Type="varchar" MaxLength="200" />
+          <Property Name="Provider" Type="varchar" MaxLength="500" />
+          <Property Name="Gender" Type="char" MaxLength="1" />
+          <Property Name="DOB" Type="date" />
+          <Property Name="Address" Type="varchar" MaxLength="200" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Photo" Type="nvarchar" MaxLength="2083" />
         </EntityType>
         <Association Name="FK_Annotaion_Source">
           <End Role="Source" Type="Self.Source" Multiplicity="0..1" />
@@ -305,7 +311,7 @@
             <End Role="User" EntitySet="Users" />
             <End Role="Tag" EntitySet="Tags" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <ComplexType Name="GetTags_Result">
           <Property Type="Int64" Name="ChildId" Nullable="true" />
           <Property Type="String" Name="ChildName" Nullable="true" MaxLength="50" />
@@ -377,7 +383,7 @@
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserID" Type="Int64" Nullable="false" />
           <Property Name="Title" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Link" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="URN" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="Summary" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
           <Property Name="ReadLater" Type="Boolean" />
           <Property Name="SaveOffline" Type="Boolean" />
@@ -426,13 +432,19 @@
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Username" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Identifier" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
           <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Folders" Relationship="NotColModel.fk_user" FromRole="User" ToRole="Folder" />
           <NavigationProperty Name="Sources" Relationship="NotColModel.FK_Source_User" FromRole="User" ToRole="Source" />
           <NavigationProperty Name="Tags" Relationship="NotColModel.FK_Tag_User" FromRole="User" ToRole="Tag" />
+          <Property Name="Provider" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="DOB" Type="DateTime" Precision="0" />
+          <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Photo" Type="String" MaxLength="2083" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Annotaion_Source">
           <End Type="NotColModel.Source" Role="Source" Multiplicity="0..1" />
@@ -619,7 +631,7 @@
                 <ScalarProperty Name="SaveOffline" ColumnName="SaveOffline" />
                 <ScalarProperty Name="ReadLater" ColumnName="ReadLater" />
                 <ScalarProperty Name="Summary" ColumnName="Summary" />
-                <ScalarProperty Name="Link" ColumnName="Link" />
+                <ScalarProperty Name="URN" ColumnName="URN" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -648,6 +660,12 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="NotColModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="DOB" ColumnName="DOB" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Provider" ColumnName="Provider" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
                 <ScalarProperty Name="Identifier" ColumnName="Identifier" />
@@ -657,7 +675,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->

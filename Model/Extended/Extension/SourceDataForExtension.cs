@@ -8,7 +8,7 @@ namespace Model.Extended.Extension
 {
     public class SourceDataForExtension
     {
-        public string link { get; set; }
+        public string urn { get; set; }
         public string url { get; set; }
         public string title { get; set; }
         public string summary { get; set; }

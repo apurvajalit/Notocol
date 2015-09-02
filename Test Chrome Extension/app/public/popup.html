@@ -3,54 +3,49 @@
 <head>
     <title>Notocol</title>
     <link rel="stylesheet" type="text/css" href="styles/notocol/popup.css">
-    <link rel="stylesheet" href="styles/"> 
     <script src="scripts/vendor/angular.min.js"></script>
     <script src="scripts/notocol/popup.js"></script>
-
 </head>
-<body ng-controller="PageCtrl as page">
-    <div ng-controller="TabsCtrl as tabs">
-        <section>
-            <ul>
-                <li ng-class="{active:tabs.isSet(1)}">
-                    <a href="" ng-click="tabs.setTab(1)">Save Page</a>
-                </li>
-                <li ng-class="{active:tabs.isSet(2)}">
-                    <a href="" ng-click="tabs.setTab(2)">Snapshot</a>
-                </li>
-                <li ng-class="{active:tabs.isSet(3)}">
-                    <a href="" ng-click="tabs.setTab(3)">Annotate</a>
-                </li>
-            </ul>
-        </section>
 
-        <div ng-controller="BookmarkCtrl as bookmark" class="popup-body" ng-show="tabs.isSet(1)">
-            <h1>{{bookmark.pageDetails.title}}</h1>
-            <textarea ng-model="bookmark.pageDetails.summary" placeholder="Enter notes for the page..."></textarea>
-            <input type="text" ng-model="bookmark.pageDetails.tags" placeholder="Enter comma separated tags.." />
-            <input type="text" ng-model="bookmark.pageDetails.folder" placeholder="Enter folder" />
-            <div>
-                <img ng-src="{{bookmark.pageDetails.faviconUrl}}" />
-                <p>{{bookmark.pageDetails.url}}</p>
+<body ng-controller="PageCtrl as page">
+    <div class="header">
+            <div class= "header-page-options">
+                <p id="page-status">Page Saved</p>
+                <input class="header-page-delete" type="button" ng-click="page.DeletePage()"value="Delete" />
             </div>
 
-
-            <input type="button" value="Save" ng-click="bookmark.savePage()" />
-            <input type="button" value="Cancel" ng-click="page.closePopup()" />
-        </div>
-
-        <div class="popup-body" ng-show="tabs.isSet(2)">
-            <input type="button" value="Take Current Page Snapshot" />
-        </div>
-
-        <div class="popup-body" ng-show="tabs.isSet(3)">
-            <input id='toggleAnnotation' type=button value="Annotate" />
-        </div>
-        
-    </div>
-    <div ng-controller="CheckCtrl">
+            <div class="popup-close">
+                <input type="button" value="Close" ng-click="page.closePopup()" />
+            </div>
         
     </div>
 
+    <div class="popup-body" ng-controller="BookmarkCtrl as bookmark">
+        <!--<p class="page-title">{{bookmark.pageDetails.title}}</p>
+        <p class="domain-name">
+            <img ng-hide="bookmark.pageDetails.faviconUrl == null" class="favicon-url" ng-src="{{bookmark.pageDetails.faviconUrl}}">
+            {{bookmark.pageDetails.url | domain}}    
+        </p>-->
+        
+        
+        <textarea class="page-summary" ng-model="bookmark.pageDetails.summary" placeholder="Something about the page to note?"></textarea>
+
+        <input class="page-tags" type="text" ng-model="bookmark.pageDetails.tags" placeholder="Add tags" />
+        <input class="page-folder" type="text" ng-model="bookmark.pageDetails.folder" placeholder="Add to folder" />
+        
+        <input type="button" value="Save" ng-click="bookmark.savePage()" />
+        
+    </div>
+
+    
+    <div class="footer">
+        <div class="footer-child">
+            <div id="annotation-switch" class="inline">
+                <input id='toggleAnnotation' type=button ng-class="{'annotator-active':page.annotator, 'annotator-inactive':!page.annotator}" value="Off" />
+            </div>
+
+            <input type="button" class="inline snapshot-trigger"  value="Snapshot" />
+        </div>
+    </div>
 </body>
 </html>

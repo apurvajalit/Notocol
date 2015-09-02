@@ -21,9 +21,15 @@ namespace Notocol
 
             // Web API Session Enabled Route Configurations start
             routes.MapHttpRoute(
+                name: "annotationAPIStoreFeaturesRoute",
+                routeTemplate: "app/features",
+                defaults: new { controller = "ChromeExtensionStore", action = "Features" }
+            ).RouteHandler = new SessionStateRouteHandler();
+            
+            routes.MapHttpRoute(
                 name: "annotationAPIStoreStatusRoute",
                 routeTemplate: "app",
-                defaults: new { controller = "ChromeExtensionStore" }
+                defaults: new { controller = "ChromeExtensionStore", action = "app" }
             ).RouteHandler = new SessionStateRouteHandler();
 
             routes.MapHttpRoute(

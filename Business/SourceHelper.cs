@@ -51,16 +51,18 @@ namespace Business
                 objSource = objSourceRepository.GetSource(sourceID);
                 if (objSource == null || objSource.UserID != userID) return 0;
 
-            }else{
+            }else if((objSource = objSourceRepository.GetSourceFromSourceURI(sourceData.url, userID)) == null){
+                
                 objSource = new Source();
                 objSource.UserID = userID;
                 objSource.SourceURI = sourceData.url;
-                objSource.Link = sourceData.link;
+                
             }
 
             objSource.Title = sourceData.title;
             objSource.Summary = sourceData.summary;
             objSource.FaviconURL = sourceData.faviconUrl;
+            objSource.URN = sourceData.urn;
             if (sourceData.folder > 0 && objSource.FolderID != sourceData.folder)
             {
                 //Set the folder here after checking whether it is created or not
@@ -90,7 +92,7 @@ namespace Business
             {
                 TagHelper tagHelper = new TagHelper();
 
-                sourceDataForExtension.link = source.Link;
+                sourceDataForExtension.urn = source.URN;
                 sourceDataForExtension.url = source.SourceURI;
                 sourceDataForExtension.summary = source.Summary;
                 sourceDataForExtension.title = source.Title;
@@ -181,9 +183,12 @@ namespace Business
             int numCharsLeft = maxThumbnailTextLength;
             foreach (string text in pageText)
             {
-                pageThumbnailText = string.Concat(pageThumbnailText, text.Trim().Substring(0, numCharsLeft < text.Length ? numCharsLeft : text.Length), System.Environment.NewLine);
-                numCharsLeft = maxThumbnailTextLength - pageThumbnailText.Length;
-                if (numCharsLeft <= 0) break;
+                if (text.Length > 0) { 
+                    pageThumbnailText = string.Concat(pageThumbnailText, text.Trim().Substring(0, numCharsLeft < text.Length ? numCharsLeft : text.Length - 1 ), System.Environment.NewLine);
+                    numCharsLeft = maxThumbnailTextLength - pageThumbnailText.Length;
+                    if (numCharsLeft <= 0) break;
+                }
+                
             }
 
             return pageThumbnailText;
@@ -218,6 +223,19 @@ namespace Business
             return;
         }
 
-       
+
+
+        internal Source Add(Source source)
+        {
+            SourceRepository sourceRepository = new SourceRepository();
+            
+            return sourceRepository.AddSource(source);
+
+        }
+
+        internal Source GetSourceFromURN(string sourceURN, int userID)
+        {
+            return obSourceRepository.GetSourceFromSourceURN(sourceURN, userID);
+        }
     }
 }

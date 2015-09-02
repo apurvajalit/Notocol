@@ -10,44 +10,79 @@ namespace Repository
 {
     public class UserRepository:BaseRepository
     {
+        //Own user authentication Errors
+        public const int AUTH_USER_NOT_FOUND = 0;
+        public const int AUTH_USER_PASSWORD_INCORRECT = -1;
+        public const int AUTH_USER_AUTHENTICATED = 1;
+
+        //User addition errors
+        public const int ADD_USER_NAME_EXISTS = -1;
+        public const int ADD_USER_EMAIL_EXISTS = -2;
+        public const  int ADD_USER_CLIENT_ID_EXISTS = -3;
+
         public UserRepository()
         {
             CreateDataContext();
         }
-        public long addUser(User user){
+        public long AddUser(ref User user){
             user.ModifiedAt = DateTime.Now;
+            User currentUser = user;
+            //List<long> existingUsers = null;
+            long returnValue = 0;
             try
             {
                 using (GetDataContext())
                 {
-                    List<long> existingUsers = (from users in context.Users
-                                   where users.Email == user.Email || users.Username == user.Username
-                                   select users.ID).ToList();
+                    if (user.Identifier == null)
+                    {
+                        if ((from users in context.Users
+                                              where users.Email == currentUser.Email
+                                              select users.ID).ToList().Count != 0)
 
-                    if (existingUsers.Count == 0)
+                            returnValue = ADD_USER_EMAIL_EXISTS;
+
+                        if ((from users in context.Users
+                                              where users.Username == currentUser.Username
+                                              select users.ID).ToList().Count != 0)
+
+                            returnValue = ADD_USER_NAME_EXISTS;
+
+                        
+                    }
+                    else
+                    {
+                        if ((from users in context.Users
+                                              where (users.Provider == currentUser.Provider &&      currentUser.Identifier == users.Identifier)
+                                              select users.ID).ToList().Count != 0)
+
+                            returnValue = ADD_USER_CLIENT_ID_EXISTS;
+                                            
+                    }
+
+                    if (returnValue == 0)
                     {
                         context.Entry(user).State = EntityState.Added;
                         context.SaveChanges();
-
+                        returnValue = user.ID;
                     }
-                    else return -1;
+                    
  
                                         
                 }
             }
             catch 
             {
-                return -1;
+                throw;
             }
             
             finally
             {
                 DisposeContext();
             }
-            return user.ID;
+            return returnValue;
         }
 
-        public long GetAuthorisedUser(string username, string password, string identifier, out User userDB)
+        public int AuthenticateOwnUser(string username, string password, out User userDB)
         {
 
             User user;
@@ -69,38 +104,20 @@ namespace Repository
             {
                 DisposeContext();
             }
-            if (user == null)
-            {
-                return 0;
-            }else{
-                if (password != null) {
-                    if (user.Password != null && user.Password == password)
-                    {
-                        userDB = user;
-                        return user.ID;
-                    }
-                    else return -1;
-                }
-                else if (identifier != null)
-                {
-                    if (user.Identifier != null && user.Identifier == identifier)
-                    {
-                        userDB = user;
-                        return user.ID;
-                    }
-                    else
-                        return -1;
-                }
-                else
-                {
-                    return -1;
-                }
+            
+            if (user == null)        
+                return AUTH_USER_NOT_FOUND;
+            
+            if(user.Password == password){
+                userDB = user;
+                return AUTH_USER_AUTHENTICATED;
             }
-            return 0;
- 
+
+            return AUTH_USER_PASSWORD_INCORRECT;
+                 
         }
 
-        public bool deleteUser(User user)
+        public bool DeleteUser(User user)
         {
             
             try
@@ -124,7 +141,7 @@ namespace Repository
 
         }
 
-        public string getuserName(long userID)
+        public bool CheckIfUserNameExists(string userName)
         {
 
             User user;
@@ -133,7 +150,7 @@ namespace Repository
                 using (GetDataContext())
                 {
                     user = (from userEntry in context.Users
-                                  where userEntry.ID == userID
+                                  where userEntry.Username == userName
                                   select userEntry).ToList().FirstOrDefault<User>();
                 }
             }
@@ -147,12 +164,12 @@ namespace Repository
             }
             if (user != null)
             {
-                return user.Username;
+                return true;
             }
-            return null;
+            return false;
         }
 
-        public User GetExistingUser(string userName, string password)
+        public User GetOwnRegisteredUser(string userName, string password)
         {
             User user;
             try
@@ -175,11 +192,34 @@ namespace Repository
             }
 
             return user;
-            
-            
- 
         }
 
+        public User GetExternalRegisteredUser(string provider, string userIdentifier)
+        {
+            User user;
+            try
+            {
+                using (GetDataContext())
+                {
+                    user = (from userEntry in context.Users
+                            where userEntry.Provider == provider && userEntry.Identifier == userIdentifier
+                            select userEntry).ToList().FirstOrDefault<User>();
+                }
+            }
+
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+
+            return user;
+
+        }
+        
         public bool ChangePassword(User user, string newPassword)
         {
 
@@ -205,8 +245,5 @@ namespace Repository
             return true;
             
         }
-
-        
-      
     }
 }

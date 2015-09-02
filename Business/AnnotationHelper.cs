@@ -9,6 +9,7 @@ using Model.Extended.Extension;
 using Model;
 using Repository;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Business
 {
@@ -63,7 +64,7 @@ namespace Business
         public ExtensionSearchResponse GetAnnotationsForPage(long userID, string uri)
         {
             ExtensionSearchResponse res = new ExtensionSearchResponse();
-            
+
 
             List<Annotation> annotationList = objAnnotationRepository.GetAnnotationsForPage(uri, userID);
 
@@ -74,28 +75,88 @@ namespace Business
             return res;
         }
 
+        public Source GetSourceFromAnnotation(Annotation annotation){
+            string sourceURI = null, sourceURN = null;
+            var document = JObject.Parse(annotation.Document);
+            var links = document["link"];
+            Source source = null;
+            SourceHelper sourceHelper = new SourceHelper();
+
+            foreach (var link in links)
+            {
+                if (link["rel"] != null) continue;
+                string href = (string)link["href"];
+                if (href.Contains("urn:x-pdf:"))
+                {
+                    sourceURN = href.Substring("urn:x-pdf:".Length);
+
+                }
+                else
+                {
+                    sourceURI = System.Uri.UnescapeDataString(href);
+                }
+
+            }
+
+            if (sourceURN != null)
+                source = sourceHelper.GetSourceFromURN(sourceURN, annotation.UserID);
+            else
+                source = sourceHelper.GetSource(sourceURI, annotation.UserID);
+
+            
+            
+            if (source == null)
+            {
+                Source sourceFromAnnotation = new Source();
+                
+                sourceFromAnnotation.Title = (string)document["title"];
+                sourceFromAnnotation.FaviconURL = (document["favicon"] != null) ? (string)document["favicon"] : null;
+                sourceFromAnnotation.UserID = annotation.UserID ;
+                sourceFromAnnotation.SourceURI = sourceURI;
+                sourceFromAnnotation.URN = sourceURN;
+
+                //Way to get thumbnail Data
+
+                if (document["facebook"] != null)
+                {
+                    var documentFacebookData = document["facebook"];
+                    if (documentFacebookData["image"] != null)
+                    {
+
+                
+                    }
+
+                    if (documentFacebookData["description"] != null)
+                    {
+                
+                    }
+                }
+                source = sourceHelper.Add(sourceFromAnnotation);
+               
+            }
+            return source;
+        }
         public ExtensionAnnotationData AddAnnotation(ExtensionAnnotationData extAnnotation, string userName, long userID)
         {
+
             extAnnotation.created = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
             extAnnotation.updated = extAnnotation.created;
             extAnnotation.consumer = userName;
+            
             Annotation annotation = ExtensionAnnotationToAnnotation(extAnnotation);
-
-            //TODO Take care of the following
             annotation.UserID = (int)userID;
-
-            if ((annotation.ID = objAnnotationRepository.AddAnnotation(annotation)) <= 0)
+            Source source = GetSourceFromAnnotation(annotation);
+            
+            if ((source == null) || ((annotation.ID = objAnnotationRepository.AddAnnotation(annotation)) <= 0))
             {
                 return null; //TODO add a more informative error
             }
-            long sourceID = annotation.SourceID != null? (long) annotation.SourceID:0;
-            if (sourceID > 0)
-            {
-                SourceHelper sourceHelper = new SourceHelper();
-                Source source = sourceHelper.GetSource(sourceID);
-                source.noteCount++;
-                sourceHelper.UpdateSource(source);
-            }
+
+            source.noteCount++;
+            SourceHelper sourceHelper = new SourceHelper();           
+            
+            sourceHelper.UpdateSource(source);
+            
 
             extAnnotation.id = annotation.ID;
             return extAnnotation;

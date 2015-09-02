@@ -10,7 +10,7 @@ namespace Model.Extended
     {
         public long ID;
         public string Title;
-        public string Link;
+        public string Url;
         public string Summary;
         public string TagNames;
         public string TagIDs;

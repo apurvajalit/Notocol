@@ -85,17 +85,7 @@ namespace Notocol.Controllers
             return View();
         }
 
-        public ActionResult Login()
-        {
-            if (TempData["SignInFailed"] != null)
-                ViewBag.SignInError = true;
-            
-            if (TempData["SignUpFailed"] != null)
-                ViewBag.SignUpError = true;
-            ViewBag.Title = "Login";
-
-            return View();
-        }
+        
 
         public ActionResult HowItWorks()
         {

@@ -12,21 +12,23 @@
     
 
     
-      <link rel="stylesheet" href="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/styles/app.min.css?5a97a3f9" />
+      <link rel="service" type="application/annotatorsvc+json" href="https://localhost:44301/api/" />
     
     
-      <link rel="service" type="application/annotatorsvc+json" href="https://notocol.tenet.res.in:8443/api/" />
-    
-    
+  
+    <link rel="stylesheet" href="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/styles/app.min.css?d5c81bab">
+  
+
 
     
 
     
-      <base target="_top" href="https://notocol.tenet.res.in:8443/" />
+      <base target="_top" href="https://localhost:44301/" />
     
   </head>
   
-<body ng-app="h" ng-controller="AppController">
+
+<body ng-app="h" ng-strict-di ng-controller="AppController" ng-csp="">
 
     
   <!-- Toolbar -->
@@ -35,7 +37,7 @@
       <div class="pull-left">
         <button class="btn btn-clean"
                 ng-click="shareDialog.visible = !shareDialog.visible"
-                ng-show="showShareButton"
+                ng-if="isEmbedded"
                 title="Share this page">
                 <i class="h-icon-share btn-icon"></i></button>
       </div>
@@ -60,6 +62,12 @@
         </div>
       </div>
 
+      <div class="pull-right dropdown group-list"
+           ng-if="auth.user && feature('groups')"
+           group-list=""
+           groups="session.state.groups">
+      </div>
+
       <!-- Searchbar -->
       <div class="simple-search"
            query="search.query"
@@ -71,7 +79,7 @@
   <!-- / Toolbar -->
 
   <!-- Wrapper -->
-  <div id="wrapper" whenscrolled="loadMore(10)">
+  <div id="wrapper">
     <!-- Account Dialog -->
     <div class="content ng-cloak" ng-if="accountDialog.visible">
       <div id="dialog" class="sheet">
@@ -524,10 +532,14 @@
          ng-href="{{vm.baseURI}}u/{{vm.annotation.user}}"
          >{{vm.annotation.user | persona}}</a>
       <i class="h-icon-border-color" ng-show="vm.isHighlight() && !vm.editing" title="This is a highlight. Click 'edit' to add a note or tag."></i>
+      
+     <!--
       <span ng-show="vm.isPrivate() && !vm.editing"
             title="This annotation is visible only to you.">
         <i class="h-icon-lock"></i> Private
       </span>
+      -->
+
       <span class="annotation-citation"
             ng-if="!vm.embedded"
             ng-show="vm.document.title">
@@ -538,6 +550,7 @@
               >({{vm.document.domain}})</span>
       </span>
       <!-- Editing controls -->
+	<!--
       <aside class="pull-right" ng-if="vm.editing">
         <privacy ng-click="$event.stopPropagation()"
                  ng-if="vm.annotation.permissions && vm.editing && action != 'delete'"
@@ -547,6 +560,7 @@
                  class="dropdown privacy pull-right"
                  name="privacy" />
       </aside>
+	-->
       <!-- / Editing controls -->
     </span>
 
@@ -613,7 +627,7 @@
     </tags-input>
   </div>
 
-  <div class="annotation-section tags tags-read-only"
+  <div class="annotation-body tags tags-read-only"
        ng-if="vm.annotation.tags.length && !vm.editing">
     <ul class="tag-list">
       <li class="tag-item" ng-repeat="tag in vm.annotation.tags">
@@ -624,13 +638,14 @@
   <!-- / Tags -->
 
   <footer class="annotation-footer">
+<!--
     <div class="small" ng-if="vm.editing">
       <p ng-show="vm.privacyLevel.text == 'Only Me'">
         <i class="h-icon-lock"></i> This annotation is visible only to you.</p>
       <p ng-show="vm.privacyLevel.text == 'Public'">
         <i class="h-icon-public"></i> This annotation is visible to everyone.</p>
     </div>
-
+-->
     <div class="form-actions" ng-if="vm.editing" ng-switch="vm.action">
       <div class="form-actions-buttons form-actions-left">
         <button ng-switch-when="edit"
@@ -647,7 +662,7 @@
                 ><i class="h-icon-cancel btn-icon"></i> Cancel</button>
       </div>
     </div>
-
+<!--
     <div class="annotation-section annotation-license" ng-if="vm.editing">
       <a href="http://creativecommons.org/publicdomain/zero/1.0/"
          title="View more information about the Creative Commons Public Domain license"
@@ -656,7 +671,7 @@
         Annotations can be freely reused by anyone for any purpose.
       </a>
     </div>
-
+-->
     <div class="annotation-replies" ng-if="replyCount > 0">
       <a class="reply-count small" href=""
          ng-click="replyCountClick()"
@@ -665,9 +680,9 @@
     </div>
 
     <div class="annotation-actions" ng-if="!vm.editing && vm.annotation.id">
-      <button class="small btn-clean"
+  <!--    <button class="small btn-clean"
               ng-click="vm.reply()"
-              ><i class="h-icon-reply btn-icon"></i> Reply</button>
+              ><i class="h-icon-reply btn-icon"></i> Reply</button> -->
       <span class="share-dialog-wrapper">
         <button class="small btn-clean"
                 ng-click="share($event)"
@@ -691,6 +706,25 @@
     </div>
   </footer>
 </div>
+
+  </script>
+  <script type="text/ng-template" id="group_list.html">
+    <span role="button" class="dropdown-toggle" data-toggle="dropdown">
+  Groups
+  <i class="h-icon-arrow-drop-down"></i>
+</span>
+<ul class="dropdown-menu pull-right" role="menu">
+  <li ng-repeat="group in groups">
+    <a ng-href="{{group.url}}" ng-bind="group.name" target="_blank"
+       class="group-name pull-left"></a>
+    <a ng-href="{{group.url}}" target="_blank" class="h-icon-link pull-right"
+       title="Share this group"></a>
+    <div style="clear:both;"></div>
+  </li>
+  <li>
+    <a href="/groups/new" target="_blank"><i class="h-icon-add"></i> New Group</a>
+  </li>
+</ul>
 
   </script>
   <script type="text/ng-template" id="markdown.html">
@@ -748,6 +782,7 @@
   <div class="form-vertical tabbable">
   <div class="form tab-pane" data-title="Share">
     <p>Share the link below to show anyone these annotations and invite them to contribute their own.</p>
+<!--
     <p><input id="via"
         class="form-input"
         type="text"
@@ -770,6 +805,8 @@
        title="Share via email"
        class="h-icon-mail"></a>
     </p>
+-->
+<p> Coming soon.... </p>
   </div>
   </div>
 </div>
@@ -779,7 +816,8 @@
     <!-- Thread view -->
 <ul class="stream-list"
     deep-count="count"
-    thread-filter="search.query">
+    thread-filter="search.query"
+    window-scroll="loadMore(20)">
   <li ng-show="threadFilter.active()"
       ><span ng-pluralize
              count="count('match')"
@@ -879,21 +917,21 @@
 
     
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/jquery.min.js?6f3c4978"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/jquery.min.js?6c7b0544"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular.min.js?2be3f5a1"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular.min.js?43032a7b"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-animate.min.js?d4b6a6fb"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-animate.min.js?b169e38b"></script>
   
     <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-bootstrap.min.js?87929dd2"></script>
   
     <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-resource.min.js?fa339530"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-route.min.js?bd27ce93"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-route.min.js?8ca9dfb2"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-sanitize.min.js?a9246b5f"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-sanitize.min.js?e201751f"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/ng-tags-input.min.js?27a55a4b"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-tags-input.min.js?d15e66fe"></script>
   
     <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-toastr.min.js?a85da403"></script>
   
@@ -901,25 +939,15 @@
   
     <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angulartics-ga.min.js?311b6a70"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/polyfills/autofill-event.min.js?b8760fe9"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/katex.min.js?fa536a3b"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/polyfills/bind.min.js?96b213e1"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/url.min.js?de686538"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/katex.min.js?4136a3a3"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/app.min.js?db7cd86a"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/moment.min.js?34a5a6c4"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/config.min.js?033d1f1a"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/jstz.min.js?26bd4bd1"></script>
-  
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/moment-timezone.min.js?ab4710da"></script>
-  
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/moment-timezone-data.min.js?e5acd81f"></script>
-  
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/polyfills/url.min.js?de686538"></script>
-  
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/app.min.js?2a06b007"></script>
-  
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/account.min.js?8e81ffcc"></script>
+    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/account.min.js?0bfc97b3"></script>
   
 
   </body>

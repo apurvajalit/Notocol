@@ -6,7 +6,7 @@
         var isAllowedFileSchemeAccess = dependencies.isAllowedFileSchemeAccess;
         var extensionURL = dependencies.extensionURL;
         var hypothesis = dependencies.hypothesis;
-        var tabInfo = tabInfo || {};;
+        var tabInfo =  {};
 
         var TAB_STATUS_COMPLETE = 'complete';
         var LOCAL_HTML_URL = 1;
@@ -60,19 +60,16 @@
                 },
 
                 success: function (pageData) {
-                    if (pageData != null)
+                    if (pageData != null) {
                         if (typeof pageData.sourceID != "undefined" && pageData.sourceID != 0) {
                             if (pageData.noteCount > 0) {
-                                hypothesis.enableHypothesis();
+                                hypothesis.enableHypothesis(tabId);
+                                vm.updateAnnotatorStatus(tabId);
                             }
-
-                            tabInfo[tabId] = pageData;
-                            tabInfo[tabId].status = true;
-                            tabInfo[tabId].tabID = tabId;
-                            console.log("Setting tabinfo for " + tabId + " as " + JSON.stringify(tabInfo[tabId]));
+                            vm.setTabInfo({ id: tabId }, pageData);
+                            //console.log("Setting tabInfo for " + tabId + " as " + JSON.stringify(tabInfo[tabId]));
                         }
-                    tabInfo[tabId].status = true;
-                    tabInfo[tabId].tabID = tabId;
+                    }
                 },
 
                 failure: function () {
@@ -86,6 +83,7 @@
         this.setTabInfo = function(tab, info) {
             if (typeof info != "undefined") {
                 tabInfo[tab.id] = info;
+                console.log("Updated tabInfo for tab " + tab.id + " as " + JSON.stringify(tabInfo[tab.id]));
             }else{
                 var link = tab.url;
 
@@ -95,13 +93,15 @@
                 tabInfo[tab.id] = {
                     title : tab.title,
                     url: link,
-                    link: link,
                     faviconUrl: tab.favIconUrl,
                     
-
                 };
+                checkForUserPageData(tab.id);
             }
-            checkForUserPageData(tab.id);
+
+            tabInfo[tab.id].status = true;
+            tabInfo[tab.id].tabID = tab.id;
+            vm.updateAnnotatorStatus(tab.id);
         }
 
         function unsetTabInfo(tabId) {
@@ -126,7 +126,8 @@
             }
 
             if (isPDFURL(tab.url)) {
-                hypothesis.enableHypothesis();
+                hypothesis.enableHypothesis(tab.id);
+                vm.updateAnnotatorStatus(tab.id);
             }
         }
 
@@ -134,20 +135,28 @@
             unsetTabInfo(tabId);
         }
 
+        this.updateAnnotatorStatus = function(tabId){
+            if (hypothesis.state.isTabActive(tabId))
+                tabInfo[tabId].annotator = true;
+            else tabInfo[tabId].annotator = false;
+
+            console.log("Setting annotator status to " + tabInfo[tabId].annotator + " for tab " + tabId)
+        }
+
         this.listen = function () {
             chromeTabs.onCreated.addListener(onTabCreated);
             chromeTabs.onUpdated.addListener(onTabUpdated);
             chromeTabs.onRemoved.addListener(onTabRemoved);
 
-            chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-                
-                if (request.greeting == "pdfUrn") {
-                
-                    if (typeof tabInfo[sender.tab.id] != "undefined") {
+            
+            chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+                if (message.type == "PDFInformation") {
+                    if (typeof sender.tab.id != "undefined" && typeof tabInfo[sender.tab.id] != "undefined") {
                         var info = tabInfo[sender.tab.id]
-                        info.url = request.data;
-                        vm.setTabInfo(sender.tab, info);
+                        info.urn = message.urn.substring("urn:x-pdf:".length);
+                        console.log("Received urn for tab " + sender.tab.id + "as " + message.urn);
                         
+                        vm.setTabInfo(sender.tab, info);
                     } else {
                         console.log("Did not find tab with ID " + sender.tab.id);
                     }

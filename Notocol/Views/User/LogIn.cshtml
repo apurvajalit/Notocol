@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "LogIn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+<div class="row" >
+    <div class="col-sm-3"></div>
+     
+        
+    <div class="col-sm-6">
+        <p class="text-warning">Already Registered?</p>
+        <form name="signIn" novalidate class="form-inline" method="post" action="@Url.Action("SignInUser", "User")">
+            @if (ViewBag.SignInError != null)
+            {
+                <div class="text-danger bg-danger">Sign in failed, try again</div>
+            }
+
+            <div class=" form-group">               
+                <label for="username"></label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+                
+            </div>
+
+            <div class="form-group">
+                <label for="password"></label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+                
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-default">Log In</button>
+                
+            </div>
+            @if (ViewBag.UserNotFound != null)
+            {
+            <p class="text-danger">Use does not exist</p>
+            }
+            @if (ViewBag.IncorrectPassword != null)
+                {
+                <p class="text-danger">Incorrect password</p>
+                }
+
+            <br />
+            
+        </form>
+   
+        
+        <div>
+            <section class="social" id="socialLoginForm">
+                @Html.Action("ExternalLoginsList", "User", new { ReturnUrl = ViewBag.ReturnUrl })
+            </section>
+        </div>
+        
+        <br>
+       
+        <div style="padding: 36px;border-style: groove;border-width: thin;border-color: currentColor;border-radius: 10px;">
+            
+            <h4 class="text-warning">Create a new account</h4>
+            <form role="form" id="signUpForm" method="post" action="@Url.Action("SignUpUser", "User")">
+
+                <div class="form-group">
+                    <label for="username"></label>
+
+                    <input type="text" class="form-control resettable" id="username" name="username" placeholder="Username" style="border:none">
+                      @if (ViewBag.NameExists != null)
+                      {
+                        <p class="text-danger"> Username already exists</p>
+                      }
+                      
+
+                </div>
+                <div class="form-group">
+                    <label for="email"></label>
+                    <input type="email" class="form-control resettable" id="email" name="email" placeholder="Email" style="border:none">
+                    @if (ViewBag.EmailExists != null)
+                    {
+                        <p class="text-danger"> Email already exists</p>
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="password"></label>
+                    <input type="password" class="form-control input-sm resettable" name="password" id="password" placeholder="Password" style="border:none">
+                </div>
+
+                <label class="radio-inline"><input type="radio" name="Male">Male</label>
+                <label class="radio-inline"><input type="radio" name="Female">Female</label>
+
+                <div class="form-group">
+                    <label for="DOB">Date Of Birth</label>
+                    <input type="date" name="DOB" placeholder="Enter Date of Birth" class="ui-datepicker"/>
+                </div>
+
+                    <button type="submit" class="btn btn-default bottom-right">Sign Up</button>
+                    @if (ViewBag.SignUpError != null)
+                    {
+                        <p class="text-danger bg-danger">
+                            Sign up failed, try again
+                        </p>
+                    }
+
+
+            </form>
+
+            
+        </div>
+
+    </div>
+
+    <div class="col-sm-3"></div>
+</div>
+
