@@ -75,6 +75,9 @@
     <Compile Include="Annotation.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
+    <Compile Include="AnnotationTag.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
     <Compile Include="Extended\Extension\ApplicationStatus.cs" />
     <Compile Include="Extended\Extension\ExtensionAnnotationData.cs" />
     <Compile Include="Extended\Extension\ExtensionSearchResponse.cs" />
@@ -83,10 +86,13 @@
     <Compile Include="Extended\Extension\PageImageInfo.cs" />
     <Compile Include="Extended\Extension\SourceDataForExtension.cs" />
     <Compile Include="Extended\Extension\TagDataForBookmark.cs" />
-    <Compile Include="Extended\Extension\ThumbnailDataFromSource.cs" />
+    <Compile Include="Extended\Extension\ThumbnailDataForSourceUser.cs" />
+    <Compile Include="Extended\FolderTree.cs" />
+    <Compile Include="Extended\MappedSourceUser.cs" />
     <Compile Include="Extended\NotCol.Context.cs" />
     <Compile Include="Extended\NoteData.cs" />
     <Compile Include="Extended\SourceData.cs" />
+    <Compile Include="Extended\SourceFilter.cs" />
     <Compile Include="Extended\SourceItem.cs" />
     <Compile Include="Extended\UserRegistration.cs" />
     <Compile Include="Folder.cs">
@@ -114,10 +120,22 @@
     <Compile Include="Source.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
-    <Compile Include="SourceTag.cs">
+    <Compile Include="SourceUser.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SourceUserTag.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="spTestSourceData_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_helpdiagramdefinition_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_helpdiagrams_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sysdiagram.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="Tag.cs">
@@ -127,6 +145,9 @@
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="UserRegistration.cs" />
+    <Compile Include="UserTagUsage.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

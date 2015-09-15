@@ -57,27 +57,31 @@
     <script src="~/Scripts/bootstrap-tagsinput.js" type="text/javascript"></script>
     
     <script>
-    var getOwnTagNamesUrl = "/Tag/GetCurrentUserTags";
-    var getAllTagNamesUrl = "/Tag/GetAllUserTags";
+    
+    var getAllTagNamesUrl = "/Tag/GetAllTags";
     var searchTagString= "";
     var sourceListUrl = "/Source/SourceItems";
-    var urlToUse = getOwnTagNamesUrl;
+    
     var tabSelected = 0;
 
     function GetPages() {
         var keywordsEntered = $('#keyword').val();
-        var tagsEntered = $('#filterTag').val();
+        var tagsFilter = $('#filterTag').val();
+        var filter = tagsFilter.length > 0 ? {
+            tags : tagsFilter
+        }:null;
+
         var userID = '@Session["userID"]';
             $.ajax({
                 // Reload the pages based on current given filter
                 url: sourceListUrl,
                 type: 'Get',
                 dataType:"html",
-                data: { "keywordFilter": keywordsEntered, "tagFilter": tagsEntered,"tab": tabSelected},
+                data: { "query": (keywordsEntered.length > 0)?keywordsEntered: null, "filter": filter,"onlySelf": false},
                 
             })
             .success(function (data) {
-                console.log("For keywords:" + keywordsEntered + " and tags:" + searchTagString + " received data");
+                console.log("For keywords:" + keywordsEntered + " and tags:" + tagsFilter + " received data");
                 $("#pages").html(data);
 
             })
@@ -89,13 +93,11 @@
         }
 
         function UpdateTagNameSource(){
-            urlToUse = (tabSelected == "0")?getOwnTagNamesUrl:getAllTagNamesUrl;
-
             //$.get(urlToUse, function(tagData){
             //    alert("Tag data fetched!");
             var autocomplete = $('#filterTag').typeahead();
             autocomplete.data('typeahead').source = function (query, process) {
-                return $.get(urlToUse+'?q=' + query);
+                return $.get(getAllTagNamesUrl+'?q=' + query);
             }
         }
 

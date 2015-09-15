@@ -1,12 +1,13 @@
-﻿@using Model.Extended
-@model IList<SourceData>
+﻿@using Repository.Search
+@model IList<ESSource>
 
 @{
     int count = 0;
     var onclickAction = "";
     foreach (var source in Model)
     {
-
+        string title = source.title != null ? source.title.Length > 25 ? source.title.Substring(0, 25) + "..." : source.title : null;
+        string tnText = (source.tnText != null) ? source.tnText.Length > 150 ? source.tnText.Substring(0, 150) + "..." : source.tnText : null;
 
         if (count % 4 == 0)
         { 
@@ -16,31 +17,39 @@
 
         <div class="col-sm-3 table-col">
             <div class="pageOptions" style="position: absolute;bottom:4px;right: 80px;" >
-                @{onclickAction = "DeleteSource(" + source.ID + ")";}
+                @{onclickAction = "DeleteSource(" + source.Id + ")";}
                 <a href="#" id="DeleteSourceButton" onclick=@onclickAction data-toggle="tooltip" data-placement="top" title="Delete this page"><span class="glyphicon glyphicon-trash"></span></a>
             </div>
 
                 <div style="padding-bottom:15px">
-                    @if (!(source.Url.StartsWith("localfile")))
+                    
+                    
+                    @if (!(source.link.StartsWith("localfile")))
                     {
-                        <a href="@source.Url" target="_blank" class="page-title text-info">@source.Title</a>
+                        
+                        <a href="@source.link" target="_blank" class="page-title text-info">@title</a>
 
                     }
                     else
                     {
-                        <p class="page-title text-info">@source.Title</p>
+                        <p class="page-title text-info">@title</p>
                     }
-
-                    <p>@source.Summary</p>
+                    @if (source.tnImage != null) { 
+                        <img src="@source.tnImage" class="img-thumbnail" width="175" height="175" />
+                    }
+                    @if (source.tnText != null) {
+                        
+                        <p>@Html.Raw(tnText)</p>
+                    }
                     <div id="pageTags">
                         <ul class="list-inline">
-                            @{if (source.Tags != null || source.Tags.Count > 0)
+                            @{if (source.tags != null)
                               {
                                   int i = 0;
-                                  for (; i < source.Tags.Count; i++)
+                                  for (; i < source.tags.Length; i++)
                                   {
-                                      var tagName = "\"" + source.Tags[i].Name + "\"";
-                                        <li><a href="#" onclick="AddTagToTagInput(@tagName)"><span class="label label-default"> @source.Tags[i].Name</span></a> </li>
+                                      var tagName = "\"" + source.tags[i] + "\"";
+                                        <li><a href="#" onclick="AddTagToTagInput(@tagName)"><span class="label label-default"> @source.tags[i]</span></a> </li>
     
                                   }
                                }
@@ -51,7 +60,7 @@
                 </div>
 
                 <div class="viewNotesButton">
-                    <button class="btn btn-default btn-xs " href="@Url.Action("NoteList", "Notes", new { sourceID = @source.ID })" data-toggle="modal" data-target='#notesModal'>View Notes</button>
+                    <button class="btn btn-default btn-xs " href="@Url.Action("NoteList", "Notes", new { sourceID = @source.Id })" data-toggle="modal" data-target='#notesModal'>View Notes</button>
                     
                 </div>
             

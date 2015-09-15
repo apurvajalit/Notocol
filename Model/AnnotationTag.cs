@@ -12,22 +12,13 @@ namespace Model
     using System;
     using System.Collections.Generic;
     
-    public partial class Folder
+    public partial class AnnotationTag
     {
-        public Folder()
-        {
-            this.SourceUsers = new HashSet<SourceUser>();
-        }
-    
-        public string name { get; set; }
         public long ID { get; set; }
-        public string description { get; set; }
-        public long parentID { get; set; }
-        public System.DateTime created { get; set; }
-        public System.DateTime updated { get; set; }
-        public Nullable<long> userID { get; set; }
+        public long annotationID { get; set; }
+        public long tagID { get; set; }
     
-        public virtual ICollection<SourceUser> SourceUsers { get; set; }
-        public virtual User User { get; set; }
+        public virtual Annotation Annotation { get; set; }
+        public virtual Tag Tag { get; set; }
     }
 }

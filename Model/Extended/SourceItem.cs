@@ -12,8 +12,7 @@ namespace Model.Extended
         public string Title;
         public string Url;
         public string Summary;
-        public string TagNames;
-        public string TagIDs;
+        public IList<Tag> Tags;
         public string UserName;
     }
 }

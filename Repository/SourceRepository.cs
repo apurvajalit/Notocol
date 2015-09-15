@@ -12,6 +12,9 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Collections;
 using Model.Extended;
+using System.Security.Cryptography;
+using System.Data.Entity.Validation;
+using Repository.Search;
 
 namespace Repository
 {
@@ -22,32 +25,6 @@ namespace Repository
             CreateDataContext();
         }
         
-        public Source AddSource(Source source)
-        {
-            //long sourceID = GetSourceIDFromSourceURI(source.SourceURI, source.UserID);
-            //if (sourceID <= 0){
-                try
-                {
-                    using (GetDataContext())
-                    {
-                        source.ModifiedAt = DateTime.Now;
-                        if (source.Privacy == null) source.Privacy = false;
-                        context.Entry(source).State = EntityState.Added;
-                        context.SaveChanges();
-                        
-                    }
-                }catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    DisposeContext();
-                }
-            //}
-            return source;
-        }
-
         public bool UpdateSource(Source source)
         {
 
@@ -55,24 +32,23 @@ namespace Repository
             {
                 return false;
             }
-            try
+            using (GetDataContext()) 
             {
-                using (GetDataContext())
+                try
                 {
-                    source.ModifiedAt = DateTime.Now;
-                    
                     context.Entry(source).State = EntityState.Modified;
                     context.SaveChanges();
                 }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
             }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
+            
             return true;
         }
 
@@ -80,134 +56,118 @@ namespace Repository
         {
             AnnotationRepository annRepo = new AnnotationRepository();
             TagRepository tagRepo = new TagRepository();
-            try
+            using (GetDataContext()) 
             {
-                using (GetDataContext())
-                {
+                
+                try{
                     context.DeleteSource(source.ID);
                 }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
             }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
+            
             return true;
         }
 
         public Source GetSource(long sourceID)
         {
-            IList<Source> lstSource = null;
+            Source source = null;
 
-            try
+            using (GetDataContext()) 
             {
-                using (GetDataContext())
-                {
-                    lstSource = (from sources in context.Sources
+                
+                try{
+                    source = (from sources in context.Sources
                                  where sources.ID == sourceID
-                                 select sources).ToList();
+                                 select sources).FirstOrDefault();
                 }
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-
-            }
-
-            if (lstSource.Count() > 0)
-                return lstSource.First();
-
-            return null;
-        }
-
-        /*Get sourceID for given user and sourceURI */
-        public long GetSourceIDFromSourceURI(string sourceURI, long userID)
-        {
-            long sourceID = 0;
-            IList<Source> lstSource = null;
-
-            try
-            {
-                using (GetDataContext())
+                catch
                 {
-                    lstSource = (from sources in context.Sources
-                                 where sources.UserID == userID && sources.SourceURI == sourceURI
-                                 select sources).ToList();
+                    throw;
                 }
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
-
-            if (lstSource.Count() > 0)
-                sourceID = lstSource.First().ID;
-
-            return sourceID;
-
-        }
-
-        public Source GetSourceFromSourceURI(string sourceURI, long userID)
-        {
-
-            IList<Source> lstSource = null;
-
-            try
-            {
-                using (GetDataContext())
+                finally
                 {
-                    lstSource = (from sources in context.Sources
-                                 where sources.UserID == userID && sources.SourceURI == sourceURI
-                                 select sources).ToList();
+
                 }
             }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
+            
 
-            }
-
-            if (lstSource.Count() > 0)
-                return lstSource.First();
-
-            return null;
-
+            return source;
         }
 
-        /* Get all the sources for a user */
-        public IList<Source> GetSourcesForUser(long userID)
+        /*Get sourceUserID for given user and sourceURI */
+        public long GetSourceUserID(string URI, string link, long userID)
         {
-            IList<Source> lstSources = null;
-            try
-            {
-                // Save Source
-                using (GetDataContext())
-                {
-                    lstSources = (from sources in context.Sources
-                                  where sources.UserID == userID
-                                  select sources).ToList();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            return lstSources;
+            SourceUser su = GetSourceUser(URI, link, userID);
+            if (su != null) return su.ID;
+            return 0;
+
         }
 
+        public SourceUser GetSourceUser(string URI, string link, long userID)
+        {
+            
+            Source source = GetSource(URI, link);
+            if (source == null) return null;
+            return GetSourceUser(source.ID, userID);
+
+        }
+        
+        public Source GetSource(string URI, string link)
+        {
+            Source source = null;
+            SHA1 sha = new SHA1CryptoServiceProvider();
+            byte[] URIHash = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(URI));
+
+            using (GetDataContext())
+            {
+                try
+                {
+                    source = (from sources in context.Sources
+                              where sources.uriHash == URIHash && sources.url == link
+                              select sources).FirstOrDefault();
+
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
+            }
+            return source;
+        }
+
+        public long GetSourceID(string URI, string link)
+        {
+            Source source = GetSource(URI, link);
+            if(source != null) return source.ID;
+            return 0;
+            
+        }
+
+        public long GetSourceUserID(string URI, MappedSourceUser mappedSourceUser)
+        {
+            long ID = 0;
+            if (mappedSourceUser.SUID != 0) return mappedSourceUser.SUID;
+            ID = GetSourceUserID(URI, mappedSourceUser.link, mappedSourceUser.userID);
+            
+            //Already Exists
+            if (ID != 0) return ID;
+
+
+            return ID;
+
+        }
+        
         /* Search used for fetch source results for dashboardpage view */
         public IList<SourceData> Search(string keyword, IList<long> tagIDs, long userID = -1)
         {
@@ -235,7 +195,7 @@ namespace Repository
                     pList.Value = table;
 
                     cmd.Parameters.Add(pList);
-
+                    TagRepository tagRepository = new TagRepository();
                     using (var dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
@@ -245,9 +205,9 @@ namespace Repository
                             source.Title = dr["Title"].ToString();
                             source.Url = dr["SourceURI"].ToString();
                             source.Summary = dr["Summary"].ToString();
-                            source.TagNames = dr["TagNames"].ToString();
-                            source.TagIDs = dr["TagIDs"].ToString();
                             source.UserName = (dr["Username"].ToString());
+
+                            source.Tags = tagRepository.GetTagsForSourceUser(source.ID);
                             sourceList.Add(source);
 
                         }
@@ -258,33 +218,166 @@ namespace Repository
             return sourceList;
         }
 
-
-        public Source GetSourceFromSourceURN(string sourceURN, int userID)
+        public SourceUser GetSourceUser(long sourceID, long userID)
         {
-            IList<Source> lstSource = null;
+            SourceUser sourceUser = null;
 
-            try
+            using (GetDataContext())
             {
-                using (GetDataContext())
+                try
                 {
-                    lstSource = (from sources in context.Sources
-                                 where sources.UserID == userID && sources.URN == sourceURN
-                                 select sources).ToList();
+                    sourceUser = (from sourceUsers in context.SourceUsers
+                                  where sourceUsers.SourceID == sourceID && sourceUsers.UserID == userID
+                                  select sourceUsers).FirstOrDefault();
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
                 }
             }
-            catch
+
+            return sourceUser;
+        }
+
+        public SourceUser GetSourceUser(long sourceUserID)
+        {
+            SourceUser sourceUser = null;
+
+            using (GetDataContext())
             {
-                throw;
+                try
+                {
+                    sourceUser = (from sourceUsers in context.SourceUsers
+                                  where sourceUsers.ID == sourceUserID
+                                  select sourceUsers).FirstOrDefault();
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
             }
-            finally
+
+            return sourceUser;
+        }
+
+        public SourceUser UpdateSourceUser(SourceUser sourceUser)
+        {
+            if (sourceUser.FolderID == 0) sourceUser.FolderID = null;
+            using (GetDataContext())
             {
+                try
+                {
+                    sourceUser.ModifiedAt = DateTime.Now;
+                    context.Entry(sourceUser).State = EntityState.Modified;
+                    context.SaveChanges();
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
+            }
+            ElasticSearchTest es = new ElasticSearchTest();
+            es.UpdateSourceUserSummary(sourceUser);
+            if (sourceUser.thumbnailImageUrl != null || sourceUser.thumbnailText != null)
+                es.UpdateSourceTNData((long)sourceUser.SourceID, sourceUser.thumbnailText, sourceUser.thumbnailImageUrl);
+            return sourceUser;
+        }
 
+        public SourceUser AddSourceUser(SourceUser sourceUser)
+        {
+            if (sourceUser.FolderID == 0) sourceUser.FolderID = null;
+            using (GetDataContext())
+            {
+                try
+                {
+                    sourceUser.ModifiedAt = DateTime.Now;
+                    context.Entry(sourceUser).State = EntityState.Added;
+                    context.SaveChanges();
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
+            }
+            if (sourceUser.ID > 0 && sourceUser.Summary != null)
+            {
+                ElasticSearchTest es = new ElasticSearchTest();
+                es.UpdateSourceUserSummary(sourceUser);
+
+                if (sourceUser.thumbnailImageUrl != null || sourceUser.thumbnailText != null)
+                    es.UpdateSourceTNData((long)sourceUser.SourceID, sourceUser.thumbnailText, sourceUser.thumbnailImageUrl);
+            }
+            return sourceUser;
+        }
+
+        public Source AddSource(string URI, Source source)
+        {
+            SHA1 sha = new SHA1CryptoServiceProvider();
+            source.uriHash = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(URI));
+            source.created = DateTime.Now;
+           
+            
+            using (GetDataContext())
+            {
+                try
+                {
+                    context.Entry(source).State = EntityState.Added;
+                    context.SaveChanges();
+                }
+                catch(Exception e) 
+                {
+                    
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
             }
 
-            if (lstSource.Count() > 0)
-                return lstSource.First();
+            if (source.ID > 0)
+            {
+                ElasticSearchTest es = new ElasticSearchTest();
+                es.AddSourceSearchIndex(source, null, null, null);
+            }
+            return source;
+        }
 
-            return null;
+        public bool DeleteSourceUser(SourceUser sourceuser)
+        {
+            using (GetDataContext())
+            {
+                try
+                {
+                    context.Entry(sourceuser).State = EntityState.Deleted;
+                    context.SaveChanges();
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    DisposeContext();
+                }
+            }
+            return true;
         }
     }
 }

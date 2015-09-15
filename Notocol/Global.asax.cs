@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.IO;
-
+using Repository.Search;
 namespace Notocol
 {
     public class WebApiApplication : System.Web.HttpApplication
@@ -26,6 +26,9 @@ namespace Notocol
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
             log4net.Config.XmlConfigurator.Configure(new FileInfo(Server.MapPath("~/Web.config")));
+
+            ElasticSearchTest es = new ElasticSearchTest();
+            es.init();
         }
     }
 }

@@ -8,6 +8,7 @@ using Model.Extended;
 using Model.Extended.Extension;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 namespace Business
 {
     public class SourceHelper
@@ -17,96 +18,14 @@ namespace Business
         public IList<SourceData> GetSourceItems(string keywordFilter, IList<long> tagIDs , long userID, bool onlyUserSource = true){
 
             IList<SourceData> retList = new List<SourceData>();
-            if(onlyUserSource)
-                return obSourceRepository.Search(keywordFilter, tagIDs, userID);
-            else { 
+            //if(onlyUserSource)
+            //    return obSourceRepository.Search(keywordFilter, tagIDs, userID);
+            //else { 
                 
-                return obSourceRepository.Search(keywordFilter, tagIDs);
-            }
+            //    return obSourceRepository.Search(keywordFilter, tagIDs);
+            //}
+            return retList;
         }
-
-        public Source GetSource(long sourceID)
-        {
-            return obSourceRepository.GetSource(sourceID);
-        }
-        public Source GetSource(string url, long userID)
-        {
-            return obSourceRepository.GetSourceFromSourceURI(url, userID);
-        }
-
-        public bool UpdateSource(Source source)
-        {
-            return obSourceRepository.UpdateSource(source);
-                
-        }
-        public long AddOrUpdateSourceFromExtension(long userID, SourceDataForExtension sourceData)
-        {
-            if (userID <= 0) return 0;
-            long sourceID = sourceData.sourceID;
-            SourceRepository objSourceRepository = new SourceRepository();
-            Source objSource;
-            if (sourceID > 0)
-            { 
-                //We assume extension would set the sourceID if it has already been added
-                objSource = objSourceRepository.GetSource(sourceID);
-                if (objSource == null || objSource.UserID != userID) return 0;
-
-            }else if((objSource = objSourceRepository.GetSourceFromSourceURI(sourceData.url, userID)) == null){
-                
-                objSource = new Source();
-                objSource.UserID = userID;
-                objSource.SourceURI = sourceData.url;
-                
-            }
-
-            objSource.Title = sourceData.title;
-            objSource.Summary = sourceData.summary;
-            objSource.FaviconURL = sourceData.faviconUrl;
-            objSource.URN = sourceData.urn;
-            if (sourceData.folder > 0 && objSource.FolderID != sourceData.folder)
-            {
-                //Set the folder here after checking whether it is created or not
-            }
-
-            if (objSource.ID == 0)
-            {
-                if (objSourceRepository.AddSource(objSource) != null)
-                    sourceID = objSource.ID;
-            }
-            else {
-                if (objSourceRepository.UpdateSource(objSource)) sourceID = objSource.ID;
-            }
-
-            if ((sourceID > 0) && (sourceData.tags!= null) && (sourceData.tags.Count() > 0)) { 
-                TagHelper tagHelper = new TagHelper();
-                tagHelper.UpdateSourceTags(objSource, sourceData.tags);
-            }
-            return sourceID;
-        }
-        
-        public SourceDataForExtension GetSourceExtensionData(string pageURL, long userID)
-        {
-            SourceDataForExtension sourceDataForExtension = new SourceDataForExtension();
-            Source source = new SourceHelper().GetSource(pageURL, userID);
-            if (source != null)
-            {
-                TagHelper tagHelper = new TagHelper();
-
-                sourceDataForExtension.urn = source.URN;
-                sourceDataForExtension.url = source.SourceURI;
-                sourceDataForExtension.summary = source.Summary;
-                sourceDataForExtension.title = source.Title;
-                sourceDataForExtension.sourceID = source.ID;
-                sourceDataForExtension.faviconUrl = source.FaviconURL;
-                sourceDataForExtension.folder = (source.FolderID != null) ? (long)source.FolderID : 0;
-                sourceDataForExtension.noteCount = source.noteCount;
-                sourceDataForExtension.tags = tagHelper.GetSourceTags(source.ID);
-            }
-            
-            return sourceDataForExtension;
-        }
-
-
         public class ImageInfoComparer : IComparer<PageImageInfo>
         {
             public int Compare(PageImageInfo q, PageImageInfo r)
@@ -114,7 +33,6 @@ namespace Business
                 return (r.score - q.score);
             }
         }
-
         private string GetThumbNailImage(string pageURL, PageImageInfo[] pageImageInfo)
         {
             Regex regex = new Regex(@"youtu(?:\.be|be\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)");
@@ -157,10 +75,10 @@ namespace Business
                 }
                 i++;
             }
-            
 
-            if(pageImageInfo[max_area_index].score > 0) pageImageInfo[max_area_index].score += 3;
-            
+
+            if (pageImageInfo[max_area_index].score > 0) pageImageInfo[max_area_index].score += 3;
+
             pageImageInfo = pageImageInfo.Where(pageImage =>
                                                     pageImage.score > 0).ToArray<PageImageInfo>();
 
@@ -175,67 +93,233 @@ namespace Business
 
             return null;
         }
-
-
-        private string GetThumbNailText(string pageURL, string[] pageText, int maxThumbnailTextLength)
+        private string GetThumbNailText(string[] pageText, int maxThumbnailTextLength)
         {
             string pageThumbnailText = "";
             int numCharsLeft = maxThumbnailTextLength;
+            Array.Sort(pageText, (x, y) => y.Length.CompareTo(x.Length));
+            
             foreach (string text in pageText)
             {
-                if (text.Length > 0) { 
-                    pageThumbnailText = string.Concat(pageThumbnailText, text.Trim().Substring(0, numCharsLeft < text.Length ? numCharsLeft : text.Length - 1 ), System.Environment.NewLine);
+                string textToUse = text.Trim();
+                if (textToUse.Length > 0)
+                {
+                    pageThumbnailText = string.Concat(pageThumbnailText, textToUse.Substring(0, numCharsLeft < textToUse.Length ? numCharsLeft : textToUse.Length - 1), System.Environment.NewLine);
                     numCharsLeft = maxThumbnailTextLength - pageThumbnailText.Length;
                     if (numCharsLeft <= 0) break;
                 }
-                
+
             }
 
             return pageThumbnailText;
         }
-
-        
-
-        public void SetPageThumbNailData(long userID, ThumbnailDataFromSource thumbnailData)
+        public void SetPageThumbNailData(long userID, ThumbnailDataForSourceUser thumbnailData)
         {
-            SourceRepository sourceRepository = new SourceRepository();
-            Source source = sourceRepository.GetSourceFromSourceURI(thumbnailData.pageURI, userID);
-            if (source == null || source.ID <= 0) return;
+            
+            SourceUser sourceUser = obSourceRepository.GetSourceUser(thumbnailData.sourceUserID);
+            if (sourceUser == null) return;
 
             int MaxThumbnailTextLength = 500;
 
-            
+
             PageImageInfo[] pageImageInfo = JsonConvert.DeserializeObject<PageImageInfo[]>(thumbnailData.imageObjects);
 
             string[] pageText = JsonConvert.DeserializeObject<string[]>(thumbnailData.textData);
 
-            string thumbnailImageURL = GetThumbNailImage(thumbnailData.pageURI, pageImageInfo);
-                
+            string thumbnailImageURL = GetThumbNailImage(thumbnailData.pageLink, pageImageInfo);
+
             if (thumbnailImageURL != null) MaxThumbnailTextLength = 200;
 
-            string thumbnailImageText = GetThumbNailText(thumbnailData.pageURI, pageText, MaxThumbnailTextLength);
+            string thumbnailImageText = GetThumbNailText(pageText, MaxThumbnailTextLength);
 
-            source.thumbnailImageUrl = thumbnailImageURL;
-            source.thumbnailText = thumbnailImageText;
+            sourceUser.thumbnailImageUrl = thumbnailImageURL;
+            sourceUser.thumbnailText = thumbnailImageText;
 
-            sourceRepository.UpdateSource(source);
+            obSourceRepository.UpdateSourceUser(sourceUser);
 
             return;
         }
-
-
-
-        internal Source Add(Source source)
+        
+        internal SourceUser GetSourceUser(string URI, string sourceLink, long userID)
         {
-            SourceRepository sourceRepository = new SourceRepository();
+            return obSourceRepository.GetSourceUser(URI, sourceLink, userID);
+        }
+
+        internal Source GetSource(string sourceURI, string sourceLink)
+        {
+            return obSourceRepository.GetSource(sourceURI, sourceLink);
+        }
+
+        internal Source AddSource(string sourceURI, Source source)
+        {
+            source = obSourceRepository.AddSource(sourceURI, source);
             
-            return sourceRepository.AddSource(source);
-
+            return source;
         }
 
-        internal Source GetSourceFromURN(string sourceURN, int userID)
+        internal SourceUser AddSourceUser(SourceUser sourceUser)
         {
-            return obSourceRepository.GetSourceFromSourceURN(sourceURN, userID);
+            sourceUser = obSourceRepository.AddSourceUser(sourceUser);
+            
+
+            return sourceUser;
         }
+
+        internal SourceUser UpdateSourceUser(SourceUser sourceUser)
+        {
+            return obSourceRepository.UpdateSourceUser(sourceUser);
+        }
+
+        public SourceDataForExtension SaveSource(SourceDataForExtension sourceData, long userID)
+        {
+            SourceUser sourceUser = null;
+            TagHelper tagHelper = new TagHelper();
+            if (sourceData.sourceUserID > 0)
+            {
+                sourceUser = obSourceRepository.GetSourceUser(sourceData.sourceUserID);
+                //TODO SHould nver happen
+                if (sourceUser == null) return null;
+
+                sourceUser.FolderID = sourceData.folder;
+                sourceUser.Summary = sourceData.summary;
+                sourceUser.Privacy = sourceData.privacy;
+                tagHelper.UpdateSourceTags(sourceUser, sourceData.tags);
+                sourceUser = UpdateSourceUser(sourceUser);
+            }
+            else
+            {
+                if (sourceData.sourceID <= 0)
+                {
+                    Source source = new Source();
+                    source.title = sourceData.title;
+                    source.faviconURL = sourceData.faviconUrl;
+                    source.url = sourceData.url;
+                    source = AddSource(sourceData.uri, source);
+                    if (source == null || source.ID <= 0) return null;
+                    sourceData.sourceID = source.ID;
+                }
+                sourceUser = new SourceUser();
+                sourceUser.SourceID = sourceData.sourceID;
+                sourceUser.FolderID = sourceData.folder;
+                sourceUser.Summary = sourceData.summary;
+                sourceUser.Privacy = sourceData.privacy;
+                sourceUser.UserID = userID;
+                sourceUser.noteCount = 0;
+                sourceUser = AddSourceUser(sourceUser);
+                if (sourceUser == null || sourceUser.ID <= 0) return null;
+                if (sourceData.tags != null)
+                {
+                    tagHelper.UpdateSourceTags(sourceUser, sourceData.tags);
+                }
+                sourceData.sourceUserID = sourceUser.ID;
+
+            }
+
+            return sourceData;
+        }
+
+        public SourceDataForExtension GetSourceDataForExtension(string URI, string Link, long userID)
+        {
+            SourceDataForExtension sourceDataForExtension = new SourceDataForExtension();
+
+            sourceDataForExtension.sourceID = obSourceRepository.GetSourceID(URI, Link);
+            if (sourceDataForExtension.sourceID <= 0) return sourceDataForExtension;
+
+            SourceUser sourceUser = obSourceRepository.GetSourceUser(sourceDataForExtension.sourceID, userID);
+            if (sourceUser != null)
+            {
+                sourceDataForExtension.sourceUserID = sourceUser.ID;
+                sourceDataForExtension.summary = sourceUser.Summary;
+                sourceDataForExtension.privacy = (sourceUser.Privacy != null) ? (bool)sourceUser.Privacy : false;
+                sourceDataForExtension.noteCount = sourceUser.noteCount;
+                sourceDataForExtension.folder = (sourceUser.FolderID != null) ? (int)sourceUser.FolderID : 0;
+                sourceDataForExtension.tags = new TagHelper().GetSourceTags(sourceUser.ID);
+            }
+
+            return sourceDataForExtension;
+        }
+        
+        //public Source GetSource(string url, long userID)
+        //{
+        //    return obSourceRepository.GetSourceFromSourceURI(url, userID);
+        //}
+        //public bool UpdateSource(Source source)
+        //{
+        //    return obSourceRepository.UpdateSource(source);
+                
+        //}
+        //public long AddOrUpdateSourceFromExtension(long userID, SourceDataForExtension sourceData)
+        //{
+        //    if (userID <= 0) return 0;
+        //    long sourceID = sourceData.sourceID;
+        //    SourceRepository objSourceRepository = new SourceRepository();
+        //    Source objSource;
+        //    if (sourceID > 0)
+        //    { 
+        //        //We assume extension would set the sourceID if it has already been added
+        //        objSource = objSourceRepository.GetSource(sourceID);
+        //        if (objSource == null || objSource.UserID != userID) return 0;
+
+        //    }else if((objSource = objSourceRepository.GetSourceFromSourceURI(sourceData.url, userID)) == null){
+                
+        //        objSource = new Source();
+        //        objSource.UserID = userID;
+        //        objSource.SourceURI = sourceData.url;
+                
+        //    }
+
+        //    objSource.Title = sourceData.title;
+        //    objSource.Summary = sourceData.summary;
+        //    objSource.FaviconURL = sourceData.faviconUrl;
+        //    objSource.URN = sourceData.urn;
+
+        //    if (sourceData.folder > 0 && objSource.FolderID != sourceData.folder)
+        //    {
+        //        //Set the folder here after checking whether it is created or not
+        //    }
+
+        //    bool updateTags = false;
+        //    if (objSource.ID == 0)
+        //    {
+        //        if (objSourceRepository.AddSource(objSource) != null){
+        //            sourceID = objSource.ID;
+        //            if((sourceData.tags!= null) && (sourceData.tags.Count() > 0)) updateTags = true;
+        //        }
+        //    }
+        //    else {
+        //        if (objSourceRepository.UpdateSource(objSource)) {
+        //            sourceID = objSource.ID;
+        //            updateTags = true;
+        //        }
+        //    }
+
+        //    if (updateTags) { 
+        //        TagHelper tagHelper = new TagHelper();
+        //        tagHelper.UpdateSourceTags(objSource, sourceData.tags);
+        //    }
+        //    return sourceID;
+        //}
+        //public SourceDataForExtension GetSourceExtensionData(string pageURL, long userID)
+        //{
+        //    SourceDataForExtension sourceDataForExtension = new SourceDataForExtension();
+        //    Source source = new SourceHelper().GetSource(pageURL, userID);
+        //    if (source != null)
+        //    {
+        //        TagHelper tagHelper = new TagHelper();
+
+        //        sourceDataForExtension.urn = source.URN;
+        //        sourceDataForExtension.url = source.SourceURI;
+        //        sourceDataForExtension.summary = source.Summary;
+        //        sourceDataForExtension.title = source.Title;
+        //        sourceDataForExtension.sourceID = source.ID;
+        //        sourceDataForExtension.faviconUrl = source.FaviconURL;
+        //        sourceDataForExtension.folder = (source.FolderID != null) ? (long)source.FolderID : 0;
+        //        sourceDataForExtension.noteCount = source.noteCount;
+        //        sourceDataForExtension.tags = tagHelper.GetSourceTags(source.ID);
+        //    }
+            
+        //    return sourceDataForExtension;
+        //}
+        
     }
 }

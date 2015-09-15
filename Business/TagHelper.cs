@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Repository.Search;
 
 namespace Business
 {
@@ -14,34 +15,43 @@ namespace Business
             return new TagRepository().SearchTagNames(searchStr);
             
         }
-        public static IList<String> GetCurrentUserTag(long userID, string searchStr = "")
-        {
-           return new TagRepository().SearchTagNames(searchStr, userID);
+        
 
-        }
-
-        public static IList<long> GetCurrentUserIDs(long userID, string[] tagStrings)
+        public static IList<long> TryGetTagIDs(string[] tagStrings)
         {
-            return new TagRepository().GetTagIDs(tagStrings, userID);
-        }
-        public static IList<long> GetAllUserTagIDs(string[] tagStrings)
-        {
-            return new TagRepository().GetTagIDs(tagStrings);
+            return new TagRepository().TryGetTagIDs(tagStrings);
         }
 
 
         public string[] GetSourceTags(long sourceID)
         {
             TagRepository tagRepository = new TagRepository();
-            IList<Tag> tags = tagRepository.GetTagsForSource(sourceID);
+            IList<Tag> tags = tagRepository.GetTagsForSourceUser(sourceID);
             return (from tag in tags select tag.Name).ToArray();
         }
 
-        public bool UpdateSourceTags(Source source, string[] tagNames)
+        public bool UpdateSourceTags(SourceUser sourceUser, string[] tagNames)
         {
             TagRepository tagRepository = new TagRepository();
-            tagRepository.AddTagsToSource(source.UserID, source.ID, tagNames);
+            tagRepository.UpdateSourceUserTags(sourceUser, tagNames);
             return true;
+        }
+
+        public static IList<Tag> GetRecentUserTags(long userID)
+        {
+            return new TagRepository().GetRecentTags(userID);
+        }
+
+        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames)
+        {
+            TagRepository tagRepository = new TagRepository();
+            tagRepository.UpdateAnnotationTags(annotation, tagNames);
+        }
+
+        public string[] GetAnnotationTagNames(long annotationID)
+        {
+            return new TagRepository().GetAnnotationTagNames(annotationID);
+            
         }
     }
 }

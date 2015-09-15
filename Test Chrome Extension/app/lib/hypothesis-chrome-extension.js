@@ -75,7 +75,7 @@
     this.install = function () {
       chromeTabs.query({}, function (tabs) {
         tabs.forEach(function (tab) {
-          if (state.isTabActive(tab.id)) {
+          if (vm.state.isTabActive(tab.id)) {
             vm.state.activateTab(tab.id, {force: true});
           } else {
             vm.state.deactivateTab(tab.id, {force: true});

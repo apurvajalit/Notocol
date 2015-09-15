@@ -16,9 +16,10 @@ namespace Model
     {
         public User()
         {
+            this.Annotations = new HashSet<Annotation>();
             this.Folders = new HashSet<Folder>();
-            this.Sources = new HashSet<Source>();
-            this.Tags = new HashSet<Tag>();
+            this.SourceUsers = new HashSet<SourceUser>();
+            this.UserTagUsages = new HashSet<UserTagUsage>();
         }
     
         public long ID { get; set; }
@@ -34,8 +35,9 @@ namespace Model
         public string Name { get; set; }
         public string Photo { get; set; }
     
+        public virtual ICollection<Annotation> Annotations { get; set; }
         public virtual ICollection<Folder> Folders { get; set; }
-        public virtual ICollection<Source> Sources { get; set; }
-        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<SourceUser> SourceUsers { get; set; }
+        public virtual ICollection<UserTagUsage> UserTagUsages { get; set; }
     }
 }

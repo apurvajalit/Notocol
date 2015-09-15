@@ -21,7 +21,7 @@ namespace Notocol.Controllers
 
         //}
 
-        public JsonResult GetAllUserTags(string q = "")
+        public JsonResult GetAllTags(string q = "")
         {
 
            
@@ -29,12 +29,10 @@ namespace Notocol.Controllers
 
         }
 
-        public JsonResult GetCurrentUserTags(string q = "")
+        public JsonResult GetRecentlyUsedTags()
         {
-            
-            return Json(TagHelper.GetCurrentUserTag(Utility.GetCurrentUserID(),q), JsonRequestBehavior.AllowGet);
-            
-
+            return Json(TagHelper.GetRecentUserTags(Utility.GetCurrentUserID()), JsonRequestBehavior.AllowGet);
         }
+        
     }
 }

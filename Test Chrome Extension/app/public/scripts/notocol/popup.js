@@ -98,7 +98,7 @@ var baseURL = "https://localhost:44301/";
 
     app.controller('PageCtrl', ['$scope', '$timeout', 'PageProperties', function ($scope, $timeout, PageProperties) {
         var vm = this;
-        this.annotator = false;
+        //this.annotator = false;
         chrome.extension.sendMessage({
             greeting: "PageDetails"
         },
@@ -112,7 +112,7 @@ var baseURL = "https://localhost:44301/";
 
                         if (vm.annotator != pageDetails.annotator) {
 
-                            ToggleAnnotation();
+                            //ToggleAnnotation();
                         }
                     } else {
                         //TODO Better way of asking
@@ -161,7 +161,7 @@ var baseURL = "https://localhost:44301/";
         $scope.$on('pageDetails', function () {
             vm.pageDetails = PageProperties.get('pageDetails');
             console.log("Received vm.pageDetails as " + JSON.stringify(vm.pageDetails));
-            if (typeof vm.pageDetails.sourceID == "undefined" || vm.pageDetails.sourceID <= 0) {
+            if (typeof vm.pageDetails.sourceUserID == "undefined" || vm.pageDetails.sourceUserID <= 0) {
                 
                 vm.savePage();
             }
@@ -171,16 +171,16 @@ var baseURL = "https://localhost:44301/";
             //TODO Delete Page asking for confirmation
             alert("Deleting a page would also delete any annotation related to it. Are you sure you want to delete the page?");
         });
-        GetPageImages = function () {
+        GetPageImages = function (pageUrl, sourceUserID) {
             var filePath = 'public/scripts/notocol/sendImageList.js';
             var jqueryFile = 'public/scripts/vendor/jquery.min.js';
             
             var inputVariables = {
-                sourceURI: vm.pageDetails.url,
+                pageUrl: pageUrl,
+                ID: sourceUserID,
                 tabID: vm.pageDetails.tabID,
                 ThumbNailDataURl: "https://localhost:44301/Api/ThumbnailData"
             };
-            
             chrome.tabs.executeScript(vm.pageDetails.tabID, {
                 code: 'var inputVariables = ' + JSON.stringify(inputVariables)
             }, function () {
@@ -204,19 +204,27 @@ var baseURL = "https://localhost:44301/";
                 sourceDetails.tags = sourceDetails.tags.split(',');
             
             console.log("Saving page with details: " + JSON.stringify(sourceDetails));
-            $http.post(baseURL + "api/Source/UpdateSource", sourceDetails).
+            $http.post(baseURL + "api/Source/SaveSource", sourceDetails ).
                 success(function (data, status, headers, config) {
                     console.log("Saved page with response data as " + JSON.stringify(data));
+                    if (data.status == "failure") {
+                        //TODO Changes to handle error
+                        console.log("Failed to save page");
+                    }
+
                     if (sourceDetails.tags != null) TagStore.store(sourceDetails.tags);
                         
 
-                    pageDetails.sourceID = data;
+                    pageDetails.sourceID = data.sourceData.sourceID;
+                    pageDetails.sourceUserID = data.sourceData.sourceUserID;
+
                     chrome.extension.sendMessage({
                         greeting: "PageDetailsUpdated",
                         pageInfo: pageDetails
                     });
+
                     if (vm.pageDetails.url.indexOf(".pdf") < 0)
-                       GetPageImages();
+                        GetPageImages(pageDetails.url, data.sourceData.sourceUserID);
                     
                 })
                 .error(function (data, status, headers, config) {

@@ -42,7 +42,7 @@ namespace Model.Extended.Extension
         public string user { get; set; }
         public Object document { get; set; }
         public string consumer { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
         public Object permissions { get; set; }
     }
 }

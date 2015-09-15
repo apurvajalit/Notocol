@@ -8,6 +8,7 @@ using System.Data.Entity;
 //using Notocol.Models;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Repository.Search;
 
 namespace Repository
 {
@@ -31,7 +32,7 @@ namespace Repository
                     {
 
                         lstAnnotations = (from annotations in context.Annotations
-                                          where annotations.SourceID == sourceID
+                                          where annotations.SourceUserID == sourceID
                                           select annotations).ToList();
                     }
 
@@ -102,7 +103,7 @@ namespace Repository
             else
                 return null;
         }
-        public int AddAnnotation(Annotation annotation)
+        public long AddAnnotation(Annotation annotation, SourceUser sourceUser = null)
         {
             //TODO Move the commented code to 
             //TagRepository tagRepository = new TagRepository();
@@ -171,7 +172,12 @@ namespace Repository
                 DisposeContext();
             }
 
-            
+            if (annotation.ID > 0)
+            {
+                ElasticSearchTest es = new ElasticSearchTest();
+                es.AddUpdateNotesForSource(annotation, true, sourceUser);
+            }   
+
             return annotation.ID;
         }
         public bool UpdateAnnotation(Annotation annotation)
@@ -199,6 +205,10 @@ namespace Repository
             //if (annotation.Tags != null) {
             //    tagRepository.UpdateImpliedTagsForSource(annotation.UserID, (long)annotation.SourceID, JsonConvert.DeserializeObject<string[]>(annotation.Tags));
             //}
+
+            ElasticSearchTest es = new ElasticSearchTest();
+            es.AddUpdateNotesForSource(annotation, false);
+            
             return true;
         }
         public bool DeleteAnnotation(long annotationId)

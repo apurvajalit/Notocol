@@ -12,13 +12,12 @@ namespace Model
     using System;
     using System.Collections.Generic;
     
-    public partial class SourceTag
+    public partial class SourceUserTag
     {
         public long ID { get; set; }
-        public long SourceID { get; set; }
-        public long TagsID { get; set; }
+        public long SourceUserID { get; set; }
+        public long TagID { get; set; }
     
-        public virtual Source Source { get; set; }
         public virtual Tag Tag { get; set; }
     }
 }

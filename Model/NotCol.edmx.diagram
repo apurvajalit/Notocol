@@ -4,20 +4,27 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="326fa09e0dcb417fa57d2b5a794d330a" Name="Diagram1" ZoomLevel="34">
-        <EntityTypeShape EntityType="NotColModel.Annotation" Width="1.5" PointX="7.5" PointY="7.625" />
-        <EntityTypeShape EntityType="NotColModel.Folder" Width="1.5" PointX="3" PointY="6" />
-        <EntityTypeShape EntityType="NotColModel.Source" Width="1.5" PointX="5.25" PointY="3.875" />
-        <EntityTypeShape EntityType="NotColModel.SourceTag" Width="1.5" PointX="7.5" PointY="4.375" />
-        <EntityTypeShape EntityType="NotColModel.Tag" Width="1.5" PointX="3" PointY="3.125" />
-        <EntityTypeShape EntityType="NotColModel.User" Width="1.5" PointX="0.75" PointY="4.625" />
-        <AssociationConnector Association="NotColModel.FK_Annotaion_Source" />
+      <Diagram DiagramId="326fa09e0dcb417fa57d2b5a794d330a" Name="Diagram1" ZoomLevel="57">
+        <EntityTypeShape EntityType="NotColModel.Annotation" Width="1.5" PointX="5.75" PointY="4.75" />
+        <EntityTypeShape EntityType="NotColModel.AnnotationTag" Width="1.5" PointX="8" PointY="5.625" />
+        <EntityTypeShape EntityType="NotColModel.Folder" Width="1.5" PointX="5.75" PointY="12.125" />
+        <EntityTypeShape EntityType="NotColModel.Source" Width="1.5" PointX="11" PointY="13.125" />
+        <EntityTypeShape EntityType="NotColModel.SourceUser" Width="1.5" PointX="11" PointY="8.75" />
+        <EntityTypeShape EntityType="NotColModel.SourceUserTag" Width="1.5" PointX="4.25" PointY="1.75" />
+        <EntityTypeShape EntityType="NotColModel.sysdiagram" Width="1.5" PointX="10.5" PointY="2.125" />
+        <EntityTypeShape EntityType="NotColModel.Tag" Width="1.5" PointX="8.75" PointY="1.625" />
+        <EntityTypeShape EntityType="NotColModel.User" Width="1.5" PointX="3.5" PointY="6.25" />
+        <EntityTypeShape EntityType="NotColModel.UserTagUsage" Width="1.5" PointX="8.75" PointY="9.25" />
+        <AssociationConnector Association="NotColModel.FK__Annotatio__annot__0E8E2250" />
+        <AssociationConnector Association="NotColModel.FK__Annotatio__UserI__0BB1B5A5" />
+        <AssociationConnector Association="NotColModel.FK__Annotatio__tagID__0F824689" />
         <AssociationConnector Association="NotColModel.fk_folder" />
         <AssociationConnector Association="NotColModel.fk_user" />
+        <AssociationConnector Association="NotColModel.FK__SourceUse__Sourc__758D6A5C" />
         <AssociationConnector Association="NotColModel.FK_Source_User" />
-        <AssociationConnector Association="NotColModel.FK_SourceTags_Source" />
-        <AssociationConnector Association="NotColModel.FK_SourceTags_Tag" />
-        <AssociationConnector Association="NotColModel.FK_Tag_User" />
+        <AssociationConnector Association="NotColModel.FK__SourceUse__tagID__08D548FA" />
+        <AssociationConnector Association="NotColModel.FK__UserTagUs__tagID__39788055" />
+        <AssociationConnector Association="NotColModel.FK__UserTagUs__userI__38845C1C" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

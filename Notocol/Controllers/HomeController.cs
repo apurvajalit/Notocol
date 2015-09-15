@@ -6,6 +6,7 @@ using System;
 using Notocol.Models;
 using System.Web;
 
+
 namespace Notocol.Controllers
 {
     public class HomeController : BaseController
@@ -46,7 +47,7 @@ namespace Notocol.Controllers
             ViewBag.Title = "Home Page";
            // SaveSource(null, null);
             
-
+            
             if(checkSession()){
                 return RedirectToAction("Home");
             }

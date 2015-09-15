@@ -29,19 +29,14 @@
                 <p>@source.Summary</p>
                 <div id="pageTags">
                         <ul class="list-inline">
-                            @{if (!(@String.IsNullOrEmpty(source.TagNames) || @String.IsNullOrEmpty(source.TagIDs)))
+                            @{if (source.Tags != null || source.Tags.Count > 0)
                             {
-                                string[] tagNames = source.TagNames.Split(',');
-                                string[] tagIDs = source.TagIDs.Split(',');
                                 int i = 0;
-                                if (tagNames.Length == tagIDs.Length)
+                                for (; i < source.Tags.Count; i++)
                                 {
-                                    for (i = 0; i < tagNames.Length; i++)
-                                    {
-                                        var tagName = "\"" + tagNames[i] + "\"";
-                                        <li><a href="#" onclick="AddTagToTagInput(@tagName)"><span class="label label-default"> @tagNames[i]</span></a> </li>
+                                    var tagName = "\"" + source.Tags[i].Name + "\"";
+                                    <li><a href="#" onclick="AddTagToTagInput(@tagName)"><span class="label label-default"> @source.Tags[i].Name</span></a> </li>
 
-                                    }
                                 }
                             }
                             }

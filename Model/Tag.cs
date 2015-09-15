@@ -16,15 +16,17 @@ namespace Model
     {
         public Tag()
         {
-            this.SourceTags = new HashSet<SourceTag>();
+            this.AnnotationTags = new HashSet<AnnotationTag>();
+            this.SourceUserTags = new HashSet<SourceUserTag>();
+            this.UserTagUsages = new HashSet<UserTagUsage>();
         }
     
         public long ID { get; set; }
         public string Name { get; set; }
-        public long UserID { get; set; }
         public System.DateTime updated { get; set; }
     
-        public virtual ICollection<SourceTag> SourceTags { get; set; }
-        public virtual User User { get; set; }
+        public virtual ICollection<AnnotationTag> AnnotationTags { get; set; }
+        public virtual ICollection<SourceUserTag> SourceUserTags { get; set; }
+        public virtual ICollection<UserTagUsage> UserTagUsages { get; set; }
     }
 }

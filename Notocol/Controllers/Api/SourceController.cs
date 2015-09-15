@@ -11,31 +11,42 @@ using Model.Extended;
 using Business;
 using Notocol.Models;
 using Model.Extended.Extension;
+using Newtonsoft.Json.Linq;
 
 namespace Notocol.Controllers.Api
 {
     public class SourceController : BaseApiController
     {
-        [HttpPost]
+        SourceHelper sourceHelper = new SourceHelper();
         
-        public long UpdateSource([FromBody]SourceDataForExtension sourceData)
+        [HttpPost]
+        public JObject SaveSource([FromBody]SourceDataForExtension sourceData)
         {
-            return new SourceHelper().AddOrUpdateSourceFromExtension(Utility.GetCurrentUserID(), sourceData);
             
+            sourceData = sourceHelper.SaveSource(sourceData, Utility.GetCurrentUserID());
+            if (sourceData != null && sourceData.sourceUserID != 0) {
+                return JObject.FromObject(new{
+                    status = "success",
+                    sourceData = sourceData
+                });
+            }else{
+                return JObject.FromObject(new
+                {
+                    status = "failed",
+                });
+            }
         }
 
         
         [HttpGet]
 
-        public SourceDataForExtension SourceData(string pageURL)
+        public JObject GetSourceData(string URI, string Link)
         {
-            long userID = Utility.GetCurrentUserID();
-            if(userID <= 0 ) return null;
-            return new SourceHelper().GetSourceExtensionData(pageURL, userID);
-
-            
+            SourceDataForExtension sourceData = sourceHelper.GetSourceDataForExtension(URI, Link, Utility.GetCurrentUserID());
+            return JObject.FromObject(new
+            {
+                sourceData = sourceData
+            });
         }
-        
-
     }
 }

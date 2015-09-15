@@ -88,9 +88,9 @@
     <Reference Include="Microsoft.WebSockets">
       <HintPath>..\packages\Microsoft.WebSockets.0.2.3\lib\net45\Microsoft.WebSockets.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Swashbuckle.Core">
       <HintPath>..\packages\Swashbuckle.Core.5.0.1\lib\net40\Swashbuckle.Core.dll</HintPath>
@@ -215,7 +215,9 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\FolderController.cs" />
     <Compile Include="Controllers\Api\ThumbnailDataController.cs" />
+    <Compile Include="Controllers\ElasticSearchTestController.cs" />
     <Compile Include="Controllers\NotesController.cs" />
     <Compile Include="Controllers\Api\AnnotationControllerBackup.cs" />
     <Compile Include="Controllers\Api\annotationsController.cs" />
@@ -1135,6 +1137,8 @@
     <Content Include="Scripts\version.json" />
     <None Include="Views\Account\Login.cshtml" />
     <Content Include="Views\User\ExternalUsername.cshtml" />
+    <Content Include="Views\ElasticSearchTest\Index.cshtml" />
+    <Content Include="Views\Source\ESSource.cshtml" />
     <None Include="Views\User\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Notes\Note.cshtml" />
     <Content Include="Views\Home\Welcome.cshtml" />
@@ -1150,6 +1154,7 @@
     <Folder Include="Views\AuthActionFilter\" />
     <Folder Include="Views\Authentication\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Folder\" />
     <Folder Include="Views\Proxy\" />
     <Folder Include="Views\Tag\" />
     <Folder Include="Views\ThumbnailData\" />

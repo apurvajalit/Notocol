@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace Model.Extended.Extension
 {
-    public class ThumbnailDataFromSource
+    public class ThumbnailDataForSourceUser
     {
         
-        public string pageURI { get; set; }
+        public long sourceUserID { get; set; }
         public string imageObjects { get; set; }
         public string textData { get; set; }
-     }
+
+
+        public string pageLink { get; set; }
+    }
 }

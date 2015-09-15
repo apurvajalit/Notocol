@@ -10,6 +10,10 @@ namespace Repository
 {
     public class FolderRepository : BaseRepository
     {
+        public FolderRepository()
+        {
+            CreateDataContext();
+        }
         public Folder AddFolder(Folder folder)
         {
             try
@@ -58,18 +62,19 @@ namespace Repository
             return true;
         }
 
-        public Folder GetFolder(long userID, string name)
+        public IList<Folder> GetFolder(long userID, string name)
         {
             Folder folder = null;
+            IList<Folder> folders = null;
             try
             {
                 using (GetDataContext())
                 {
-                    IList<Folder> folders = (from folderObjects in context.Folders
+                   folders = (from folderObjects in context.Folders
                                              where folderObjects.userID == userID && folderObjects.name.Equals(name)
                                     select folder).ToList();
 
-                    if (folders.Count > 0) folder = folders[0];
+                    
                 }
             }
             catch
@@ -81,7 +86,7 @@ namespace Repository
                 DisposeContext();
             }
             //}
-            return folder;
+            return folders;
         }
 
         public Folder GetFolder(long folderID)
@@ -158,6 +163,33 @@ namespace Repository
                 DisposeContext();
             }
             //}
+            return folder;
+        }
+
+
+        public Folder GetFolderUnderParent(long userID, string folderName, long parentID)
+        {
+            Folder folder = null;
+            using (GetDataContext())
+            {
+                try
+                {
+                    IList<Folder> checkFolders = (from folders in context.Folders
+                                                   where folders.parentID == parentID &&
+                                                             folders.name == folderName
+
+                                                   select folders).ToList();
+
+                    if (checkFolders.Count > 0) folder = checkFolders[0];
+                   
+                }
+
+                catch
+                {
+                    throw;
+                }
+            }
+
             return folder;
         }
     }

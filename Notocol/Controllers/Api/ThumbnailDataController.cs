@@ -15,19 +15,12 @@ namespace Notocol.Controllers.Api
     {
         // post: ThumbnailData
         [HttpPost]
-        public void ThumbnailData(ThumbnailDataFromSource thumbnailData)
+        public void ThumbnailData(ThumbnailDataForSourceUser thumbnailData)
         {
             SourceHelper sourceHelper = new SourceHelper();
-            //ThumbnailDataFromSource thumbnailData = JsonConvert.DeserializeObject<ThumbnailDataFromSource>(thumbnailDataString);
+            
             sourceHelper.SetPageThumbNailData(Utility.GetCurrentUserID(), thumbnailData);
             return;
-        }
-
-        [HttpGet]
-        public string ThumbnailData()
-        {
-            
-            return ("I am running");
         }
 
     }

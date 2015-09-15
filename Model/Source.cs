@@ -16,34 +16,16 @@ namespace Model
     {
         public Source()
         {
-            this.Annotations = new HashSet<Annotation>();
-            this.SourceTags = new HashSet<SourceTag>();
+            this.SourceUsers = new HashSet<SourceUser>();
         }
     
         public long ID { get; set; }
-        public long UserID { get; set; }
-        public string Title { get; set; }
-        public string URN { get; set; }
-        public string Summary { get; set; }
-        public Nullable<bool> ReadLater { get; set; }
-        public Nullable<bool> SaveOffline { get; set; }
-        public Nullable<bool> Privacy { get; set; }
-        public Nullable<int> Rating { get; set; }
-        public string TagNames { get; set; }
-        public string TagIDs { get; set; }
-        public Nullable<System.DateTime> ModifiedAt { get; set; }
-        public string SourceURI { get; set; }
-        public string ImpliedTagNames { get; set; }
-        public string ImpliedTagIDs { get; set; }
-        public string FaviconURL { get; set; }
-        public string thumbnailImageUrl { get; set; }
-        public string thumbnailText { get; set; }
-        public Nullable<long> FolderID { get; set; }
-        public int noteCount { get; set; }
+        public string url { get; set; }
+        public byte[] uriHash { get; set; }
+        public string faviconURL { get; set; }
+        public string title { get; set; }
+        public System.DateTime created { get; set; }
     
-        public virtual ICollection<Annotation> Annotations { get; set; }
-        public virtual Folder Folder { get; set; }
-        public virtual User User { get; set; }
-        public virtual ICollection<SourceTag> SourceTags { get; set; }
+        public virtual ICollection<SourceUser> SourceUsers { get; set; }
     }
 }

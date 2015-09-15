@@ -53,22 +53,36 @@
 
             //tabInfo[tabId].pageCheckRequest =
             $.ajax({
-                url: SERVER_BASE_URL + "Api/Source/SourceData",
+                url: SERVER_BASE_URL + "Api/Source/GetSourceData",
                 type: 'Get',
                 data: {
-                    pageURL: tabInfo[tabId].url
+                    URI: tabInfo[tabId].uri,
+                    Link: tabInfo[tabId].url
                 },
 
                 success: function (pageData) {
                     if (pageData != null) {
-                        if (typeof pageData.sourceID != "undefined" && pageData.sourceID != 0) {
-                            if (pageData.noteCount > 0) {
+                        var data = pageData.sourceData;
+                        var currentTabInfo = tabInfo[tabId] || {};
+                        
+                        currentTabInfo.sourceID = data.sourceID;
+
+                        if (data != "undefined" && data.sourceUserID != 0) {
+                            if (data.noteCount > 0) {
                                 hypothesis.enableHypothesis(tabId);
                                 vm.updateAnnotatorStatus(tabId);
                             }
-                            vm.setTabInfo({ id: tabId }, pageData);
-                            //console.log("Setting tabInfo for " + tabId + " as " + JSON.stringify(tabInfo[tabId]));
+
+                            currentTabInfo.sourceUserID = data.sourceUserID;
+                            currentTabInfo.tags = data.tags;
+                            currentTabInfo.summary = data.summary;
+                            currentTabInfo.folder = data.folder;
+                            currentTabInfo.noteCount = data.noteCount;
+                            currentTabInfo.privacy = data.privacy;
                         }
+
+                        vm.setTabInfo({ id: tabId }, currentTabInfo);
+                        console.log("Setting tabInfo for " + tabId + " as " + JSON.stringify(tabInfo[tabId]));
                     }
                 },
 
@@ -79,26 +93,58 @@
             });
             return;
         }
+      
+        this.updateTabURI = function(tabid, uri){
+            var checkServer = false;
+            if (tabInfo[tabid].uri != uri) checkServer = true;
+            tabInfo[tabid].uri = uri;
+            if (checkServer) checkForUserPageData(tabid);
+            console.log("Updated uri for tab " + tabid + " as " + uri);
+        }
         
-        this.setTabInfo = function(tab, info) {
+        this.setTabInfo = function (tab, info) {
+            var checkServer = false;
+            if (tab.url == "undefined") return;
+
             if (typeof info != "undefined") {
+                if (typeof tabInfo[tab.id] == "undefined" || tabInfo[tab.id].uri != info.uri || tabInfo[tab.id].url != info.url) checkServer = true;
                 tabInfo[tab.id] = info;
-                console.log("Updated tabInfo for tab " + tab.id + " as " + JSON.stringify(tabInfo[tab.id]));
+
+               
             }else{
                 var link = tab.url;
-
-                if (isPDFURL(link)) link = unescape(tab.url.substring(tab.url.indexOf("=") + 1));
+                var currentTabInfo = tabInfo[tab.id];
+                var isPDF = false;
+                if (isPDFURL(link)) {
+                    isPDF = true;
+                    link = unescape(tab.url.substring(tab.url.indexOf("=") + 1));
+                }
                 if (isFileURL(link))link = unescape(link);
-
-                tabInfo[tab.id] = {
-                    title : tab.title,
-                    url: link,
-                    faviconUrl: tab.favIconUrl,
+                 
+                if (typeof currentTabInfo == "undefined") {
+                    tabInfo[tab.id] = {
+                        title: tab.title,
+                        url: link,
+                        uri: link,
+                        faviconUrl: tab.faviconUrl,
+                        sourceUserID: 0,
+                        sourceID: 0
+                    };
+                    checkServer = true;
+                } else {
+                    if (!isPDF && (link != currentTabInfo.uri || link != currentTabInfo.url)){
+                        checkServer = true;
+                        currentTabInfo.uri = currentTabInfo.url = link;
+                        
+                    }
+                    currentTabInfo.favIconUrl = tab.faviconUrl;
+                    currentTabInfo.title = tab.title;
                     
-                };
-                checkForUserPageData(tab.id);
+                }
+                
+                
             }
-
+            if (checkServer) checkForUserPageData(tab.id);
             tabInfo[tab.id].status = true;
             tabInfo[tab.id].tabID = tab.id;
             vm.updateAnnotatorStatus(tab.id);
@@ -152,11 +198,8 @@
             chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 if (message.type == "PDFInformation") {
                     if (typeof sender.tab.id != "undefined" && typeof tabInfo[sender.tab.id] != "undefined") {
-                        var info = tabInfo[sender.tab.id]
-                        info.urn = message.urn.substring("urn:x-pdf:".length);
                         console.log("Received urn for tab " + sender.tab.id + "as " + message.urn);
-                        
-                        vm.setTabInfo(sender.tab, info);
+                        vm.updateTabURI(sender.tab.id, message.urn.substring("urn:x-pdf:".length));
                     } else {
                         console.log("Did not find tab with ID " + sender.tab.id);
                     }

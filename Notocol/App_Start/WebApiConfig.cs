@@ -11,7 +11,7 @@ namespace Notocol
             // Web API routes
             //All the routes to web APIs for extension have been moved to routeconfig.cs
 
-           config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
         }
     }
 }

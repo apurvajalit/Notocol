@@ -29,11 +29,12 @@ function GetPageText() {
 
 }
 
-console.log("I am running to send thumbnailData");
+
 var imageObjects = JSON.stringify(GetAllImageURLs());
 var pageText = JSON.stringify(GetPageText());
 var thumbnailData = {
-    pageURI: inputVariables.sourceURI,
+    pageLink: inputVariables.pageUrl,
+    sourceUserID: inputVariables.ID,
     imageObjects: imageObjects,
     textData: pageText
 }
@@ -44,14 +45,3 @@ xhr.setRequestHeader("Content-Type", "application/json");
 xhr.setRequestHeader("dataType", "json");
 xhr.send(JSON.stringify(thumbnailData));
 
-
-//$.ajax({
-//    url: inputVariables.ThumbNailDataURl,
-//    type: "POST",
-//    data: JSON.stringify(thumbnailData),
-//    contentType:"application/json",
-//    dataType: "json",
-//    success: function (data) {
-//        console.log(data);
-//    }
-//})

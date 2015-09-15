@@ -14,20 +14,25 @@ namespace Model
     
     public partial class Annotation
     {
-        public int ID { get; set; }
+        public Annotation()
+        {
+            this.AnnotationTags = new HashSet<AnnotationTag>();
+        }
+    
+        public long ID { get; set; }
         public string Updated { get; set; }
         public string Target { get; set; }
         public string Created { get; set; }
         public string Text { get; set; }
-        public string Tags { get; set; }
         public string Uri { get; set; }
         public string Document { get; set; }
         public string Consumer { get; set; }
         public string Permissions { get; set; }
         public string User { get; set; }
-        public int UserID { get; set; }
-        public Nullable<long> SourceID { get; set; }
+        public long UserID { get; set; }
+        public long SourceUserID { get; set; }
     
-        public virtual Source Source { get; set; }
+        public virtual ICollection<AnnotationTag> AnnotationTags { get; set; }
+        public virtual User User1 { get; set; }
     }
 }
