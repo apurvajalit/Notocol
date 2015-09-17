@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Model.Extended
 {
-    public class SourceFilter
+    public class SearchFilter
     {
-        public List<string> tags { get; set; }
+        public string[] tags { get; set; }
         public long folderID { get; set; }
+        
         
     }
 }

@@ -58,7 +58,7 @@
       if (request.greeting === "PageDetails") {
           chrome.tabs.query({ active: true }, function (tabs) {
               if (!(tabs.length === 0)) {
-                  var tabInfo = notocolUtil.getTabInfo(tabs[0]);
+                  var tabInfo = notocolUtil.gettabsData(tabs[0]);
                   
                   if (typeof tabInfo != "undefined") {
                       sendResponse(tabInfo);
@@ -70,7 +70,7 @@
       } else if (request.greeting === "PageDetailsUpdated") {
           
           if (typeof request.pageInfo.tabID != undefined && request.pageInfo.tabID > 0) {
-              notocolUtil.setTabInfo({ id: request.pageInfo.tabID }, request.pageInfo);
+              notocolUtil.settabsData({ id: request.pageInfo.tabID }, request.pageInfo);
           }
       } else if (request.greeting === "ToggleAnnotation") {
           chrome.tabs.query({ active: true }, function (tabs) {

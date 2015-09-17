@@ -16,7 +16,8 @@ namespace Notocol.Controllers
             if (searchQuery != null)
             {
                 ElasticSearchTest elasticSearchTest = new ElasticSearchTest();
-                return View(elasticSearchTest.SearchUsingQuery(searchQuery, Utility.GetCurrentUserID(), 0, 20));
+                //return View(elasticSearchTest.SearchUsingQuery(searchQuery, Utility.GetCurrentUserID(), 0, 20));
+                return View();
             }
 
 

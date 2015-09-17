@@ -155,7 +155,7 @@ namespace Business
 
             annotation.SourceUserID = sourceUser.ID;
 
-            if ((annotation.ID = objAnnotationRepository.AddAnnotation(annotation, sourceUser)) <= 0) return null;
+            if ((annotation.ID = objAnnotationRepository.AddAnnotation(annotation, sourceUser, extAnnotation.tags)) <= 0) return null;
 
             sourceUser.noteCount++;
             SourceHelper sourceHelper = new SourceHelper();
@@ -163,7 +163,7 @@ namespace Business
             extAnnotation.id = annotation.ID;
 
             if (extAnnotation.tags != null && extAnnotation.tags.Length > 0)
-                new TagHelper().UpdateAnnotationTags(annotation, extAnnotation.tags);
+                new TagHelper().UpdateAnnotationTags(annotation, extAnnotation.tags, (long)sourceUser.SourceID);
             
             return extAnnotation;
         }

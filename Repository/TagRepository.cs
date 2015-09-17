@@ -219,11 +219,14 @@ namespace Repository
                 if (addedTagIDs.Count > 0)
                 {
                     ElasticSearchTest es = new ElasticSearchTest();
+                    List<string> tagNamesToAdd = new List<string>();
                     foreach (var id in addedTagIDs)
                     {
-                        string tagname = tagNames[tagIDs.IndexOf(id)];
-                        es.AddSourceTagsData(sourceID, tagname);
+                         tagNamesToAdd.Add(tagNames[tagIDs.IndexOf(id)]);
+                                
                     }
+
+                    es.AddSourceUserTagsData(sourceID, sourceuser.ID, tagNamesToAdd.ToArray());
                 }
             }
 
@@ -375,11 +378,11 @@ namespace Repository
             
             return tagIDs;
         }
-        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames)
+        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames, long sourceID = 0)
         {
 
             List<long> tagIDs = tagNames != null ? GetTagIDs(tagNames) : new List<long>();
-
+            List<long> newTagIDs = null;
             using(GetDataContext()){
 
                  try{
@@ -397,7 +400,7 @@ namespace Repository
                      foreach (var annotationTag in removedannnotionTags)
                         context.Entry(annotationTag).State = EntityState.Deleted;
 
-                     List<long> newTagIDs = tagIDs.Except((from annotationTag in annotationTags
+                     newTagIDs = tagIDs.Except((from annotationTag in annotationTags
                                              select annotationTag.tagID).ToList()).ToList();
 
                      foreach (var tagId in newTagIDs)
@@ -417,6 +420,28 @@ namespace Repository
                  {
                      throw;
                  }
+                 if (newTagIDs.Count > 0)
+                 {
+                     ElasticSearchTest es = new ElasticSearchTest();
+                     if (sourceID == 0)
+                     {
+                         SourceRepository sourceRepository = new SourceRepository();
+                         sourceID = sourceRepository.GetSourceIDFromSourceUser(annotation.SourceUserID);
+                         
+                     }
+                     if (sourceID > 0)
+                     {
+                         List<string> tagNamesToAdd = new List<string>();
+                         foreach (var id in newTagIDs)
+                         {
+                             tagNamesToAdd.Add(tagNames[tagIDs.IndexOf(id)]);
+
+                         }
+
+                         es.AddSourceUserTagsData(sourceID, annotation.SourceUserID, tagNamesToAdd.ToArray());
+                     }
+                 }
+
                  UpdateRecentUserTag(annotation.UserID, tagIDs);
 
              }

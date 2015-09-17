@@ -190,22 +190,33 @@ namespace Business
             {
                 if (sourceData.sourceID <= 0)
                 {
-                    Source source = new Source();
-                    source.title = sourceData.title;
-                    source.faviconURL = sourceData.faviconUrl;
-                    source.url = sourceData.url;
-                    source = AddSource(sourceData.uri, source);
+                    Source source = obSourceRepository.GetSource(sourceData.uri, sourceData.url);
+                    if (source == null)
+                    {
+                        source = new Source();
+                        source.title = sourceData.title;
+                        source.faviconURL = sourceData.faviconUrl;
+                        source.url = sourceData.url;
+                        source = AddSource(sourceData.uri, source);
+                    }    
+
                     if (source == null || source.ID <= 0) return null;
                     sourceData.sourceID = source.ID;
                 }
-                sourceUser = new SourceUser();
-                sourceUser.SourceID = sourceData.sourceID;
-                sourceUser.FolderID = sourceData.folder;
-                sourceUser.Summary = sourceData.summary;
-                sourceUser.Privacy = sourceData.privacy;
-                sourceUser.UserID = userID;
-                sourceUser.noteCount = 0;
-                sourceUser = AddSourceUser(sourceUser);
+
+                sourceUser = obSourceRepository.GetSourceUser(sourceData.sourceID, userID);
+                if (sourceUser == null)
+                {
+                    sourceUser = new SourceUser();
+                    sourceUser.SourceID = sourceData.sourceID;
+                    sourceUser.FolderID = sourceData.folder;
+                    sourceUser.Summary = sourceData.summary;
+                    sourceUser.Privacy = sourceData.privacy;
+                    sourceUser.UserID = userID;
+                    sourceUser.noteCount = 0;
+                    sourceUser = AddSourceUser(sourceUser);
+                }
+                    
                 if (sourceUser == null || sourceUser.ID <= 0) return null;
                 if (sourceData.tags != null)
                 {

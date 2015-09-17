@@ -103,7 +103,7 @@ namespace Repository
             else
                 return null;
         }
-        public long AddAnnotation(Annotation annotation, SourceUser sourceUser = null)
+        public long AddAnnotation(Annotation annotation, SourceUser sourceUser = null, string[] tags = null)
         {
             //TODO Move the commented code to 
             //TagRepository tagRepository = new TagRepository();
@@ -111,56 +111,9 @@ namespace Repository
             {
                 using (GetDataContext())
                 {
-                    //SourceRepository sourceRepository = new SourceRepository();
-                    //long sourceID = sourceRepository.GetSourceIDFromSourceURI(annotation.Uri, annotation.UserID);
-                    //if (sourceID == 0)
-                    //{
-                    //    //Create the source for this user
-                    //    Source source = new Source();
-                              
-                    //    source.SourceURI = annotation.Uri;
-                    //    source.UserID = annotation.UserID;
-                    //    dynamic data = JObject.Parse(annotation.Document);
-                    //    source.Title = data.title;
-                    //    source.Link = null;
-                    //    if (annotation.Uri.StartsWith("urn:x-pdf"))
-                    //    {
-
-                    //        foreach (var link in data.link)
-                    //        {
-                    //            string value = link.href;
-                    //            if (value.StartsWith("http"))
-                    //            {
-                    //                source.Link = value;
-                    //                break;
-                    //            }
-                    //        }
-                    //        if (source.Link == null)
-                    //        {
-                    //            source.Link = "localFile:" + data.filename;
-                    //        }
-                    //    }else
-                    //        source.Link = data.link[0].href;
-                      
-                    //    try
-                    //    {
-                    //        source.UserID = annotation.UserID;
-                    //        sourceRepository.AddSource(source);
-                    //        sourceID = source.ID;
-                    //    }
-                    //    catch
-                    //    {
-                    //        throw;
-                    //    }
-
-                    //}
                     
-                    //annotation.SourceID = sourceID;
                     context.Entry(annotation).State = EntityState.Added;
                     context.SaveChanges();
-                    //if(annotation.Tags != null)
-                    //    tagRepository.AddImpliedTagsToSource(annotation.UserID, sourceID, JsonConvert.DeserializeObject<string[]>(annotation.Tags));
-
                 }
             }
             catch
@@ -175,7 +128,7 @@ namespace Repository
             if (annotation.ID > 0)
             {
                 ElasticSearchTest es = new ElasticSearchTest();
-                es.AddUpdateNotesForSource(annotation, true, sourceUser);
+                es.UpdateNotesForSource(annotation,true,sourceUser,null,tags);
             }   
 
             return annotation.ID;
@@ -207,7 +160,7 @@ namespace Repository
             //}
 
             ElasticSearchTest es = new ElasticSearchTest();
-            es.AddUpdateNotesForSource(annotation, false);
+            es.UpdateNotesForSource(annotation, false);
             
             return true;
         }

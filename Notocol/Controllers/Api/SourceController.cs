@@ -32,7 +32,7 @@ namespace Notocol.Controllers.Api
             }else{
                 return JObject.FromObject(new
                 {
-                    status = "failed",
+                    status = "failure",
                 });
             }
         }

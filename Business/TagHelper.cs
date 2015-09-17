@@ -42,10 +42,10 @@ namespace Business
             return new TagRepository().GetRecentTags(userID);
         }
 
-        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames)
+        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames, long sourceID = 0)
         {
             TagRepository tagRepository = new TagRepository();
-            tagRepository.UpdateAnnotationTags(annotation, tagNames);
+            tagRepository.UpdateAnnotationTags(annotation, tagNames, sourceID);
         }
 
         public string[] GetAnnotationTagNames(long annotationID)

@@ -92,7 +92,7 @@
     <Compile Include="Extended\NotCol.Context.cs" />
     <Compile Include="Extended\NoteData.cs" />
     <Compile Include="Extended\SourceData.cs" />
-    <Compile Include="Extended\SourceFilter.cs" />
+    <Compile Include="Extended\SearchFilter.cs" />
     <Compile Include="Extended\SourceItem.cs" />
     <Compile Include="Extended\UserRegistration.cs" />
     <Compile Include="Folder.cs">

@@ -14,30 +14,32 @@ namespace Notocol.Controllers
 {
     public class SourceController : Controller
     {
+        
         // GET: Source
-        public ActionResult SourceItems(string query = null, SourceFilter filter = null, bool onlySelf = false)
+        public ActionResult SourceItems(string query = null, string tagFilter = null, int sourceType = ElasticSearchTest.SOURCE_TYPE_ALL)
         {
 
             long userID = Utility.GetCurrentUserID();
-            List<string> tags = null;
-            if (filter != null) tags = filter.tags;
+            
             ElasticSearchTest es = new ElasticSearchTest();
-            if(query == null){
-                return PartialView("ESSource", es.PopulateDefaultFeed(userID, onlySelf));
+            
+            SearchFilter filter = new SearchFilter
+            {
+                tags = (tagFilter != null && tagFilter.Length > 0) ? tagFilter.Split(new char[] { ',' }) : null
+            };
+
+
+
+
+            if (query == null || query.Length == 0)
+            {
+                return PartialView("ESSource", es.GetSource(filter, userID, 
+                    sourceType == ElasticSearchTest.SOURCE_TYPE_OWN? true:false, 0, 50));
+                
             }else{
-                return PartialView("ESSource", es.SearchUsingQuery(query, userID, 0, 50));
+                return PartialView("ESSource", es.SearchUsingQuery(query, filter, userID, sourceType, 0, 50));
             }
 
-            //IList<long> tagIDs = new List<long>();
-            //if (tagFilter != "")
-            //{
-            //    string[] tags = tagFilter.Split(',');
-            //    tagIDs =  TagHelper.TryGetTagIDs(tagFilter.Split(','));
-            //}
-            //if(tab == 0)
-            //    return PartialView(new SourceHelper().GetSourceItems(keywordFilter, tagIDs, userID, true));
-            //else
-            //    return PartialView("SourceItemsWithUser",new SourceHelper().GetSourceItems(keywordFilter, tagIDs, userID, false));
         }
 
         public bool DeleteSource(long sourceUserID)

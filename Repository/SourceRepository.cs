@@ -315,13 +315,13 @@ namespace Repository
                     DisposeContext();
                 }
             }
-            if (sourceUser.ID > 0 && sourceUser.Summary != null)
-            {
+            
+            if (sourceUser.ID > 0){
                 ElasticSearchTest es = new ElasticSearchTest();
-                es.UpdateSourceUserSummary(sourceUser);
-
-                if (sourceUser.thumbnailImageUrl != null || sourceUser.thumbnailText != null)
+                es.AddUserToSource(sourceUser);
+                if (sourceUser.thumbnailImageUrl != null || sourceUser.thumbnailText != null){
                     es.UpdateSourceTNData((long)sourceUser.SourceID, sourceUser.thumbnailText, sourceUser.thumbnailImageUrl);
+                }
             }
             return sourceUser;
         }
@@ -354,7 +354,7 @@ namespace Repository
             if (source.ID > 0)
             {
                 ElasticSearchTest es = new ElasticSearchTest();
-                es.AddSourceSearchIndex(source, null, null, null);
+                es.AddSourceSearchIndex(source, null, null);
             }
             return source;
         }
@@ -377,7 +377,35 @@ namespace Repository
                     DisposeContext();
                 }
             }
+            ElasticSearchTest es = new ElasticSearchTest();
+            es.DeleteUserForSource(sourceuser);
             return true;
+        }
+
+        internal long GetSourceIDFromSourceUser(long sourceUserID)
+        {
+            long sourceID = 0;
+            using (GetDataContext())
+            {
+                try
+                {
+                    var sourceCheck = (from sourceuser in context.SourceUsers
+                                where sourceuser.ID == sourceUserID
+                                select sourceuser.SourceID).FirstOrDefault();
+
+                    if (sourceCheck != null) sourceID = (long)sourceCheck;
+                    
+                }
+                catch
+                {
+
+                }
+                finally
+                {
+                    DisposeContext();
+                }
+            }
+            return sourceID;
         }
     }
 }

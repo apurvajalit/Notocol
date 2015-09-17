@@ -6,8 +6,9 @@
         var isAllowedFileSchemeAccess = dependencies.isAllowedFileSchemeAccess;
         var extensionURL = dependencies.extensionURL;
         var hypothesis = dependencies.hypothesis;
-        var tabInfo =  {};
-
+        var tabsData = {};
+        //var tabsData =  {};
+        
         var TAB_STATUS_COMPLETE = 'complete';
         var LOCAL_HTML_URL = 1;
         var WEB_HTML_URL = 2;
@@ -48,41 +49,43 @@
             }else return false;
         }
         var checkForUserPageData = function (tabId) {
-            //if (typeof tabInfo[tabId].pageCheckRequest != "undefined")
-              //  tabInfo[tabId].pageCheckRequest.abort();
-
-            //tabInfo[tabId].pageCheckRequest =
-            $.ajax({
+          $.ajax({
                 url: SERVER_BASE_URL + "Api/Source/GetSourceData",
                 type: 'Get',
                 data: {
-                    URI: tabInfo[tabId].uri,
-                    Link: tabInfo[tabId].url
+                    URI: tabsData[tabId].uri,
+                    Link: tabsData[tabId].url
                 },
 
                 success: function (pageData) {
                     if (pageData != null) {
                         var data = pageData.sourceData;
-                        var currentTabInfo = tabInfo[tabId] || {};
-                        
-                        currentTabInfo.sourceID = data.sourceID;
+                        var currenttabsData = tabsData[tabId] || {};
 
-                        if (data != "undefined" && data.sourceUserID != 0) {
+                        if (data != "undefined") {
                             if (data.noteCount > 0) {
                                 hypothesis.enableHypothesis(tabId);
                                 vm.updateAnnotatorStatus(tabId);
                             }
-
-                            currentTabInfo.sourceUserID = data.sourceUserID;
-                            currentTabInfo.tags = data.tags;
-                            currentTabInfo.summary = data.summary;
-                            currentTabInfo.folder = data.folder;
-                            currentTabInfo.noteCount = data.noteCount;
-                            currentTabInfo.privacy = data.privacy;
+                            currenttabsData.sourceID = data.sourceID;
+                            currenttabsData.sourceUserID = data.sourceUserID;
+                            currenttabsData.tags = data.tags;
+                            currenttabsData.summary = data.summary;
+                            currenttabsData.folder = data.folder;
+                            currenttabsData.noteCount = data.noteCount;
+                            currenttabsData.privacy = data.privacy;
+                        } else {
+                            currenttabsData.sourceID = 0;
+                            currenttabsData.sourceUserID = 0;
+                            currenttabsData.tags = null;
+                            currenttabsData.summary = null;
+                            currenttabsData.folder = 0;
+                            currenttabsData.noteCount = 0;
+                            currenttabsData.privacy = false;
                         }
 
-                        vm.setTabInfo({ id: tabId }, currentTabInfo);
-                        console.log("Setting tabInfo for " + tabId + " as " + JSON.stringify(tabInfo[tabId]));
+                        vm.settabsData({ id: tabId }, currenttabsData);
+                        console.log("Setting tabsData for " + tabId + " as " + JSON.stringify(tabsData[tabId]));
                     }
                 },
 
@@ -96,24 +99,24 @@
       
         this.updateTabURI = function(tabid, uri){
             var checkServer = false;
-            if (tabInfo[tabid].uri != uri) checkServer = true;
-            tabInfo[tabid].uri = uri;
+            if (tabsData[tabid].uri != uri) checkServer = true;
+            tabsData[tabid].uri = uri;
             if (checkServer) checkForUserPageData(tabid);
             console.log("Updated uri for tab " + tabid + " as " + uri);
         }
         
-        this.setTabInfo = function (tab, info) {
+        this.settabsData = function (tab, info) {
+            
             var checkServer = false;
             if (tab.url == "undefined") return;
 
             if (typeof info != "undefined") {
-                if (typeof tabInfo[tab.id] == "undefined" || tabInfo[tab.id].uri != info.uri || tabInfo[tab.id].url != info.url) checkServer = true;
-                tabInfo[tab.id] = info;
-
-               
+                if (typeof tabsData[tab.id] == "undefined" || tabsData[tab.id].uri != info.uri || tabsData[tab.id].url != info.url) checkServer = true;
+                tabsData[tab.id] = info;
             }else{
                 var link = tab.url;
-                var currentTabInfo = tabInfo[tab.id];
+                
+                var currenttabsData = tabsData[tab.id];
                 var isPDF = false;
                 if (isPDFURL(link)) {
                     isPDF = true;
@@ -121,8 +124,8 @@
                 }
                 if (isFileURL(link))link = unescape(link);
                  
-                if (typeof currentTabInfo == "undefined") {
-                    tabInfo[tab.id] = {
+                if (typeof currenttabsData == "undefined") {
+                    tabsData[tab.id] = {
                         title: tab.title,
                         url: link,
                         uri: link,
@@ -131,42 +134,47 @@
                         sourceID: 0
                     };
                     checkServer = true;
+                    console.log("Setting data for first time for tab "+ tab.id);
+
                 } else {
-                    if (!isPDF && (link != currentTabInfo.uri || link != currentTabInfo.url)){
+                    if (!isPDF && (link != currenttabsData.uri || link != currenttabsData.url)){
                         checkServer = true;
-                        currentTabInfo.uri = currentTabInfo.url = link;
+                        currenttabsData.uri = currenttabsData.url = link;
                         
                     }
-                    currentTabInfo.favIconUrl = tab.faviconUrl;
-                    currentTabInfo.title = tab.title;
+                    currenttabsData.favIconUrl = tab.faviconUrl;
+                    currenttabsData.title = tab.title;
                     
                 }
                 
                 
             }
             if (checkServer) checkForUserPageData(tab.id);
-            tabInfo[tab.id].status = true;
-            tabInfo[tab.id].tabID = tab.id;
+            tabsData[tab.id].status = true;
+            tabsData[tab.id].tabID = tab.id;
             vm.updateAnnotatorStatus(tab.id);
         }
 
-        function unsetTabInfo(tabId) {
-            delete tabInfo[tabId];
+        function unsettabsData(tabId) {
+            delete tabsData[tabId];
         }
 
-        this.getTabInfo = function (tab) {
-            console.log("Request for tabInfo for " + tab.id);
-            return tabInfo[tab.id];
+        this.gettabsData = function (tab) {
+            console.log("Request for tabsData for " + tab.id);
+            return tabsData[tab.id];
         }
 
         function onTabCreated(tab) {
             // Clear the info in case there is old, conflicting data
-            unsetTabInfo(tab);
+            unsettabsData(tab);
         }
 
         function onTabUpdated(tabId, changeInfo, tab) {
-            
-            vm.setTabInfo(tab);
+            var curr_url = "";
+            if (typeof tabsData[tabId] != "undefined") curr_url = tabsData[tabId].uri;
+
+            console.log("Tab updated for tab " + tab.id + " with status " + changeInfo.status + "  " + tab.url + "/" + curr_url);
+            vm.settabsData(tab);
             if (changeInfo.status !== TAB_STATUS_COMPLETE) {
                 return;
             }
@@ -178,15 +186,15 @@
         }
 
         function onTabRemoved(tabId) {
-            unsetTabInfo(tabId);
+            unsettabsData(tabId);
         }
 
         this.updateAnnotatorStatus = function(tabId){
             if (hypothesis.state.isTabActive(tabId))
-                tabInfo[tabId].annotator = true;
-            else tabInfo[tabId].annotator = false;
+                tabsData[tabId].annotator = true;
+            else tabsData[tabId].annotator = false;
 
-            console.log("Setting annotator status to " + tabInfo[tabId].annotator + " for tab " + tabId)
+            console.log("Setting annotator status to " + tabsData[tabId].annotator + " for tab " + tabId)
         }
 
         this.listen = function () {
@@ -197,7 +205,7 @@
             
             chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 if (message.type == "PDFInformation") {
-                    if (typeof sender.tab.id != "undefined" && typeof tabInfo[sender.tab.id] != "undefined") {
+                    if (typeof sender.tab.id != "undefined" && typeof tabsData[sender.tab.id] != "undefined") {
                         console.log("Received urn for tab " + sender.tab.id + "as " + message.urn);
                         vm.updateTabURI(sender.tab.id, message.urn.substring("urn:x-pdf:".length));
                     } else {
