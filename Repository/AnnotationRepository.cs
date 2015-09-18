@@ -50,33 +50,7 @@ namespace Repository
             
             return lstAnnotations;
         }
-       
-        public List<Annotation> GetAnnotationsForPage(string uri, long userID)
-        {
-            List<Annotation> lstAnnotations = null;
-            
-            try
-            {
-                using (GetDataContext())
-                {
-                    lstAnnotations = (from annotations in context.Annotations
-                                          where annotations.UserID == userID && annotations.Uri == uri 
-                                          select annotations).ToList();
-                }
-
-                
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                DisposeContext();
-            }
-
-            return lstAnnotations;
-        }
+        
         public Annotation GetAnnotation(long annotationID)
         {
 
@@ -128,7 +102,7 @@ namespace Repository
             if (annotation.ID > 0)
             {
                 ElasticSearchTest es = new ElasticSearchTest();
-                es.UpdateNotesForSource(annotation,true,sourceUser,null,tags);
+                es.UpdateNotesForSource(annotation,true,tags);
             }   
 
             return annotation.ID;
@@ -174,8 +148,7 @@ namespace Repository
             {
                 using (GetDataContext())
                 {
-                    context.Entry(annotation).State = EntityState.Deleted;
-                    context.SaveChanges();
+                    context.DeleteAnnotation(annotation.ID);
                 }
             }
             catch
@@ -347,5 +320,30 @@ namespace Repository
         ////    }
         ////    return true;
         ////}
+
+        public List<Annotation> GetAnnotationsForPage(string uri, long userID)
+        {
+            List<Annotation> annotation = new List<Annotation>();
+            try
+            {
+                using (GetDataContext())
+                {
+                    annotation = (from annotations in context.Annotations
+                                  where annotations.UserID == userID && 
+                                        annotations.SourceUserID != 0 && 
+                                        annotations.Uri == uri
+                                  select annotations).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return annotation;
+        }
     }
 }

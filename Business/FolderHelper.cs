@@ -51,22 +51,31 @@ namespace Business
 
         }
 
-        public FolderTree AddFolder(FolderTree newFolder, long userID)
+        private long AddFolderTreeNode(FolderTree folderTree, long userID)
         {
-            Folder folder = null;
-            folder = new Folder();
-            folder.name = newFolder.Name;
-            folder.parentID = newFolder.ParentID;
+            Folder folder = new Folder();
+            folder.name = folderTree.Name;
+            folder.parentID = folderTree.ParentID;
             folder.created = folder.updated = DateTime.Now;
             folder.userID = userID;
-
-            if (!AddFolder(ref folder, userID))
+            if (AddFolder(ref folder)) return folder.ID;
+            else return 0;
+        }
+        public FolderTree AddFolderTree(FolderTree newFolderTree, long userID)
+        {
+            long folderID = 0;
+            if ((folderID = AddFolderTreeNode(newFolderTree, userID)) > 0)
             {
-                return null;
+                newFolderTree.ID = folderID;
+                foreach (var foldertree in newFolderTree.Children)
+                {
+                    foldertree.ParentID = folderID;
+                    if (AddFolderTree(newFolderTree, userID) == null) return null;
+                }
+                return newFolderTree;
             }
+            else return null;
             
-            newFolder.ID = folder.ID;
-            return newFolder;
         }
 
         public bool DeleteFolder(Folder folder, long userID){
@@ -78,9 +87,9 @@ namespace Business
             return folder;
         }
 
-        public bool AddFolder(ref Folder folder, long userID)
+        public bool AddFolder(ref Folder folder)
         {
-            Folder checkFolder = folderRepository.GetFolderUnderParent(userID, folder.name, folder.parentID);
+            Folder checkFolder = folderRepository.GetFolderUnderParent((long)folder.userID, folder.name, folder.parentID);
             long pid = folder.parentID;
             if (checkFolder != null) return false;
 

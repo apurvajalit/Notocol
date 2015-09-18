@@ -60,7 +60,7 @@ namespace Repository
             {
                 
                 try{
-                    context.DeleteSource(source.ID);
+                   // context.DeleteSource(source.ID);
                 }
                 catch
                 {
@@ -365,8 +365,7 @@ namespace Repository
             {
                 try
                 {
-                    context.Entry(sourceuser).State = EntityState.Deleted;
-                    context.SaveChanges();
+                    context.DeleteSourceUser(sourceuser.ID);
                 }
                 catch
                 {
@@ -390,11 +389,11 @@ namespace Repository
                 try
                 {
                     var sourceCheck = (from sourceuser in context.SourceUsers
-                                where sourceuser.ID == sourceUserID
-                                select sourceuser.SourceID).FirstOrDefault();
+                                       where sourceuser.ID == sourceUserID
+                                       select sourceuser.SourceID).FirstOrDefault();
 
                     if (sourceCheck != null) sourceID = (long)sourceCheck;
-                    
+
                 }
                 catch
                 {
@@ -407,5 +406,7 @@ namespace Repository
             }
             return sourceID;
         }
+
+        
     }
 }

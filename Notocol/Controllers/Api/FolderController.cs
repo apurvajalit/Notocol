@@ -22,7 +22,7 @@ namespace Notocol.Controllers.Api
         [HttpPost]
         public FolderTree AddNewUserFolder(FolderTree newFolder)
         {
-            return new FolderHelper().AddFolder(newFolder, Utility.GetCurrentUserID());
+            return new FolderHelper().AddFolderTree(newFolder, Utility.GetCurrentUserID());
         }
     }
 }

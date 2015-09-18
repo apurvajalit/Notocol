@@ -21,6 +21,7 @@
           <Property Name="User" Type="nvarchar(max)" Nullable="false" />
           <Property Name="UserID" Type="bigint" Nullable="false" />
           <Property Name="SourceUserID" Type="bigint" Nullable="false" />
+          <Property Name="SourceID" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="AnnotationTag">
           <Key>
@@ -68,6 +69,8 @@
           <Property Name="FolderID" Type="bigint" />
           <Property Name="noteCount" Type="int" Nullable="false" />
           <Property Name="SourceID" Type="bigint" />
+          <Property Name="PrivacyOverride" Type="bit" />
+          <Property Name="PrivateNoteCount" Type="int" />
         </EntityType>
         <EntityType Name="SourceUserTag">
           <Key>
@@ -133,6 +136,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Annotatio__Sourc__1249A49B">
+          <End Role="Source" Type="Self.Source" Multiplicity="1" />
+          <End Role="Annotation" Type="Self.Annotation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Annotation">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Annotatio__tagID__0F824689">
           <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
           <End Role="AnnotationTag" Type="Self.AnnotationTag" Multiplicity="*" />
@@ -145,7 +160,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Annotatio__UserI__0BB1B5A5">
+        <Association Name="FK__Annotatio__UserI__11558062">
           <End Role="User" Type="Self.User" Multiplicity="1" />
           <End Role="Annotation" Type="Self.Annotation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -241,8 +256,11 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="DeleteSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="SourceID" Type="bigint" Mode="In" />
+        <Function Name="DeleteAnnotation" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AnnotationID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="DeleteSourceUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SourceUserID" Type="bigint" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="GetTagID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -315,11 +333,15 @@
             <End Role="Annotation" EntitySet="Annotation" />
             <End Role="AnnotationTag" EntitySet="AnnotationTag" />
           </AssociationSet>
+          <AssociationSet Name="FK__Annotatio__Sourc__1249A49B" Association="Self.FK__Annotatio__Sourc__1249A49B">
+            <End Role="Source" EntitySet="Source" />
+            <End Role="Annotation" EntitySet="Annotation" />
+          </AssociationSet>
           <AssociationSet Name="FK__Annotatio__tagID__0F824689" Association="Self.FK__Annotatio__tagID__0F824689">
             <End Role="Tag" EntitySet="Tag" />
             <End Role="AnnotationTag" EntitySet="AnnotationTag" />
           </AssociationSet>
-          <AssociationSet Name="FK__Annotatio__UserI__0BB1B5A5" Association="Self.FK__Annotatio__UserI__0BB1B5A5">
+          <AssociationSet Name="FK__Annotatio__UserI__11558062" Association="Self.FK__Annotatio__UserI__11558062">
             <End Role="User" EntitySet="User" />
             <End Role="Annotation" EntitySet="Annotation" />
           </AssociationSet>
@@ -382,9 +404,6 @@
             <Parameter Name="keywordStr" Mode="In" Type="String" />
             <Parameter Name="userID" Mode="In" Type="Int64" />
           </FunctionImport>
-          <FunctionImport Name="DeleteSource">
-          <Parameter Name="SourceID" Mode="In" Type="Int64" />
-          </FunctionImport>
           <FunctionImport Name="sp_alterdiagram">
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
@@ -429,7 +448,11 @@
             <End Role="Annotation" EntitySet="Annotations" />
             <End Role="AnnotationTag" EntitySet="AnnotationTags" />
           </AssociationSet>
-          <AssociationSet Name="FK__Annotatio__UserI__0BB1B5A5" Association="NotColModel.FK__Annotatio__UserI__0BB1B5A5">
+          <AssociationSet Name="FK__Annotatio__Sourc__1249A49B" Association="NotColModel.FK__Annotatio__Sourc__1249A49B">
+            <End Role="Source" EntitySet="Sources" />
+            <End Role="Annotation" EntitySet="Annotations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Annotatio__UserI__11558062" Association="NotColModel.FK__Annotatio__UserI__11558062">
             <End Role="User" EntitySet="Users" />
             <End Role="Annotation" EntitySet="Annotations" />
           </AssociationSet>
@@ -465,6 +488,12 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UserTagUsage" EntitySet="UserTagUsages" />
           </AssociationSet>
+          <FunctionImport Name="DeleteSourceUser">
+          <Parameter Name="SourceUserID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="DeleteAnnotation">
+          <Parameter Name="AnnotationID" Mode="In" Type="Int64" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="GetTags_Result">
           <Property Type="Int64" Name="ChildId" Nullable="true" />
@@ -524,8 +553,10 @@
           <Property Name="User" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="UserID" Type="Int64" Nullable="false" />
           <Property Name="SourceUserID" Type="Int64" Nullable="false" />
+          <Property Name="SourceID" Type="Int64" Nullable="false" />
           <NavigationProperty Name="AnnotationTags" Relationship="NotColModel.FK__Annotatio__annot__0E8E2250" FromRole="Annotation" ToRole="AnnotationTag" />
-          <NavigationProperty Name="User1" Relationship="NotColModel.FK__Annotatio__UserI__0BB1B5A5" FromRole="Annotation" ToRole="User" />
+          <NavigationProperty Name="Source" Relationship="NotColModel.FK__Annotatio__Sourc__1249A49B" FromRole="Annotation" ToRole="Source" />
+          <NavigationProperty Name="User1" Relationship="NotColModel.FK__Annotatio__UserI__11558062" FromRole="Annotation" ToRole="User" />
         </EntityType>
         <EntityType Name="AnnotationTag">
           <Key>
@@ -561,6 +592,7 @@
           <Property Name="faviconURL" Type="String" MaxLength="2083" FixedLength="false" Unicode="true" />
           <Property Name="title" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Name="created" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Annotations" Relationship="NotColModel.FK__Annotatio__Sourc__1249A49B" FromRole="Source" ToRole="Annotation" />
           <NavigationProperty Name="SourceUsers" Relationship="NotColModel.FK__SourceUse__Sourc__758D6A5C" FromRole="Source" ToRole="SourceUser" />
         </EntityType>
         <EntityType Name="SourceUser">
@@ -578,6 +610,8 @@
           <Property Name="FolderID" Type="Int64" />
           <Property Name="noteCount" Type="Int32" Nullable="false" />
           <Property Name="SourceID" Type="Int64" />
+          <Property Name="PrivacyOverride" Type="Boolean" />
+          <Property Name="PrivateNoteCount" Type="Int32" />
           <NavigationProperty Name="Folder" Relationship="NotColModel.fk_folder" FromRole="SourceUser" ToRole="Folder" />
           <NavigationProperty Name="Source" Relationship="NotColModel.FK__SourceUse__Sourc__758D6A5C" FromRole="SourceUser" ToRole="Source" />
           <NavigationProperty Name="User" Relationship="NotColModel.FK_Source_User" FromRole="SourceUser" ToRole="User" />
@@ -628,7 +662,7 @@
           <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Photo" Type="String" MaxLength="2083" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Annotations" Relationship="NotColModel.FK__Annotatio__UserI__0BB1B5A5" FromRole="User" ToRole="Annotation" />
+          <NavigationProperty Name="Annotations" Relationship="NotColModel.FK__Annotatio__UserI__11558062" FromRole="User" ToRole="Annotation" />
           <NavigationProperty Name="Folders" Relationship="NotColModel.fk_user" FromRole="User" ToRole="Folder" />
           <NavigationProperty Name="SourceUsers" Relationship="NotColModel.FK_Source_User" FromRole="User" ToRole="SourceUser" />
           <NavigationProperty Name="UserTagUsages" Relationship="NotColModel.FK__UserTagUs__userI__38845C1C" FromRole="User" ToRole="UserTagUsage" />
@@ -656,7 +690,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Annotatio__UserI__0BB1B5A5">
+        <Association Name="FK__Annotatio__Sourc__1249A49B">
+          <End Type="NotColModel.Source" Role="Source" Multiplicity="1" />
+          <End Type="NotColModel.Annotation" Role="Annotation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Annotation">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Annotatio__UserI__11558062">
           <End Type="NotColModel.User" Role="User" Multiplicity="1" />
           <End Type="NotColModel.Annotation" Role="Annotation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -813,7 +859,6 @@
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="SearchForSource" FunctionName="NotColModel.Store.SearchForSource" />
-          <FunctionImportMapping FunctionImportName="DeleteSource" FunctionName="NotColModel.Store.DeleteSource" />
           <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="NotColModel.Store.sp_alterdiagram" />
           <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="NotColModel.Store.sp_creatediagram" />
           <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="NotColModel.Store.sp_dropdiagram" />
@@ -841,6 +886,7 @@
           <EntitySetMapping Name="Annotations">
             <EntityTypeMapping TypeName="NotColModel.Annotation">
               <MappingFragment StoreEntitySet="Annotation">
+                <ScalarProperty Name="SourceID" ColumnName="SourceID" />
                 <ScalarProperty Name="SourceUserID" ColumnName="SourceUserID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="User" ColumnName="User" />
@@ -893,6 +939,8 @@
           <EntitySetMapping Name="SourceUsers">
             <EntityTypeMapping TypeName="NotColModel.SourceUser">
               <MappingFragment StoreEntitySet="SourceUser">
+                <ScalarProperty Name="PrivateNoteCount" ColumnName="PrivateNoteCount" />
+                <ScalarProperty Name="PrivacyOverride" ColumnName="PrivacyOverride" />
                 <ScalarProperty Name="SourceID" ColumnName="SourceID" />
                 <ScalarProperty Name="noteCount" ColumnName="noteCount" />
                 <ScalarProperty Name="FolderID" ColumnName="FolderID" />
@@ -964,6 +1012,8 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="DeleteSourceUser" FunctionName="NotColModel.Store.DeleteSourceUser" />
+          <FunctionImportMapping FunctionImportName="DeleteAnnotation" FunctionName="NotColModel.Store.DeleteAnnotation" />
           </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

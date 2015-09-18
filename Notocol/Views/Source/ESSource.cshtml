@@ -17,8 +17,12 @@
 
         <div class="col-sm-3 table-col">
             <div class="pageOptions" style="position: absolute;bottom:4px;right: 80px;" >
-                @{onclickAction = "DeleteSource(" + source.Id + ")";}
-                <a href="#" id="DeleteSourceButton" onclick=@onclickAction data-toggle="tooltip" data-placement="top" title="Delete this page"><span class="glyphicon glyphicon-trash"></span></a>
+                @{if (source.sourceUserID != 0)
+                  { 
+                    onclickAction = "DeleteSource(" + source.sourceUserID + ")";
+                    <a href="#" id="DeleteSourceButton" onclick=@onclickAction data-toggle="tooltip" data-placement="top" title="Delete this page"><span class="glyphicon glyphicon-trash"></span></a>
+                  }
+                }
             </div>
 
                 <div style="padding-bottom:15px">
@@ -99,15 +103,19 @@
 
 
 
-    function DeleteSource(sourceID) {
-        var url = '@Url.Action("DeleteSource", "Source")?sourceID=' + sourceID;
+    function DeleteSource(sourceUserID) {
+        var url = '@Url.Action("DeleteSourceUser", "Source")?sourceUserID=' + sourceUserID;
         var r = confirm("Deleting a page will delete all the notes with it too. Press OK to continue");
         if (r == true) {
-            console.log("Calling " + url);
+            
             $.ajax({
-                url: url
-            }).success(function () {
-                GetPages();
+                url: url,
+                method : "delete"
+            }).success(function (data) {
+                if(data == "True")
+                    GetPages();
+                else
+                    alert("Failed to delete!Contact the server for any help");
             }).fail(function () {
                 alert("Failed to delete!Contact the server for any help");
             })

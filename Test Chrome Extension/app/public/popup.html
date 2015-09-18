@@ -32,8 +32,12 @@
 
         <input class="page-tags" type="text" ng-model="bookmark.pageDetails.tags" placeholder="Add tags" />
         <input class="page-folder" type="text" ng-model="bookmark.pageDetails.folder" placeholder="Add to folder" />
-        
-        <input type="button" value="Save" ng-click="bookmark.savePage()" />
+       
+         <input type="button" value="Make public" ng-click="bookmark.pageDetails.privacy = false" />
+
+        <input type="button"  value="Make private" ng-click="bookmark.pageDetails.privacy = true" />
+
+        <input type="button" style="position: absolute" value="Save" ng-click="bookmark.savePage()" />
         
     </div>
 

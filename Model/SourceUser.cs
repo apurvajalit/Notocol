@@ -25,6 +25,8 @@ namespace Model
         public Nullable<long> FolderID { get; set; }
         public int noteCount { get; set; }
         public Nullable<long> SourceID { get; set; }
+        public Nullable<bool> PrivacyOverride { get; set; }
+        public Nullable<int> PrivateNoteCount { get; set; }
     
         public virtual Folder Folder { get; set; }
         public virtual Source Source { get; set; }

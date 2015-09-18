@@ -31,8 +31,10 @@ namespace Model
         public string User { get; set; }
         public long UserID { get; set; }
         public long SourceUserID { get; set; }
+        public long SourceID { get; set; }
     
         public virtual ICollection<AnnotationTag> AnnotationTags { get; set; }
+        public virtual Source Source { get; set; }
         public virtual User User1 { get; set; }
     }
 }

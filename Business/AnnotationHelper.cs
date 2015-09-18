@@ -33,7 +33,7 @@ namespace Business
             extAnnData.consumer = annotation.Consumer;
             extAnnData.id = annotation.ID;
             extAnnData.user = annotation.User;
-            extAnnData.permissions = JsonConvert.DeserializeObject(annotation.Permissions);
+            extAnnData.permissions = JsonConvert.DeserializeObject<Permissions>(annotation.Permissions);
 
             return extAnnData;
         }
@@ -62,7 +62,6 @@ namespace Business
         {
             ExtensionSearchResponse res = new ExtensionSearchResponse();
 
-
             List<Annotation> annotationList = objAnnotationRepository.GetAnnotationsForPage(uri, userID);
 
             res.total = annotationList.Count;
@@ -71,8 +70,19 @@ namespace Business
                 ExtensionAnnotationData extAnnotation = AnnotationToExtensionAnnotation(annotation);
                 extAnnotation.tags = new TagHelper().GetAnnotationTagNames(annotation.ID);
                 res.rows.Add(extAnnotation);
-            }
+            }            
+            
+            
             return res;
+        }
+
+        private bool IsAnnotationPrivate(Annotation annotation)
+        {
+            
+            return (Array.IndexOf(
+                JsonConvert.DeserializeObject<Permissions>(annotation.Permissions).read, 
+                "group:__world__") < 0);
+
         }
 
         public SourceUser GetSourceUserFromAnnotation(Annotation annotation){
@@ -113,6 +123,7 @@ namespace Business
                 source.title = (string)document["title"];
                 source.faviconURL = (document["favicon"] != null) ? (string)document["favicon"] : null;
                 source.url = sourceLink;
+                
 
                 source = sourceHelper.AddSource(sourceURI, source);
 
@@ -123,7 +134,11 @@ namespace Business
             sourceUser = new SourceUser();
             sourceUser.SourceID = source.ID;
             sourceUser.UserID = annotation.UserID;
-            sourceUser.Privacy = false;
+            
+            if (IsAnnotationPrivate(annotation))
+                sourceUser.Privacy = true;
+            else
+                sourceUser.Privacy = false;
 
             if (document["facebook"] != null)
             {
@@ -136,7 +151,7 @@ namespace Business
                     sourceUser.thumbnailText = documentFacebookData["description"].First().Value<String>();
                 
             }
-
+            
             sourceUser = sourceHelper.AddSourceUser(sourceUser);
             return sourceUser;
         }
@@ -154,10 +169,13 @@ namespace Business
             if (sourceUser == null || sourceUser.ID <= 0 ) return null;
 
             annotation.SourceUserID = sourceUser.ID;
+            annotation.SourceID = (long)sourceUser.SourceID;
 
             if ((annotation.ID = objAnnotationRepository.AddAnnotation(annotation, sourceUser, extAnnotation.tags)) <= 0) return null;
 
             sourceUser.noteCount++;
+            if (IsAnnotationPrivate(annotation)) sourceUser.PrivateNoteCount++;
+
             SourceHelper sourceHelper = new SourceHelper();
             sourceHelper.UpdateSourceUser(sourceUser);
             extAnnotation.id = annotation.ID;
@@ -189,7 +207,20 @@ namespace Business
 
             annotation.Updated = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
             annotation.Text = updatedannotation.Text;
-            annotation.Permissions = updatedannotation.Permissions;
+            if (annotation.Permissions != updatedannotation.Permissions)
+            {
+                SourceHelper sourceHelper = new SourceHelper();
+                annotation.Permissions = updatedannotation.Permissions;
+                if (IsAnnotationPrivate(annotation))
+                {
+                    sourceHelper.IncPrivateNoteCount(annotation.SourceUserID);
+                }
+                else
+                {
+                    sourceHelper.DecPrivateNoteCount(annotation.SourceUserID);
+                }
+            }
+            
             annotation.Document = updatedannotation.Document;
 
             //annotation.UserID = (int)userID;
@@ -209,9 +240,12 @@ namespace Business
         {
             Annotation annotation = objAnnotationRepository.GetAnnotation(annotationID);
             if (annotation == null || annotation.UserID != userID) return false;
-
-            return objAnnotationRepository.DeleteAnnotation(annotationID);
-
+            
+            if(objAnnotationRepository.DeleteAnnotation(annotationID)){
+                new SourceHelper().DecNoteCount(annotation.SourceUserID, IsAnnotationPrivate(annotation));
+                return true;
+            }
+            return false;
         }
     }
 }

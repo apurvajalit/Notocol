@@ -42,18 +42,12 @@ namespace Notocol.Controllers
 
         }
 
-        public bool DeleteSource(long sourceUserID)
+        [HttpDelete]
+        public bool DeleteSourceUser(long sourceUserID)
         {
-            SourceRepository sourceRepository = new SourceRepository();
+            SourceHelper sourceHelper = new SourceHelper();
+            return sourceHelper.DeleteSourceUser(sourceUserID, Utility.GetCurrentUserID());
 
-            SourceUser sourceuser = sourceRepository.GetSourceUser(sourceUserID);
-
-            if (sourceuser != null && sourceuser.UserID == Utility.GetCurrentUserID())
-            {
-                return sourceRepository.DeleteSourceUser(sourceuser);
-
-            }
-            return false;
         }
     }
 }

@@ -170,7 +170,30 @@ var baseURL = "https://localhost:44301/";
         $scope.$on('DeletePage', function () {
             //TODO Delete Page asking for confirmation
             alert("Deleting a page would also delete any annotation related to it. Are you sure you want to delete the page?");
+
+            $http.delete(baseURL + "api/Source/DeleteSource?sourceUserID=" + vm.pageDetails.sourceUserID ).
+                success(function (data, status, headers, config) {
+                    if (data == "true") {
+                        console.log("Page with sourceID " + vm.pageDetails.sourceUserID + " deleted");
+                        vm.pageDetails.sourceUserID = 0;
+                        vm.pageDetails.summary = null;
+                        vm.pageDetails.tags = null;
+                        chrome.extension.sendMessage({
+                            greeting: "PageDetailsUpdated",
+                            pageInfo: pageDetails
+                        });
+                    } else {
+                        alert("Failed to delete page");
+                    }
+                })
+                .error(function (data, status, headers, config) {
+                    console.log("Failed to delete the page");
+                });
+
+            
+
         });
+
         GetPageImages = function (pageUrl, sourceUserID) {
             var filePath = 'public/scripts/notocol/sendImageList.js';
             var jqueryFile = 'public/scripts/vendor/jquery.min.js';

@@ -37,9 +37,13 @@ namespace Notocol.Controllers.Api
             }
         }
 
-        
-        [HttpGet]
+        [HttpDelete]
+        public bool DeleteSource(long sourceUserID)
+        {
+            return sourceHelper.DeleteSourceUser(sourceUserID, Utility.GetCurrentUserID());
+        }
 
+        [HttpGet]
         public JObject GetSourceData(string URI, string Link)
         {
             SourceDataForExtension sourceData = sourceHelper.GetSourceDataForExtension(URI, Link, Utility.GetCurrentUserID());

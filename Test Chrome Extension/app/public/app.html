@@ -550,7 +550,7 @@
               >({{vm.document.domain}})</span>
       </span>
       <!-- Editing controls -->
-	<!--
+	
       <aside class="pull-right" ng-if="vm.editing">
         <privacy ng-click="$event.stopPropagation()"
                  ng-if="vm.annotation.permissions && vm.editing && action != 'delete'"
@@ -560,7 +560,7 @@
                  class="dropdown privacy pull-right"
                  name="privacy" />
       </aside>
-	-->
+
       <!-- / Editing controls -->
     </span>
 
@@ -638,14 +638,12 @@
   <!-- / Tags -->
 
   <footer class="annotation-footer">
-<!--
     <div class="small" ng-if="vm.editing">
       <p ng-show="vm.privacyLevel.text == 'Only Me'">
         <i class="h-icon-lock"></i> This annotation is visible only to you.</p>
       <p ng-show="vm.privacyLevel.text == 'Public'">
         <i class="h-icon-public"></i> This annotation is visible to everyone.</p>
     </div>
--->
     <div class="form-actions" ng-if="vm.editing" ng-switch="vm.action">
       <div class="form-actions-buttons form-actions-left">
         <button ng-switch-when="edit"
@@ -782,7 +780,7 @@
   <div class="form-vertical tabbable">
   <div class="form tab-pane" data-title="Share">
     <p>Share the link below to show anyone these annotations and invite them to contribute their own.</p>
-<!--
+
     <p><input id="via"
         class="form-input"
         type="text"
@@ -805,7 +803,7 @@
        title="Share via email"
        class="h-icon-mail"></a>
     </p>
--->
+
 <p> Coming soon.... </p>
   </div>
   </div>

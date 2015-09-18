@@ -16,6 +16,7 @@ namespace Model
     {
         public Source()
         {
+            this.Annotations = new HashSet<Annotation>();
             this.SourceUsers = new HashSet<SourceUser>();
         }
     
@@ -26,6 +27,7 @@ namespace Model
         public string title { get; set; }
         public System.DateTime created { get; set; }
     
+        public virtual ICollection<Annotation> Annotations { get; set; }
         public virtual ICollection<SourceUser> SourceUsers { get; set; }
     }
 }

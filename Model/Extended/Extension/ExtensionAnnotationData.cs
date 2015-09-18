@@ -31,6 +31,14 @@ namespace Model.Extended.Extension
         public Position pos { get; set; }
         public Selector[] selector { get; set; }
     }
+
+    public class Permissions
+    {
+        public string[] admin { get; set; }
+        public string[] delete { get; set; }
+        public string[] read { get; set; }
+        public string[] update { get; set; }
+    }
     public class ExtensionAnnotationData
     {
         public string updated { get; set; }
@@ -43,6 +51,6 @@ namespace Model.Extended.Extension
         public Object document { get; set; }
         public string consumer { get; set; }
         public long id { get; set; }
-        public Object permissions { get; set; }
+        public Permissions permissions { get; set; }
     }
 }

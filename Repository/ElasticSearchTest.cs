@@ -31,6 +31,10 @@ namespace Repository.Search
         [ElasticProperty(Index = FieldIndexOption.No)]
         public string link { get; set; }
 
+        //TODO Following property is used just to return results. Need NOT be mapped in the index at all
+        [ElasticProperty(Index = FieldIndexOption.No)]
+        public long sourceUserID { get; set; }
+
         public ESSourceHText[] hTexts { get; set; }
         
         [ElasticProperty(Index = FieldIndexOption.No)]
@@ -186,19 +190,8 @@ namespace Repository.Search
         }
 
         
-        public void UpdateNotesForSource(Annotation annotation, bool hTextChange, SourceUser sourceuser = null, Source source = null, string[] tags = null)
+        public void UpdateNotesForSource(Annotation annotation, bool hTextChange, string[] tags = null)
         {
-            long sourceID = 0;
-            
-            if (source != null) sourceID = source.ID;
-            else if (sourceuser != null) sourceID = (long)sourceuser.SourceID;
-            else{
-                sourceuser = new SourceRepository().GetSourceUser(annotation.SourceUserID);
-                if (sourceuser == null) return;
-                sourceID = (long)sourceuser.SourceID;
-            }
-            
-            
             string note = annotation.Text;
             
 
@@ -224,15 +217,9 @@ namespace Repository.Search
                     ESSourceHText sourcehtext = new ESSourceHText();
                     sourcehtext.htext = hText;
                     sourcehtext.aid = annotation.ID;
-                   
-                                
-                    //var response = client.Update<ESSource, object>(u => u
-                    //                        .Id(sourceID)
-                    //                        .ScriptFile("update-htext")
-                    //                        .Params(p => p.Add("sourcehtext", sourcehtext)));
 
                     var response = client.Update<ESSource, object>(u => u
-                                            .Id(sourceID)
+                                            .Id(annotation.SourceID)
                                             .Script(update_s_htext)
                                             .Language("javascript")
                                             .Params(p => p.Add("sourcehtext", sourcehtext)));
@@ -250,8 +237,8 @@ namespace Repository.Search
                 };
 
                 var response = client.Update<ESSourceUser, object>(u => u
-                                                .Id(sourceuser.ID)
-                                                .Parent(sourceID.ToString())
+                                                .Id(annotation.SourceUserID)
+                                                .Parent(annotation.SourceID.ToString())
                                                 .Script(update_s_note)
                                                 .Language("javascript")
                                                 .Params(p => p.Add("usernote", usernote)));
@@ -261,14 +248,14 @@ namespace Repository.Search
             if (tags != null && tags.Length > 0)
             {
                 var response = client.Update<ESSourceUser, object>(u => u
-                                                               .Id(sourceuser.ID)
-                                                               .Parent(sourceID.ToString())
+                                                               .Id(annotation.SourceUserID)
+                                                               .Parent(annotation.SourceID.ToString())
                                                                .Script(update_su_tag)
                                                                .Language("javascript")
                                                                .Params(p => p.Add("tags", tags)));
 
                 response = client.Update<ESSource, object>(u => u
-                                        .Id((long)sourceuser.SourceID)
+                                        .Id((long)annotation.SourceUserID)
                                         .Script(update_s_tag)
                                         .Language("javascript")
                                         .Params(p => p.Add("tags", tags)));
@@ -302,16 +289,25 @@ namespace Repository.Search
             FilterContainer ownSourceFilter = new HasChildFilter
             {
                 Type = "sourceuser",
-                Query = Query<ESSourceUser>.Term("userID", userID)
+                Query = Query<ESSourceUser>.Term("userID", userID),
+                InnerHits = new InnerHits() //Needed to get hold of sourceUserID from the child doc
+                
             };
+
+
             FilterContainer notOwnSourceFilter = new NotFilter
             {
-                Filter = ownSourceFilter
+                Filter = new HasChildFilter
+                {
+                    Type = "sourceuser",
+                    Query = Query<ESSourceUser>.Term("userID", userID),
+                    
+                }.ToContainer()
             };
 
             var query = Query<ESSource>
                             .Filtered(f => {
-                                f.Filter(fq => { if (own)return ownSourceFilter; else return notOwnSourceFilter; });
+                                f.Filter(fq => { if (own)return ownSourceFilter ; else return notOwnSourceFilter; });
                                     
                                 if (applyTagFilter)
                                 {
@@ -338,7 +334,19 @@ namespace Repository.Search
                                .Size(size)
                                .Query(query));
                                
-                                
+            if(!own) {
+                return searchResponse.Documents.ToList();
+            }
+
+            
+            foreach(var hit in searchResponse.Hits){
+               hit.Source.sourceUserID = Convert.ToInt64(hit.InnerHits.First().Value.Hits.Hits.First().Id);
+               hit.Source.tags = hit.InnerHits.First().Value.Hits.Hits.First().Source.As<ESSourceUser>().tags;
+            }
+                        
+                        
+                        
+                    
 
             return searchResponse.Documents.ToList();
 
@@ -372,6 +380,7 @@ namespace Repository.Search
             childMatchClauses.Add(new MultiMatchQuery
             {
                 Query = searchString,
+                
                 Fields = new PropertyPathMarker[] { "note", "usernotes.note" }
                 
             });
@@ -488,6 +497,13 @@ namespace Repository.Search
                                 
 
             return searchResponse.Documents.ToList();
+        }
+
+        public void DeleteSourceUser(long sourceUserID, long sourceID)
+        {
+            client.Delete<ESSourceUser>(d => d
+                        .Id(sourceUserID)
+                        .Parent(sourceID.ToString()));
         }
         
     }

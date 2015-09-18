@@ -159,6 +159,7 @@ namespace Business
 
         internal SourceUser AddSourceUser(SourceUser sourceUser)
         {
+            sourceUser.PrivateNoteCount = sourceUser.noteCount = 0;
             sourceUser = obSourceRepository.AddSourceUser(sourceUser);
             
 
@@ -177,12 +178,21 @@ namespace Business
             if (sourceData.sourceUserID > 0)
             {
                 sourceUser = obSourceRepository.GetSourceUser(sourceData.sourceUserID);
-                //TODO SHould nver happen
-                if (sourceUser == null) return null;
+                
+                if (sourceUser == null) {
+                    //Call self to create sourceUser for data
+                    sourceData.sourceUserID = 0;
+                    return SaveSource(sourceData, userID);
+                }
 
                 sourceUser.FolderID = sourceData.folder;
                 sourceUser.Summary = sourceData.summary;
-                sourceUser.Privacy = sourceData.privacy;
+                if (sourceUser.Privacy != sourceData.privacy)
+                {
+                    sourceUser.Privacy = sourceData.privacy;
+                    sourceUser.PrivacyOverride = true;
+                }
+                
                 tagHelper.UpdateSourceTags(sourceUser, sourceData.tags);
                 sourceUser = UpdateSourceUser(sourceUser);
             }
@@ -212,12 +222,15 @@ namespace Business
                     sourceUser.FolderID = sourceData.folder;
                     sourceUser.Summary = sourceData.summary;
                     sourceUser.Privacy = sourceData.privacy;
+                    if (sourceData.privacy == true) sourceUser.PrivacyOverride = true;
+
                     sourceUser.UserID = userID;
                     sourceUser.noteCount = 0;
                     sourceUser = AddSourceUser(sourceUser);
                 }
                     
                 if (sourceUser == null || sourceUser.ID <= 0) return null;
+
                 if (sourceData.tags != null)
                 {
                     tagHelper.UpdateSourceTags(sourceUser, sourceData.tags);
@@ -249,88 +262,53 @@ namespace Business
 
             return sourceDataForExtension;
         }
-        
-        //public Source GetSource(string url, long userID)
-        //{
-        //    return obSourceRepository.GetSourceFromSourceURI(url, userID);
-        //}
-        //public bool UpdateSource(Source source)
-        //{
-        //    return obSourceRepository.UpdateSource(source);
-                
-        //}
-        //public long AddOrUpdateSourceFromExtension(long userID, SourceDataForExtension sourceData)
-        //{
-        //    if (userID <= 0) return 0;
-        //    long sourceID = sourceData.sourceID;
-        //    SourceRepository objSourceRepository = new SourceRepository();
-        //    Source objSource;
-        //    if (sourceID > 0)
-        //    { 
-        //        //We assume extension would set the sourceID if it has already been added
-        //        objSource = objSourceRepository.GetSource(sourceID);
-        //        if (objSource == null || objSource.UserID != userID) return 0;
 
-        //    }else if((objSource = objSourceRepository.GetSourceFromSourceURI(sourceData.url, userID)) == null){
-                
-        //        objSource = new Source();
-        //        objSource.UserID = userID;
-        //        objSource.SourceURI = sourceData.url;
-                
-        //    }
+        public bool DeleteSourceUser(long sourceUserID, long userID)
+        {
+            SourceRepository sourceRepository = new SourceRepository();
 
-        //    objSource.Title = sourceData.title;
-        //    objSource.Summary = sourceData.summary;
-        //    objSource.FaviconURL = sourceData.faviconUrl;
-        //    objSource.URN = sourceData.urn;
+            SourceUser sourceuser = sourceRepository.GetSourceUser(sourceUserID);
 
-        //    if (sourceData.folder > 0 && objSource.FolderID != sourceData.folder)
-        //    {
-        //        //Set the folder here after checking whether it is created or not
-        //    }
+            if (sourceuser != null && sourceuser.UserID == userID)
+            {
+                return sourceRepository.DeleteSourceUser(sourceuser);
 
-        //    bool updateTags = false;
-        //    if (objSource.ID == 0)
-        //    {
-        //        if (objSourceRepository.AddSource(objSource) != null){
-        //            sourceID = objSource.ID;
-        //            if((sourceData.tags!= null) && (sourceData.tags.Count() > 0)) updateTags = true;
-        //        }
-        //    }
-        //    else {
-        //        if (objSourceRepository.UpdateSource(objSource)) {
-        //            sourceID = objSource.ID;
-        //            updateTags = true;
-        //        }
-        //    }
+            }
+            return false;
+        }
 
-        //    if (updateTags) { 
-        //        TagHelper tagHelper = new TagHelper();
-        //        tagHelper.UpdateSourceTags(objSource, sourceData.tags);
-        //    }
-        //    return sourceID;
-        //}
-        //public SourceDataForExtension GetSourceExtensionData(string pageURL, long userID)
-        //{
-        //    SourceDataForExtension sourceDataForExtension = new SourceDataForExtension();
-        //    Source source = new SourceHelper().GetSource(pageURL, userID);
-        //    if (source != null)
-        //    {
-        //        TagHelper tagHelper = new TagHelper();
+        public SourceUser GetSourceUser(long id)
+        {
+            return obSourceRepository.GetSourceUser(id);
+        }
 
-        //        sourceDataForExtension.urn = source.URN;
-        //        sourceDataForExtension.url = source.SourceURI;
-        //        sourceDataForExtension.summary = source.Summary;
-        //        sourceDataForExtension.title = source.Title;
-        //        sourceDataForExtension.sourceID = source.ID;
-        //        sourceDataForExtension.faviconUrl = source.FaviconURL;
-        //        sourceDataForExtension.folder = (source.FolderID != null) ? (long)source.FolderID : 0;
-        //        sourceDataForExtension.noteCount = source.noteCount;
-        //        sourceDataForExtension.tags = tagHelper.GetSourceTags(source.ID);
-        //    }
-            
-        //    return sourceDataForExtension;
-        //}
-        
+        public void IncPrivateNoteCount(long id)
+        {
+            SourceUser su = obSourceRepository.GetSourceUser(id);
+            su.PrivateNoteCount++;
+            obSourceRepository.UpdateSourceUser(su);
+        }
+
+        public void DecNoteCount(long id, bool isPrivate)
+        {
+            SourceUser su = obSourceRepository.GetSourceUser(id);
+            su.noteCount--;
+            if(isPrivate)su.PrivateNoteCount--;
+            if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) su.Privacy = false;
+
+            obSourceRepository.UpdateSourceUser(su);
+
+        }
+
+
+
+        internal void DecPrivateNoteCount(long id)
+        {
+            SourceUser su = obSourceRepository.GetSourceUser(id);
+            su.PrivateNoteCount--;
+            if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) su.Privacy = false;
+
+            obSourceRepository.UpdateSourceUser(su);
+        }
     }
 }
