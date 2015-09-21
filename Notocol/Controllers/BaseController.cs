@@ -7,6 +7,7 @@ using log4net;
 
 namespace Notocol.Controllers
 {
+    //[SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public abstract class BaseController : Controller
     {
         private static ILog log;

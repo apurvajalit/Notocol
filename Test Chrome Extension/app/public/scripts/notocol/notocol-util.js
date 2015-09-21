@@ -71,7 +71,7 @@
                             currenttabsData.sourceUserID = data.sourceUserID;
                             currenttabsData.tags = data.tags;
                             currenttabsData.summary = data.summary;
-                            currenttabsData.folder = data.folder;
+                            currenttabsData.folderData = data.folderData;
                             currenttabsData.noteCount = data.noteCount;
                             currenttabsData.privacy = data.privacy;
                         } else {
@@ -79,7 +79,7 @@
                             currenttabsData.sourceUserID = 0;
                             currenttabsData.tags = null;
                             currenttabsData.summary = null;
-                            currenttabsData.folder = 0;
+                            currenttabsData.folderData = 0;
                             currenttabsData.noteCount = 0;
                             currenttabsData.privacy = false;
                         }

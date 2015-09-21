@@ -16,6 +16,7 @@ using System.IO;
 using Newtonsoft.Json;
 namespace Notocol.Controllers
 {
+    //[SessionState(System.Web.SessionState.SessionStateBehavior.Required)]
     public class UserController : Controller
     {
         UserHelper userHelper = new UserHelper();
@@ -23,6 +24,7 @@ namespace Notocol.Controllers
         private void SetupForLogin(User user)
         {
             Utility.AddCookie("TOKEN-INFO", Utility.GenerateUserInfoCookieData(user.ID, user.Username));
+
             Utility.SetUserSession(user.ID, user.Username);
             TempData["RefreshExtension"] = true;
         }

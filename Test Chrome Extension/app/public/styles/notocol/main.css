@@ -1,0 +1,129 @@
+textarea:hover, 
+input:hover, 
+textarea:active, 
+input:active, 
+textarea:focus, 
+input:focus,
+button:focus,
+button:active,
+button:hover
+{
+    outline:0px !important;
+    -webkit-appearance:none;
+}
+
+.addFolderButton {
+    width:230px;
+    border-radius:12px;
+    border:1px solid lightgray;
+    height:25px;
+    cursor:pointer;
+    color:white;
+    margin-left:10px;
+    font-size:11px
+}
+
+.listOfBookmarkItems{
+    width:230px;
+    border-radius:12px;
+    border:1px solid lightgray;
+
+    cursor:pointer;
+    color:white;
+    margin-left:10px;
+
+}
+
+.tags-input .tags .tag-item{
+    background:white!important
+}
+.coln-fol {
+    height: 29px;
+    position: absolute;
+    -webkit-transform: none;
+    width: 100%;
+}
+.coln-folw {
+    display: inline-block;
+    height: 29px;
+    left: 5px;
+    position: absolute;
+    white-space: nowrap;
+    width: 200px;
+}
+.coln-foli, .coln-folp, .colc-sugi {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15px;
+}
+.col-ft-icon-bookmarks-bar, .coln-folbb, .colc-sugbb {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAABGdBT…kcgOQfwhoeM5QziMNFxIG8x7g1HGEIZWDDEGUDih4Z1BkfAJjQ5CqgjfrxAAAAAElFTkSuQmCC) !important;
+    background-size: 19px !important;
+}
+.coln-folt {
+    cursor: default;
+    height: 29px;
+    line-height: 29px;
+    margin-left: 4px;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 172px;
+}
+.coln-text {
+    color: inherit;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 400;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
+    position: absolute;
+    -webkit-transition: color 300ms ease-in-out;
+}
+.coln-dup, .coln-dup-rtl, .coln-fold, .coln-fold-rtl {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAANCAYAAACUwi84AAAAMUlEQ…orAEn+B+IPuBQZQCUHk6IEqIL/UA8QbwKNJIkOSZxxAQCWviW1Jy0EXAAAAABJRU5ErkJggg==);
+}
+.coln-fold, .coln-fold-rtl {
+    left: 205px;
+    border-left: 1px solid #dedede;
+}
+
+.coln-dup, .coln-dup-rtl, .coln-fold, .coln-fold-rtl {
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+    height: 29px;
+    opacity: 0.5;
+    position: absolute;
+    width: 29px;
+}
+
+
+
+.tags-input .tags .tag-item{
+    border-radius:10px !important
+}
+
+
+.userImage{
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    position: absolute;
+    top: 26px;
+    left: 30px;
+    background-image: url(images/appu.jpg);
+    background-size: 77px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.iconStyle{
+    background-repeat:no-repeat;
+    background-size: 19px;
+    background-position:center;
+}
+
+.iconDimension{
+    width:20px;height:20px
+}

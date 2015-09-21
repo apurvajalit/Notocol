@@ -23,6 +23,7 @@ namespace Notocol.Controllers.Api
         public FolderTree AddNewUserFolder(FolderTree newFolder)
         {
             return new FolderHelper().AddFolderTree(newFolder, Utility.GetCurrentUserID());
+            
         }
     }
 }

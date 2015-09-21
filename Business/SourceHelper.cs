@@ -175,6 +175,17 @@ namespace Business
         {
             SourceUser sourceUser = null;
             TagHelper tagHelper = new TagHelper();
+            FolderHelper folderHelper = new FolderHelper();
+                 
+            
+            //Handle folder info here
+            if (sourceData.folderData != null && sourceData.folderData.addedFolders != null)
+            {
+                sourceData.folderData = folderHelper.ProcessExtensionFolderData(sourceData.folderData, userID);
+                
+            }
+            
+
             if (sourceData.sourceUserID > 0)
             {
                 sourceUser = obSourceRepository.GetSourceUser(sourceData.sourceUserID);
@@ -185,7 +196,10 @@ namespace Business
                     return SaveSource(sourceData, userID);
                 }
 
-                sourceUser.FolderID = sourceData.folder;
+                sourceUser.FolderID = (sourceData.folderData == null)? 0 : 
+                    (sourceData.folderData.selectedFolder == null? 0 : 
+                        (sourceData.folderData.selectedFolder.folderID));
+
                 sourceUser.Summary = sourceData.summary;
                 if (sourceUser.Privacy != sourceData.privacy)
                 {
@@ -219,7 +233,11 @@ namespace Business
                 {
                     sourceUser = new SourceUser();
                     sourceUser.SourceID = sourceData.sourceID;
-                    sourceUser.FolderID = sourceData.folder;
+
+                    sourceUser.FolderID = (sourceData.folderData == null) ? 0 :
+                    (sourceData.folderData.selectedFolder == null ? 0 :
+                        (sourceData.folderData.selectedFolder.folderID)); 
+
                     sourceUser.Summary = sourceData.summary;
                     sourceUser.Privacy = sourceData.privacy;
                     if (sourceData.privacy == true) sourceUser.PrivacyOverride = true;
@@ -256,7 +274,16 @@ namespace Business
                 sourceDataForExtension.summary = sourceUser.Summary;
                 sourceDataForExtension.privacy = (sourceUser.Privacy != null) ? (bool)sourceUser.Privacy : false;
                 sourceDataForExtension.noteCount = sourceUser.noteCount;
-                sourceDataForExtension.folder = (sourceUser.FolderID != null) ? (int)sourceUser.FolderID : 0;
+                if(sourceUser.FolderID != null){
+                    sourceDataForExtension.folderData = new FolderDataFromExtension();
+                    sourceDataForExtension.folderData.selectedFolder = new FolderDataFromExtensionSelectedFolder();
+                    sourceDataForExtension.folderData.selectedFolder.folderID = (long)sourceUser.FolderID;
+                    sourceDataForExtension.folderData.selectedFolder.folderName =
+                        new FolderHelper().GetFolderName(
+                        sourceDataForExtension.folderData.selectedFolder.folderID,
+                        userID);
+                }
+                    
                 sourceDataForExtension.tags = new TagHelper().GetSourceTags(sourceUser.ID);
             }
 

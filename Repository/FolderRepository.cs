@@ -97,8 +97,8 @@ namespace Repository
                 using (GetDataContext())
                 {
                     IList<Folder> folders = (from folderObjects in context.Folders
-                                             where folderObjects.ID == folderID 
-                                             select folder).ToList();
+                                             where folderObjects.ID == folderID
+                                             select folderObjects).ToList();
 
                     if (folders.Count > 0) folder = folders[0];
                 }

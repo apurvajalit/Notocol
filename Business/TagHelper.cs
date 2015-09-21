@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Repository.Search;
+using Model.Extended.Extension;
 
 namespace Business
 {
@@ -23,17 +24,24 @@ namespace Business
         }
 
 
-        public string[] GetSourceTags(long sourceID)
+        public List<SourceTagData> GetSourceTags(long sourceID)
         {
             TagRepository tagRepository = new TagRepository();
             IList<Tag> tags = tagRepository.GetTagsForSourceUser(sourceID);
-            return (from tag in tags select tag.Name).ToArray();
+            List<SourceTagData> retList = new List<SourceTagData>();
+            foreach(var sourcetag in tags){
+                SourceTagData n = new SourceTagData{text = sourcetag.Name, id = sourcetag.ID};
+                retList.Add(n);
+            }
+            return retList;
         }
 
-        public bool UpdateSourceTags(SourceUser sourceUser, string[] tagNames)
+        public bool UpdateSourceTags(SourceUser sourceUser, List<SourceTagData> tags)
         {
             TagRepository tagRepository = new TagRepository();
-            tagRepository.UpdateSourceUserTags(sourceUser, tagNames);
+            string[] tagNames = new string[] { };
+            
+            tagRepository.UpdateSourceUserTags(sourceUser, (from tag in tags select tag.text).ToArray());
             return true;
         }
 

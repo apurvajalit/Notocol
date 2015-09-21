@@ -1,55 +1,83 @@
-<!DOCTYPE html>
-<html ng-app="NotocolPopup">
-<head>
-    <title>Notocol</title>
-    <link rel="stylesheet" type="text/css" href="styles/notocol/popup.css">
-    <script src="scripts/vendor/angular.min.js"></script>
-    <script src="scripts/notocol/popup.js"></script>
-</head>
-
-<body ng-controller="PageCtrl as page">
-    <div class="header">
-            <div class= "header-page-options">
-                <p id="page-status">Page Saved</p>
-                <input class="header-page-delete" type="button" ng-click="page.DeletePage()"value="Delete" />
-            </div>
-
-            <div class="popup-close">
-                <input type="button" value="Close" ng-click="page.closePopup()" />
-            </div>
+﻿<div style="background:#636464;width:250px;height:300px;margin-top:50px">
+    <div class="userImage">
+    </div>
+    <div style="float:right">
+        <span style="float:right">
+            <a href=# tooltips tooltip-size="small" tooltip-side="left" tooltip-content="Close popup">
+                <img style='width:15px;height:15px' src="images/notocol/close.png" ng-click="ClosePopup()" />
+            </a>
+</span>
+        <span style="float:right;padding-right:5px">
+            <a href=# tooltips tooltip-size="small" tooltip-side="left" tooltip-content="Delete this page">
+                <img style='width:15px;height:15px' src="images/notocol/delete.png" ng-click="DeletePage()" />
+            </a>
+</span>
         
     </div>
+    <br>
 
-    <div class="popup-body" ng-controller="BookmarkCtrl as bookmark">
-        <!--<p class="page-title">{{bookmark.pageDetails.title}}</p>
-        <p class="domain-name">
-            <img ng-hide="bookmark.pageDetails.faviconUrl == null" class="favicon-url" ng-src="{{bookmark.pageDetails.faviconUrl}}">
-            {{bookmark.pageDetails.url | domain}}    
-        </p>-->
-        
-        
-        <textarea class="page-summary" ng-model="bookmark.pageDetails.summary" placeholder="Something about the page to note?"></textarea>
+    <!--<div style="text-align: center;color:white;margin-top:10px">
+        Twitter Blogs
+    </div>-->
+    <div style="width:230px;margin-left:10px;margin-right:10px">
+        <div style="width:100%">
+            <span style="float:left;padding-right:5px">
+                <a href=# tooltips tooltip-size="small" tooltip-side="right" tooltip-content="Save page privately" ng-click="TogglePrivacy()" ng-show="!pageDetails.privacy">
+                    <img class="iconDimension" src="images/notocol/lock.png" />
+                </a>
+                <a href=# tooltips tooltip-size="small" tooltip-side="right" tooltip-content="Save page publicly" ng-click="TogglePrivacy()" ng-show ="pageDetails.privacy">
+                    <img class="iconDimension" src="images/notocol/lock.png" />
+                </a>
 
-        <input class="page-tags" type="text" ng-model="bookmark.pageDetails.tags" placeholder="Add tags" />
-        <input class="page-folder" type="text" ng-model="bookmark.pageDetails.folder" placeholder="Add to folder" />
-       
-         <input type="button" value="Make public" ng-click="bookmark.pageDetails.privacy = false" />
+            </span>
+            <span style="float:right;padding-right:5px">
+                <a href=# tooltips tooltip-size="small" tooltip-side="left" tooltip-content="Enable note taker" ng-click="ToggleAnnotation()">
+                    <img class="iconDimension" src="images/notocol/toggle.png" />
+                </a>
+            </span>
+            <!--<span style="float:right;padding-right:5px">
+                <img class="iconDimension" src="images/notocol/camera.png" />
+            </span>-->
+        </div>
+        <br>
 
-        <input type="button"  value="Make private" ng-click="bookmark.pageDetails.privacy = true" />
-
-        <input type="button" style="position: absolute" value="Save" ng-click="bookmark.savePage()" />
-        
-    </div>
-
-    
-    <div class="footer">
-        <div class="footer-child">
-            <div id="annotation-switch" class="inline">
-                <input id='toggleAnnotation' type=button value="Off" />
-            </div>
-
-            <input type="button" class="inline snapshot-trigger"  value="Snapshot" />
+        <div style="width:100%">
+            <textarea rows="2" style="width:220px" placeholder="Something to say or note about this page" ng-model="pageDetails.summary"></textarea>
+        </div>
+        <br />
+        <div>
+            <tags-input ng-model="pageDetails.tags"></tags-input>
         </div>
     </div>
-</body>
-</html>
+    
+    <br />
+
+    <div class="addFolderButton" ng-show="addFolderVisibility" ng-click="openSearchBox()">
+        <span style="padding-left:10px;line-height:24px">{{pageDetails.folderData.selectedFolder.folderName || 'Add to folder'}}</span>
+    </div>
+    
+    <div ng-show="createFolderVisibility" style="overflow: auto;max-height:100px">
+
+        <div style="margin-left:10px;border-radius:10px">
+            <input style="background:transparent;border-radius:10px;width:230px" type="text" placeholder="Create New" />
+        </div>
+
+        <div ng-show="hideList" class="listOfBookmarkItems" ng-click="openSearchBox()">
+            <table width="100%">
+                <tr style="height:29px;width:100%" ng-repeat="n in listOfBookmarkFolders">
+                    <td class='iconStyle' ng-click="showSubFolder(n,false)" width="20px" style="background-image:url(images/notocol/folder.png);
+                                       "></td>
+                    <td class='iconStyle' ng-click="showSubFolder(n,false)" style="font-size:13px;padding-top:7px">
+                        {{n.name}}
+                    </td>
+                    <td class='iconStyle' ng-click="showSubFolder(n,true)" width="20px" style="background-image:url(images/notocol/next2.png);
+                                        border-left: 1px solid grey"></td>
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+    <div style="text-align: center;padding-top:10px">
+        <button style="background:#e60000;color:white;border:0px" ng-click="SavePage()">Note</button>
+    </div>
+</div>

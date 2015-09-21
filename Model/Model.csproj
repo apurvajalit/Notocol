@@ -83,6 +83,7 @@
     <Compile Include="Extended\Extension\ExtensionSearchResponse.cs" />
     <Compile Include="Extended\Extension\ExtensionUser.cs" />
     <Compile Include="Extended\Extension\Features.cs" />
+    <Compile Include="Extended\Extension\FolderDataFromExtension.cs" />
     <Compile Include="Extended\Extension\PageImageInfo.cs" />
     <Compile Include="Extended\Extension\SourceDataForExtension.cs" />
     <Compile Include="Extended\Extension\TagDataForBookmark.cs" />

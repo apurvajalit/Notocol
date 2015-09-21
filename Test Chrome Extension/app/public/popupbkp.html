@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html ng-app="NotocolPopup">
+<head>
+    <title>Notocol</title>
+    <link rel="stylesheet" type="text/css" href="styles/notocol/popup.css">
+    <script src="scripts/vendor/angular.min.js"></script>
+    <script src="scripts/notocol/popup.js"></script>
+</head>
+
+<body ng-controller="PageCtrl as page">
+    <div class="header">
+            <div class= "header-page-options">
+                <p id="page-status">Page Saved</p>
+                <input class="header-page-delete" type="button" ng-click="page.DeletePage()"value="Delete" />
+            </div>
+
+            <div class="popup-close">
+                <input type="button" value="Close" ng-click="page.closePopup()" />
+            </div>
+        
+    </div>
+
+    <div class="popup-body" ng-controller="BookmarkCtrl as bookmark">
+        <!--<p class="page-title">{{bookmark.pageDetails.title}}</p>
+        <p class="domain-name">
+            <img ng-hide="bookmark.pageDetails.faviconUrl == null" class="favicon-url" ng-src="{{bookmark.pageDetails.faviconUrl}}">
+            {{bookmark.pageDetails.url | domain}}    
+        </p>-->
+        
+        
+        <textarea class="page-summary" ng-model="bookmark.pageDetails.summary" placeholder="Something about the page to note?"></textarea>
+
+        <input class="page-tags" type="text" ng-model="bookmark.pageDetails.tags" placeholder="Add tags" />
+        <!--<input class="page-folder" type="text" ng-model="bookmark.pageDetails.folderData" placeholder="Add to folder" />-->
+       
+        <textarea json-text ng-model='bookmark.pageDetails.folderData' placeholder="Add to folder"></textarea> 
+        <input type="text" ng-model="bookmark.pageDetails.folderData.selectedFolder.folderName" />
+        
+         <input type="button" value="Make public" ng-click="bookmark.pageDetails.privacy = false" />
+
+        <input type="button"  value="Make private" ng-click="bookmark.pageDetails.privacy = true" />
+
+        <input type="button" style="position: absolute" value="Save" ng-click="bookmark.savePage()" />
+        
+    </div>
+
+    
+    <div class="footer">
+        <div class="footer-child">
+            <div id="annotation-switch" class="inline">
+                <input id='toggleAnnotation' type=button value="Off" />
+            </div>
+
+            <input type="button" class="inline snapshot-trigger"  value="Snapshot" />
+        </div>
+    </div>
+</body>
+</html>
