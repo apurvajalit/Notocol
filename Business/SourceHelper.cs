@@ -179,11 +179,11 @@ namespace Business
                  
             
             //Handle folder info here
-            if (sourceData.folderData != null && sourceData.folderData.addedFolders != null)
-            {
-                sourceData.folderData = folderHelper.ProcessExtensionFolderData(sourceData.folderData, userID);
+            //if (sourceData.folderData != null && sourceData.folderData.addedFolders != null)
+            //{
+            //    sourceData.folderData = folderHelper.ProcessExtensionFolderData(sourceData.folderData, userID);
                 
-            }
+            //}
             
 
             if (sourceData.sourceUserID > 0)
@@ -198,7 +198,7 @@ namespace Business
 
                 sourceUser.FolderID = (sourceData.folderData == null)? 0 : 
                     (sourceData.folderData.selectedFolder == null? 0 : 
-                        (sourceData.folderData.selectedFolder.folderID));
+                       Convert.ToInt64(sourceData.folderData.selectedFolder.folderID));
 
                 sourceUser.Summary = sourceData.summary;
                 if (sourceUser.Privacy != sourceData.privacy)
@@ -234,9 +234,9 @@ namespace Business
                     sourceUser = new SourceUser();
                     sourceUser.SourceID = sourceData.sourceID;
 
-                    sourceUser.FolderID = (sourceData.folderData == null) ? 0 :
+                    sourceUser.FolderID = (sourceData.folderData == null) ? 0:
                     (sourceData.folderData.selectedFolder == null ? 0 :
-                        (sourceData.folderData.selectedFolder.folderID)); 
+                        Convert.ToInt64((sourceData.folderData.selectedFolder.folderID))); 
 
                     sourceUser.Summary = sourceData.summary;
                     sourceUser.Privacy = sourceData.privacy;
@@ -277,10 +277,10 @@ namespace Business
                 if(sourceUser.FolderID != null){
                     sourceDataForExtension.folderData = new FolderDataFromExtension();
                     sourceDataForExtension.folderData.selectedFolder = new FolderDataFromExtensionSelectedFolder();
-                    sourceDataForExtension.folderData.selectedFolder.folderID = (long)sourceUser.FolderID;
+                    sourceDataForExtension.folderData.selectedFolder.folderID = ((long)sourceUser.FolderID).ToString();
                     sourceDataForExtension.folderData.selectedFolder.folderName =
                         new FolderHelper().GetFolderName(
-                        sourceDataForExtension.folderData.selectedFolder.folderID,
+                        (long)sourceUser.FolderID,
                         userID);
                 }
                     

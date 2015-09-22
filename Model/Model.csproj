@@ -85,6 +85,7 @@
     <Compile Include="Extended\Extension\Features.cs" />
     <Compile Include="Extended\Extension\FolderDataFromExtension.cs" />
     <Compile Include="Extended\Extension\PageImageInfo.cs" />
+    <Compile Include="Extended\Extension\SaveSourceData.cs" />
     <Compile Include="Extended\Extension\SourceDataForExtension.cs" />
     <Compile Include="Extended\Extension\TagDataForBookmark.cs" />
     <Compile Include="Extended\Extension\ThumbnailDataForSourceUser.cs" />

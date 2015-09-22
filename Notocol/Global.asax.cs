@@ -8,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.IO;
 using Repository.Search;
+using Newtonsoft.Json;
 namespace Notocol
 {
     public class WebApiApplication : System.Web.HttpApplication
@@ -29,6 +30,8 @@ namespace Notocol
 
             ElasticSearchTest es = new ElasticSearchTest();
             es.init();
+
+        
         }
     }
 }

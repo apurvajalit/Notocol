@@ -8,7 +8,7 @@ namespace Model.Extended.Extension
 {
     public class FolderDataFromExtensionSelectedFolder
     {
-        public long folderID { get; set; }
+        public string folderID { get; set; }
         public string folderName { get; set; }
     }
 
@@ -17,6 +17,6 @@ namespace Model.Extended.Extension
         public FolderDataFromExtensionSelectedFolder selectedFolder { get; set; }
 
 
-        public FolderTree addedFolders { get; set; }
+        
     }
 }

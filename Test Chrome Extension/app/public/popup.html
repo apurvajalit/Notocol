@@ -52,30 +52,36 @@
     
     <br />
 
-    <div class="addFolderButton" ng-show="addFolderVisibility" ng-click="openSearchBox()">
+    <div class="addFolderButton" ng-hide="folderSelect" ng-click="SetFolderSelect(true)">
         <span style="padding-left:10px;line-height:24px">{{pageDetails.folderData.selectedFolder.folderName || 'Add to folder'}}</span>
     </div>
     
-    <div ng-show="createFolderVisibility" style="overflow: auto;max-height:100px">
-
+    <div ng-show="folderSelect" style="overflow-y: auto;max-height: 100px;overflow-x: hidden; background-color:lightgray">
+        <!--ParentFolder Navigation-->
+        <div ng-show="currentParent.Parent != null" style="margin-left: 20px">
+            <input type="button" value="{{currentParent.Name}}" ng-cli ng-click="setCurrentParent(currentParent.Parent)">
+        </div>
+        <!--Input for New folder name-->
         <div style="margin-left:10px;border-radius:10px">
-            <input style="background:transparent;border-radius:10px;width:230px" type="text" placeholder="Create New" />
+            <input style="background:transparent;border-radius:10px;width:230px" type="text" placeholder="Create New" ng-model="selectedFoldername" ng-keyup="$event.keyCode == 13 ? AddFolder() : null" />
+            <input type="button" ng-click="AddFolder()" value="Add" />
         </div>
 
-        <div ng-show="hideList" class="listOfBookmarkItems" ng-click="openSearchBox()">
-            <table width="100%">
-                <tr style="height:29px;width:100%" ng-repeat="n in listOfBookmarkFolders">
-                    <td class='iconStyle' ng-click="showSubFolder(n,false)" width="20px" style="background-image:url(images/notocol/folder.png);
+        <!--Dropdown List-->
+        <div class="folderListItems">
+            <table style="width:220px">
+                <tr style="height:29px;width:100%" ng-repeat="folder in currentParent.Children">
+                    <td class='iconStyle' ng-click="showSubFolder(folder,false)" width="20px" style="background-image:url(images/notocol/folder.png);
                                        "></td>
-                    <td class='iconStyle' ng-click="showSubFolder(n,false)" style="font-size:13px;padding-top:7px">
-                        {{n.name}}
+                    <td class='iconStyle' ng-click="selectFolder(folder)" style="font-size:13px;padding-top:7px">
+                        {{folder.Name}}
                     </td>
-                    <td class='iconStyle' ng-click="showSubFolder(n,true)" width="20px" style="background-image:url(images/notocol/next2.png);
+                    <td class='iconStyle' ng-click="setCurrentParent(folder)" width="20px" style="background-image:url(images/notocol/next2.png);
                                         border-left: 1px solid grey"></td>
                 </tr>
             </table>
         </div>
-        
+
     </div>
     <div style="text-align: center;padding-top:10px">
         <button style="background:#e60000;color:white;border:0px" ng-click="SavePage()">Note</button>

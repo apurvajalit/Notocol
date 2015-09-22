@@ -23,11 +23,11 @@ button:hover
     font-size:11px
 }
 
-.listOfBookmarkItems{
+.folderListItems{
     width:230px;
     border-radius:12px;
     border:1px solid lightgray;
-
+    min-height:50px;
     cursor:pointer;
     color:white;
     margin-left:10px;

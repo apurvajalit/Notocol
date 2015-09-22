@@ -10,24 +10,117 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
             templateUrl: "popUp.html",
 
             controller: function ($scope, $element, $document, toastr) {
-
-                $scope.addFolderVisibility = true;
-                $scope.createFolderVisibility = false;
+                
+                //$scope.addFolderVisibility = true;
+                //$scope.createFolderVisibility = false;
                 //$scope.selectedFolder = {};
                 $scope.showSublist = false;
                 //$scope.tags = [];
                 $scope.hideList = true;
-                $scope.pageDetails = null;
+                $scope.pageDetails = {};
                 var baseURL = "https://localhost:44301/";
+                var addedFolders = [];
+
+                var RootFolder = {
+                    ID: 0,
+                    Parent: null,
+                    Name: "Root",
+                    Children: []
+                };
+
+                //Variable that shows whether user is selecting folders
+                $scope.folderSelect = false;
+                //$scope.currentParentFolder = RootFolder;
+                $scope.selectedFolder = RootFolder;
+                $scope.folderTree = RootFolder;
+                $scope.selectedFoldername = null;
+                $scope.currentParent = null;
+                $scope.selectFolder = function (folder) {
+                    $scope.selectedFoldername = folder.Name;
+                    $scope.pageDetails.folderData = $scope.pageDetails.folderData || {}
+                    $scope.pageDetails.folderData.selectedFolder = {
+                        "folderID": folder.ID,
+                        "folderName": folder.Name
+                    }
+                    $scope.SetFolderSelect(false);
+                }
+                $scope.setCurrentParent = function(folder){
+                    $scope.currentParent = folder;
+                    $scope.selectedFoldername = null;
+                }
+
+                function RunForEachFolderTreeNode(folderTreeNode, functionToRun) {
+                    functionToRun(folderTreeNode);
+                    if (folderTreeNode.Children.length > 0) {
+                        var i = 0;
+                        for (; i < folderTreeNode.Children.length; i++) {
+                            RunForEachFolderTreeNode(folderTreeNode.Children[i], functionToRun);
+                        }
+
+                    }
+                }
+
+                $scope.AddFolder = function () {
+                    var selectedFolder = null;
+                    if ($scope.selectedFoldername == "") {
+                        selectedFolder = $scope.folderTree;
+                    }
+
+                    if ($scope.currentParent != null && $scope.currentParent.Children.length > 0) {
+                        for (var i = 0; i < $scope.currentParent.Children.length; i++) {
+                            if ($scope.currentParent.Children[i].Name == $scope.selectedFoldername) {
+                                selectedFolder = $scope.currentParent.Children[i];
+                                break;
+                            }
+
+                        }
+                    }
+                    if (selectedFolder == null) {
+                        selectedFolder = {
+                            ID: "a" + addedFolders.length,
+                            Parent: $scope.currentParent,
+                            Name: $scope.selectedFoldername,
+                            Children: []
+                        }
+                        addedFolders.push({
+                            ID: selectedFolder.ID,
+                            ParentID: selectedFolder.Parent.ID,
+                            Name: selectedFolder.Name
+                        })
+                        //Add folder to added folders
+                        $scope.currentParent.Children.push(selectedFolder);
+
+                    }
+
+                    $scope.selectFolder(selectedFolder);
+
+                }
+
+                function GetSelectedFolderFromUserFolderTree(folderID, checkFolderTree) {
+                    var retFolder = null;
+                    if (folderID == checkFolderTree.ID) return checkFolderTree;
+                    else if(checkFolderTree.Children != null && checkFolderTree.Children.length > 0){
+                        for (var i = 0 ; retFolder == null && i < checkFolderTree.Children.length ; i++) {
+                            retFolder = GetSelectedFolderFromUserFolderTree(folderID, checkFolderTree.Children[i]);
+                        }
+                    }
+                    return retFolder;
+                }
 
                 var GetCurrentPageDetails = function () {
                     chrome.extension.sendMessage({
                         greeting: "PageDetails"
                     },
-                        function (pageDetailResponse) {
+                        function (response) {
+                            
                             $timeout(function () {
-                                if (pageDetailResponse.status) {
-                                    $scope.pageDetails = pageDetailResponse;
+                                if (response.userFolderTreeJson != null){
+                                    $scope.folderTree = JSON.retrocycle(JSON.parse(response.userFolderTreeJson));
+                                    //$scope.currentParentFolder = $scope.folderTree;
+                                }
+
+                                if (response.tabInfo != null && response.tabInfo.status) {
+                                    $scope.pageDetails = response.tabInfo;
                                     if ($scope.pageDetails.sourceUserID <= 0) $scope.SavePage();
 
                                     if ($scope.pageDetails.tags != null) {
@@ -38,12 +131,18 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                                     if ($scope.pageDetails.folderData != null && $scope.pageDetails.folderData.selectedFolder != null) {
                                         console.log("Recieved folder is " +
                                             JSON.stringify($scope.pageDetails.folderData.selectedFolder));
-
+                                        $scope.selectedFolder = GetSelectedFolderFromUserFolderTree(
+                                            $scope.pageDetails.folderData.selectedFolder.folderID, $scope.folderTree);
+                                        $scope.selectedFoldername = $scope.selectedFolder.Name;
+                                        $scope.currentParent = $scope.selectedFolder.Parent;
+                                    } else {
+                                        $scope.selectedFolder = $scope.folderTree;
+                                        $scope.currentParent = $scope.folderTree;
                                     }
 
                                 } else {
                                     //TODO Better way of asking
-                                    if (!alert("Please refresh the page since the page was opened before Notocol was installed")) $scope.closePopup();
+                                    if (!alert("Please refresh the page since the page was opened before Notocol was installed")) $scope.ClosePopup();
                                 }
                             })
 
@@ -97,16 +196,18 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                         //TODO Delete Page asking for confirmation
                         alert("Deleting a page would also delete any annotation related to it. Are you sure you want to delete the page?");
 
-                        $http.delete(baseURL + "api/Source/DeleteSource?sourceUserID=" + pageDetails.sourceUserID ).
+                        $http.delete(baseURL + "api/Source/DeleteSource?sourceUserID=" + $scope.pageDetails.sourceUserID ).
                             success(function (data, status, headers, config) {
                                 if (data == "true") {
-                                    console.log("Page with sourceID " + pageDetails.sourceUserID + " deleted");
+                                    console.log("Page with sourceID " + $scope.pageDetails.sourceUserID + " deleted");
                                     //$scope.tags = [];
                                     //$scope.folderData = {};
                                     $scope.pageDetails.sourceUserID = 0;
                                     $scope.pageDetails.summary = null;
                                     $scope.pageDetails.tags = null;
                                     $scope.pageDetails.folderData = null;
+                                    
+
                                     chrome.extension.sendMessage({
                                         greeting: "PageDetailsUpdated",
                                         pageInfo: $scope.pageDetails
@@ -123,11 +224,14 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
 
                 $scope.SavePage = function () {
             
-                    var sourceDetails = $scope.pageDetails
                     
+                    var data = { sourceData: $scope.pageDetails };
+                    if (addedFolders.length > 0) {
+                        data.addedFolders = addedFolders;
+                    }
                     
-                    console.log("Saving page with details: " + JSON.stringify(sourceDetails));
-                    $http.post(baseURL + "api/Source/SaveSource", sourceDetails ).
+                    //console.log("Saving page with details: " + JSON.stringify(sourceDetails));
+                    $http.post(baseURL + "api/Source/SaveSource", data ).
                         success(function (data, status, headers, config) {
                             toastr.success('This page has been saved to your collection', 'Saved!');
                             console.log("Saved page with response data as " + JSON.stringify(data));
@@ -137,17 +241,27 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                                 toastr.error('Failed to save the page', 'Save Failed');
                             }
 
-                            if (sourceDetails.tags != null) TagStore.store(sourceDetails.tags);
-                            if (sourceDetails.folderData != null &&
-                                sourceDetails.folderData.addedFolders != null) {
+                            if ($scope.pageDetails.tags != null) TagStore.store($scope.pageDetails.tags);
+                            if (addedFolders.length > 0) {
+                                //Process the user tree
+                                RunForEachFolderTreeNode($scope.folderTree, function (node) {
+                                    if (typeof node.ID.indexOf == "function" &&  node.ID.indexOf("a") == 0) {
+                                        node.ID = data.saveSourceData.addedFolderIDs[node.ID];
+
+                                    }
+                                    
+                                });
                                 chrome.extension.sendMessage({
                                     greeting: "UserFoldersUpdated",
-                                    pageInfo: pageDetails
+                                    userFolderTree: JSON.stringify(JSON.decycle($scope.folderTree))
+                                    
                                 });
+                                addedFolders = [];
                             }
 
-                            $scope.pageDetails.sourceID = data.sourceData.sourceID;
-                            $scope.pageDetails.sourceUserID = data.sourceData.sourceUserID;
+                            $scope.pageDetails.sourceID = data.saveSourceData.sourceData.sourceID;
+                            $scope.pageDetails.sourceUserID = data.saveSourceData.sourceData.sourceUserID;
+                            $scope.pageDetails.folderData = data.saveSourceData.sourceData.folderData;
 
                             chrome.extension.sendMessage({
                                 greeting: "PageDetailsUpdated",
@@ -155,7 +269,7 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                             });
 
                             if ($scope.pageDetails.url.indexOf(".pdf") < 0)
-                                GetPageImages($scope.pageDetails.url, data.sourceData.sourceUserID);
+                                GetPageImages($scope.pageDetails.url, data.saveSourceData.sourceData.sourceUserID);
                     
                         })
                         .error(function (data, status, headers, config) {
@@ -164,140 +278,15 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                         });
                 }
 
-                $scope.folderData = {
-                    "id": 0,
-                    "Name": "Root",
-                    "parentID": 0,
-                    "children": [
-                        {
-                            "id": 1,
-                            "name": "Project1",
-                            "parentID": -1,
-                            "children": [
-                                {
-                                    "id": 6,
-                                    "name": "Project11",
-                                    "parentID": 1,
-                                    "children": [
-                                        {
-                                            "id": 17,
-                                            "name": "Project111",
-                                            "parentID": 6,
-                                            "children": [
-                                                {
-                                                    "id": 18,
-                                                    "name": "Project1111",
-                                                    "parentID": 17,
-                                                    "children": []
-                                                },
-                                                {
-                                                    "id": 19,
-                                                    "name": "Project1112",
-                                                    "parentID": 17,
-                                                    "children": []
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "id": 7,
-                                    "name": "Project12",
-                                    "parentID": 1,
-                                    "children": []
-                                }
-                            ]
-                        },
-                        {
-                            "id": 2,
-                            "name": "Project2",
-                            "parentID": -1,
-                            "children": []
-                        },
-                        {
-                            "id": 3,
-                            "name": "Project3",
-                            "parentID": -1,
-                            "children": [
-                                {
-                                    "id": 8,
-                                    "name": "Project31",
-                                    "parentID": 3,
-                                    "children": []
-                                }
-                            ]
-                        },
-                        {
-                            "id": 4,
-                            "name": "Project4",
-                            "parentID": -1,
-                            "children": []
-                        },
-                        {
-                            "id": 5,
-                            "name": "Project5",
-                            "parentID": -1,
-                            "children": [
-                                {
-                                    "id": 9,
-                                    "name": "Project51",
-                                    "parentID": 5,
-                                    "children": []
-                                },
-                                {
-                                    "id": 10,
-                                    "name": "Project52",
-                                    "parentID": 5,
-                                    "children": []
-                                },
-                                {
-                                    "id": 11,
-                                    "name": "Project53",
-                                    "parentID": 5,
-                                    "children": []
-                                },
-                                {
-                                    "id": 12,
-                                    "name": "Project54",
-                                    "parentID": 5,
-                                    "children": []
-                                },
-                                {
-                                    "id": 13,
-                                    "name": "Project55",
-                                    "parentID": 5,
-                                    "children": []
-                                },
-                                {
-                                    "id": 14,
-                                    "name": "Project56",
-                                    "parentID": 5,
-                                    "children": []
-                                },
-                                {
-                                    "id": 15,
-                                    "name": "Project57",
-                                    "parentID": 1,
-                                    "children": []
-                                },
-                                {
-                                    "id": 16,
-                                    "name": "Project58",
-                                    "parentID": 1,
-                                    "children": []
-                                }
-                            ]
-                        }
-                    ]
-                };
+                $scope.folderData = {}
 
                 
                 $scope.init = function () {
-                    $scope.listOfBookmarkFolders = [];
-                    for (var z = 0; z < $scope.folderData.children.length; z++) {
-                        var p = $scope.folderData.children[z];
-                        $scope.listOfBookmarkFolders.push({ name: p.name, children: p.children });
-                    };
+                    //$scope.listOfBookmarkFolders = [];
+                    //for (var z = 0; z < $scope.folderData.children.length; z++) {
+                    //    var p = $scope.folderData.children[z];
+                    //    $scope.listOfBookmarkFolders.push({ name: p.name, children: p.children });
+                    //};
                 };
                 $scope.getTags = function () {
                     var data = [
@@ -341,10 +330,8 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
 
 
 
-                $scope.openSearchBox = function () {
-                    $scope.addFolderVisibility = false;
-                    $scope.createFolderVisibility = true;
-
+                $scope.SetFolderSelect = function (value) {
+                    $scope.folderSelect = value;
                 };
 
 

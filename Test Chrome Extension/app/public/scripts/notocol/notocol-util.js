@@ -15,7 +15,50 @@
         var LOCAL_PDF_URL = 3;
         var WEB_PDF_URL = 4;
         var SERVER_BASE_URL = "https://localhost:44301/";
+        var userFolderTree = {
+            ID: 0,
+            Parent: null,
+            Name: "Root",
+            Children: []
+        }
+        var userFolderTreeJson = null;
 
+        function FillChildrenForNode(node, folders)
+        {
+            node.Children = [];
+
+            for (var i = 0; i < folders.length; i++)
+            {
+                if(folders[i].parentID != node.ID) continue;
+                var childTree = {};
+                childTree.ID = folders[i].ID;
+                childTree.Name = folders[i].name;
+                //childTree.ParentID = node.ID;
+                childTree.Parent = node;
+
+                FillChildrenForNode(childTree, folders);
+                node.Children.push(childTree);
+            }
+
+        }
+
+        var processUserFolders = function (folders) {
+            if (folders != null) {
+                FillChildrenForNode(userFolderTree,folders); 
+            }
+        }
+
+        var GenerateUserFolderTreeJson = function () {
+            $.ajax({
+                url: SERVER_BASE_URL + "Api/Folder/GetUserFolders",
+                type: 'Get',
+                success: function (data) {
+                    processUserFolders(data);
+                    userFolderTreeJson = JSON.stringify(JSON.decycle(userFolderTree));
+                }
+            });
+        }
+        GenerateUserFolderTreeJson();
         function isPDFURL(url) {
             return url.toLowerCase().indexOf('.pdf') > 0;
         }
@@ -164,6 +207,14 @@
             return tabsData[tab.id];
         }
 
+        this.getUserFolderTreeJson = function () {
+            return userFolderTreeJson;
+        }
+
+        this.setUserFolderTreeJson = function (folderTreeJson) {
+            userFolderTreeJson = folderTreeJson;
+            
+        }
         function onTabCreated(tab) {
             // Clear the info in case there is old, conflicting data
             unsettabsData(tab);
@@ -196,7 +247,7 @@
 
             console.log("Setting annotator status to " + tabsData[tabId].annotator + " for tab " + tabId)
         }
-
+        
         this.listen = function () {
             chromeTabs.onCreated.addListener(onTabCreated);
             chromeTabs.onUpdated.addListener(onTabUpdated);

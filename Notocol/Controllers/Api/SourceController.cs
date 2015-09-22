@@ -20,14 +20,46 @@ namespace Notocol.Controllers.Api
         SourceHelper sourceHelper = new SourceHelper();
         
         [HttpPost]
-        public JObject SaveSource([FromBody]SourceDataForExtension sourceData)
-        {
-            
-            sourceData = sourceHelper.SaveSource(sourceData, Utility.GetCurrentUserID());
-            if (sourceData != null && sourceData.sourceUserID != 0) {
+        public JObject SaveSource([FromBody]SaveSourceData saveSourceData)
+        {   
+            if (saveSourceData.addedFolders != null)
+            {
+                FolderHelper folderHelper = new FolderHelper();
+                saveSourceData.addedFolderIDs = folderHelper.HandleNewAddedFolders(saveSourceData.addedFolders, Utility.GetCurrentUserID());
+
+                if (saveSourceData.addedFolders.Count != saveSourceData.addedFolderIDs.Count)
+                {
+                    return JObject.FromObject(new
+                    {
+                        status = "failure",
+                    });
+                }
+
+                string newRequiredFolderID = saveSourceData.sourceData.folderData == null ? null : (saveSourceData.sourceData.folderData.selectedFolder == null) ? null : (saveSourceData.sourceData.folderData.selectedFolder.folderID.Contains("a") ? saveSourceData.sourceData.folderData.selectedFolder.folderID : null);
+                
+                if (newRequiredFolderID != null)
+                {
+                    long newID = 0;
+                    if (saveSourceData.addedFolderIDs.TryGetValue(newRequiredFolderID, out newID))
+                    {
+                        saveSourceData.sourceData.folderData.selectedFolder.folderID = newID.ToString();
+                    }
+                    else
+                    {
+                        return JObject.FromObject(new
+                        {
+                            status = "failure",
+                        });
+                    }
+                }
+
+            }
+            saveSourceData.sourceData = sourceHelper.SaveSource(saveSourceData.sourceData, Utility.GetCurrentUserID());
+            if (saveSourceData.sourceData != null && saveSourceData.sourceData.sourceUserID != 0)
+            {
                 return JObject.FromObject(new{
                     status = "success",
-                    sourceData = sourceData
+                    saveSourceData = saveSourceData
                 });
             }else{
                 return JObject.FromObject(new

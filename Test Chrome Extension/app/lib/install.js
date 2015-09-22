@@ -59,12 +59,16 @@
           chrome.tabs.query({ active: true }, function (tabs) {
               if (!(tabs.length === 0)) {
                   var tabInfo = notocolUtil.gettabsData(tabs[0]);
-                  
+                  var userFolderTreeJson = notocolUtil.getUserFolderTreeJson();
                   if (typeof tabInfo != "undefined") {
-                      sendResponse(tabInfo);
+                      sendResponse({ "tabInfo": tabInfo, "userFolderTreeJson" : userFolderTreeJson });
+                  } else {
+                      sendResponse({ status: false });
                   }
-              } 
-              sendResponse({ status: false });
+              } else {
+                  sendResponse({ status: false });
+              }
+              
           });
           
       } else if (request.greeting === "PageDetailsUpdated") {
@@ -81,6 +85,8 @@
               }
           });
           sendResponse({ message: "Toggled Annotation" });
+      } else if (request.greeting === "UserFoldersUpdated") {
+          notocolUtil.setUserFolderTreeJson(request.userFolderTree);
       }
       return true;
   });

@@ -8,9 +8,10 @@ namespace Model.Extended
 {
     public class FolderTree
     {
-        public long ID { get; set; }
+        public string ID { get; set; }
         public string Name { get; set; }
-        public long ParentID { get; set; }
+        public FolderTree Parent { get; set; }
+        public string ParentID { get; set; }
         public IList<FolderTree> Children { get; set; }
     }
 }

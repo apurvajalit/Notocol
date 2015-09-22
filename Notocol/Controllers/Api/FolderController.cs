@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using Business;
 using Notocol.Models;
+using Model;
 
 namespace Notocol.Controllers.Api
 {
@@ -14,9 +15,9 @@ namespace Notocol.Controllers.Api
         // GET: Folder
 
         [HttpGet]
-        public FolderTree GetUserFolders()
+        public IList<Folder> GetUserFolders()
         {
-            return new FolderHelper().GetUserFolderTree(Utility.GetCurrentUserID());
+            return new FolderHelper().GetUserFolders(Utility.GetCurrentUserID());
         }
 
         [HttpPost]

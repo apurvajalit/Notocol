@@ -35,11 +35,13 @@
             "lib/browser-action.js",
             "lib/help-page.js",
             "lib/errors.js",
+            "public/scripts/notocol/cycle.js",
             "lib/hypothesis-chrome-extension.js",
             "public/scripts/vendor/jquery.min.js",
             "public/scripts/notocol/notocol-util.js",
             "lib/install.js",
             "lib/blocklist.js"
+            
         ]
     },
 
