@@ -26,5 +26,12 @@ namespace Notocol.Controllers.Api
             return new FolderHelper().AddFolderTree(newFolder, Utility.GetCurrentUserID());
             
         }
+
+        [HttpGet]
+        public IList<string> GetUserFolderNameSuggestions(string query)
+        {
+            return new FolderHelper().GetUserFolderNameSuggestions(query, Utility.GetCurrentUserID());
+        }
+
     }
 }

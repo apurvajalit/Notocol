@@ -8,12 +8,12 @@
   // for hi-res screens (38).
   var icons = {};
   icons[states.ACTIVE] = {
-    19: 'images/notocol-active.png',
-    38: 'images/notocol-active.png'
+    19: 'images/notocol-19-active.png',
+    38: 'images/notocol-38-active.png'
   };
   icons[states.INACTIVE] = {
-    19: 'images/notocol-inactive.png',
-    38: 'images/notocol-inactive.png'
+    19: 'images/notocol-19-inactive.png',
+    38: 'images/notocol-38-inactive.png'
   };
 
   // Fake localization function.

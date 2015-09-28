@@ -8,11 +8,31 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Model;
 using Model.Extended;
+using System.IO;
 
 
 namespace Repository.Search
 {
-    
+    [ElasticType(Name = "userfolder")]
+    public class ESUserFolder{
+        public long id { get; set; }
+        public SuggestField folder_suggest { get; set; }
+        public string userID { get; set; }
+        
+    }
+
+    [ElasticType(Name = "user")]
+    public class ESUser
+    {
+        public long id { get; set; }
+        public SuggestField user_suggest { get; set; }
+    }
+
+    public class ESKeyPhrase
+    {
+        public long hitCount { get; set; }
+        public SuggestField keyphrase_suggest { get; set; }
+    }
 
     public class ESSourceHText
     {
@@ -53,11 +73,24 @@ namespace Repository.Search
 
         [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
         public string[] tags { get; set; }
+
+        //[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+        public SuggestField tag_suggest { get; set; }
+        
     }
 
     public class ESSourceUserNotes{
         public string note { get; set; }
         public long noteID { get; set; }
+    }
+
+    public class SuggestField
+    {
+        public IEnumerable<string> Input { get; set; }
+        public string Output { get; set; }
+        public object Payload { get; set; }
+        public int? Weight { get; set; }
+
     }
 
     [ElasticType(Name = "sourceuser")]
@@ -75,7 +108,7 @@ namespace Repository.Search
          
         [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
         public string[] tags { get; set; }
- 
+
         [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
         public DateTime lastUsed { get; set; }
     }
@@ -88,34 +121,77 @@ namespace Repository.Search
 
         const string update_su_tag = "if(ctx._source.tags == null) ctx._source.tags = tags;else{var i=0;for(;i<tags.length;i++){if (ctx._source.tags.indexOf(tags[i]) < 0) {ctx._source.tags[ctx._source.tags.length] = tags[i]}}}";
 
-        const string update_s_tag = "if(ctx._source.tags == null) ctx._source.tags = tags;else{var i=0;for(;i<tags.length;i++){if (ctx._source.tags.indexOf(tags[i]) < 0) {ctx._source.tags[ctx._source.tags.length] = tags[i]}}}";
+        const string update_s_tag = "if(ctx._source.tags == null){ ctx._source.tags = tags;ctx._source.tag_suggest = {}; ctx._source.tag_suggest = {'input':tags};}else{var i=0;for(;i<tags.length;i++){if (ctx._source.tags.indexOf(tags[i]) < 0) {ctx._source.tags[ctx._source.tags.length] = tags[i]; ctx._source.tag_suggest.input[ctx._source.tag_suggest.input.length] = tags[i];}}}";
 
         const string update_s_tnImage = "if(ctx._source.tnImage == null) ctx._source.tnImage = tnImage;";
         const string update_s_tnText = "if(ctx._source.tnText == null) ctx._source.tnText = tnText;";
 
-        Uri uri = new Uri("http://localhost:9200/");//Address of local ElasticSearch instance. On a production ready code, address to access ElasticSearch should be a config entry
-        ElasticClient client = null;
+
         
+
+        static Uri uri = new Uri("http://localhost:9200/");//Address of local ElasticSearch instance. On a production ready code, address to access ElasticSearch should be a config entry
+        public static ElasticClient Client = null;
+        public static ConnectionSettings Settings = null;
         public ElasticSearchTest()
         {
-            ConnectionSettings setting = new ConnectionSettings(uri);
+			Settings = new ConnectionSettings(uri, "notocol");
 
-            setting.SetDefaultIndex("notocol"); //setting default index
+			Client = new ElasticClient(Settings);
+		}
 
-            client = new ElasticClient(setting);
-        }
+		public static string Serialize<T>(T obj) where T : class
+		{
+			return Encoding.UTF8.GetString(Client.Serializer.Serialize(obj));
+		}
 
+		public static T Deserialize<T>(string json) where T : class
+		{
+			return Client.Serializer.Deserialize<T>(new MemoryStream(Encoding.UTF8.GetBytes(json)));
+		}
+	
         public void init()
         {
-            
-            
 
-            var notocolIndex = client.CreateIndex("notocol", null); //incase index does not exist, create it
-            var response = client.Map<ESSource>(m => m.MapFromAttributes());
-            response = client.Map<ESSourceUser>(m => m
+
+
+            var notocolIndex = Client.CreateIndex("notocol", null);
+            var response = Client.Map<ESSource>(m => m
+                                                .MapFromAttributes()
+                                                .Properties(p => p
+                                                    .Completion(c => c
+                                                        .Name(cp => cp.tag_suggest)
+                                                        .Payloads()
+                                                    )));
+                                         
+
+            response = Client.Map<ESSourceUser>(m => m
                                                 .MapFromAttributes()
                                                 .SetParent<ESSource>());
-           
+
+            response = Client.Map<ESUserFolder>(m => m
+                                                    .MapFromAttributes()
+                                                    .Properties( p => p 
+                                                        .Completion(c => c
+                                                            .Name(cp => cp.folder_suggest)
+                                                            .Payloads(true)
+                                                            .Context(cc => cc
+                                                                .Category("user", ccc => ccc
+                                                                    .Path("userID"))))));
+
+            response = Client.Map<ESUser>(m => m
+                                                .MapFromAttributes()
+                                                .Properties(mp => mp
+                                                    .Completion(mpc => mpc
+                                                        .Name(mpcn => mpcn.user_suggest)
+                                                        .Payloads(false))));
+
+            response = Client.Map<ESKeyPhrase>(m => m
+                                                .MapFromAttributes()
+                                                .Properties(mp => mp
+                                                    .Completion(mpc => mpc
+                                                        .Name(mpcn => mpcn.keyphrase_suggest)
+                                                        .Payloads(false))));
+              
         }
 
         public void AddUserToSource(SourceUser sourceuser)
@@ -127,13 +203,13 @@ namespace Repository.Search
                 note = sourceuser.Summary,
                 lastUsed = (DateTime)sourceuser.ModifiedAt
             };
-            var response = client.Index<ESSourceUser>(su, d => d.Parent(sourceuser.SourceID.ToString()));
+            var response = Client.Index<ESSourceUser>(su, d => d.Parent(sourceuser.SourceID.ToString()));
             
         }
 
         public void DeleteUserForSource(SourceUser sourceuser)
         {
-            var response = client.Delete<ESSourceUser>(d => d
+            var response = Client.Delete<ESSourceUser>(d => d
                                                     .Id(sourceuser.ID)
                                                     .Parent(sourceuser.SourceID.ToString()));
         }
@@ -150,7 +226,7 @@ namespace Repository.Search
             essource.tnImage = tnImageURL;
             essource.tnText = tnText;
             
-            var response = client.Index<ESSource>(essource);
+            var response = Client.Index<ESSource>(essource);
         }
 
         public void UpdateSourceTNData(long sourceID, string tnText, string tnImageURL)
@@ -159,7 +235,7 @@ namespace Repository.Search
             if(tnText != null) script += update_s_tnText;
             if (tnImageURL != null) script += update_s_tnImage;
 
-            var response = client.Update<ESSource, object>(u => u
+            var response = Client.Update<ESSource, object>(u => u
                                             .Id(sourceID)
                                             .Script(script)
                                             .Params(p => p
@@ -172,18 +248,19 @@ namespace Repository.Search
         {
             if (tags != null && tags.Length > 0)
             {
-                var response = client.Update<ESSourceUser, object>(u => u
+                var response = Client.Update<ESSourceUser, object>(u => u
                                         .Id(sourceUserID)
                                         .Parent(sourceID.ToString())
                                         .Script(update_su_tag)
                                         .Language("javascript")
                                         .Params(p => p.Add("tags", tags)));
 
-                response = client.Update<ESSource, object>(u => u
+                response = Client.Update<ESSource, object>(u => u
                                         .Id((long)sourceID)
                                         .Script(update_s_tag)
                                         .Language("javascript")
                                         .Params(p => p.Add("tags", tags)));
+                
                 
             }
 
@@ -218,7 +295,7 @@ namespace Repository.Search
                     sourcehtext.htext = hText;
                     sourcehtext.aid = annotation.ID;
 
-                    var response = client.Update<ESSource, object>(u => u
+                    var response = Client.Update<ESSource, object>(u => u
                                             .Id(annotation.SourceID)
                                             .Script(update_s_htext)
                                             .Language("javascript")
@@ -236,7 +313,7 @@ namespace Repository.Search
                     
                 };
 
-                var response = client.Update<ESSourceUser, object>(u => u
+                var response = Client.Update<ESSourceUser, object>(u => u
                                                 .Id(annotation.SourceUserID)
                                                 .Parent(annotation.SourceID.ToString())
                                                 .Script(update_s_note)
@@ -247,14 +324,14 @@ namespace Repository.Search
 
             if (tags != null && tags.Length > 0)
             {
-                var response = client.Update<ESSourceUser, object>(u => u
+                var response = Client.Update<ESSourceUser, object>(u => u
                                                                .Id(annotation.SourceUserID)
                                                                .Parent(annotation.SourceID.ToString())
                                                                .Script(update_su_tag)
                                                                .Language("javascript")
                                                                .Params(p => p.Add("tags", tags)));
 
-                response = client.Update<ESSource, object>(u => u
+                response = Client.Update<ESSource, object>(u => u
                                         .Id((long)annotation.SourceUserID)
                                         .Script(update_s_tag)
                                         .Language("javascript")
@@ -267,7 +344,7 @@ namespace Repository.Search
         public void UpdateSourceUserSummary(SourceUser sourceuser)
         {
             
-           var response = client.Update<ESSourceUser, object>(u => u
+           var response = Client.Update<ESSourceUser, object>(u => u
                                                   .Id(sourceuser.ID)
                                                   .Doc(new { note = sourceuser.Summary})
                                                   .Parent(sourceuser.SourceID.ToString())
@@ -329,7 +406,7 @@ namespace Repository.Search
                                 }
                             });
 
-            ISearchResponse<ESSource> searchResponse = client.Search<ESSource>(s => s
+            ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(s => s
                                .From(offset)
                                .Size(size)
                                .Query(query));
@@ -439,7 +516,7 @@ namespace Repository.Search
 
              
             
-            ISearchResponse<ESSource> searchResponse = client.Search<ESSource>(s =>s
+            ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(s =>s
                                .From(offset)
                                .Size(size)
                                .Query(searchQuery)
@@ -489,7 +566,7 @@ namespace Repository.Search
         public List<ESSource> PopulateDefaultFeed(long userID, int offset = 0, int size = 40)
         {
             var query = Query<Source>.MatchAll();
-            ISearchResponse<ESSource> searchResponse = client.Search<ESSource>(s =>s
+            ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(s =>s
                                .From(offset)
                                .Size(size)
                                .Query(query));
@@ -501,10 +578,126 @@ namespace Repository.Search
 
         public void DeleteSourceUser(long sourceUserID, long sourceID)
         {
-            client.Delete<ESSourceUser>(d => d
+            Client.Delete<ESSourceUser>(d => d
                         .Id(sourceUserID)
                         .Parent(sourceID.ToString()));
         }
-        
+
+
+        internal IList<string> GetTagNames(string tagQuery)
+        {
+            var completionSuggestDescriptor = new CompletionSuggestDescriptor<ESSource>()
+                .OnField("tag_suggest")
+                .Text("tagQuery");
+
+            var result = Client.Search<ESSource>(s=> s
+                                    
+                                    .SuggestCompletion("suggest_tag", c=>c  
+                                        .Text(tagQuery)
+                                        .OnField("tag_suggest")));
+
+            
+            if(result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0 ){
+                return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
+                            select options.Text).ToList();
+            } 
+
+            //Assert.IsTrue(json.JsonEquals(expected), json);
+            return null;
+        }
+
+        public void AddFolder(Folder folder)
+        {
+            ESUserFolder userFolder = new ESUserFolder();
+            userFolder.id = folder.ID;
+            userFolder.userID = ((long)folder.userID).ToString();
+            userFolder.folder_suggest = new SuggestField();
+            userFolder.folder_suggest.Input = new string[] { folder.name };
+
+            var response = Client.Index<ESUserFolder>(userFolder);
+            
+
+        }
+
+        internal IList<string> GetFolderSuggestions(string folderQuery, long userID)
+        {
+            var result = Client.Search<ESUserFolder>(s => s
+                                    .SuggestCompletion("suggest_folder", c => c
+                                        .Text(folderQuery)
+                                        .OnField("folder_suggest")
+                                        .Context(cc => cc.
+                                           Add("user", userID.ToString())
+                                        )));
+
+
+
+            if (result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0)
+            {
+                return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
+                        select options.Text).ToList();
+            }
+
+            //Assert.IsTrue(json.JsonEquals(expected), json);
+            return null;
+        }
+
+        public void AddUser(User user)
+        {
+            ESUser esuser = new ESUser();
+            esuser.user_suggest = new SuggestField();
+            esuser.id = user.ID;
+            esuser.user_suggest.Input = new string[] { user.Name };
+            var response = Client.Index<ESUser>(esuser);
+        }
+
+        internal IList<string> GetUserSuggestions(string userQuery)
+        {
+            var result = Client.Search<ESUser>(s => s
+                                    .SuggestCompletion("suggest_user", c => c
+                                        .Text(userQuery)
+                                        .OnField("user_suggest")
+                                        ));
+
+
+
+            if (result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0)
+            {
+                return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
+                        select options.Text).ToList();
+            }
+
+            //Assert.IsTrue(json.JsonEquals(expected), json);
+            return null;
+        }
+
+        public void AddKeyPhrase(string keyPhrase)
+        {
+            ESKeyPhrase esKeyPhrase = new ESKeyPhrase();
+
+            esKeyPhrase.keyphrase_suggest = new SuggestField();
+
+            esKeyPhrase.keyphrase_suggest.Input = new string[] { keyPhrase };
+            var response = Client.Index<ESKeyPhrase>(esKeyPhrase);
+        }
+
+        internal IList<string> GetKeyPhraseSuggestions(string query)
+        {
+            var result = Client.Search<ESKeyPhrase>(s => s
+                                    .SuggestCompletion("suggest_keyphrase", c => c
+                                        .Text(query)
+                                        .OnField("keyphrase_suggest")
+                                        ));
+
+
+
+            if (result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0)
+            {
+                return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
+                        select options.Text).ToList();
+            }
+
+            //Assert.IsTrue(json.JsonEquals(expected), json);
+            return null;
+        }
     }
 }

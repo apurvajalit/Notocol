@@ -51,11 +51,21 @@
       },
       hypothesis: browserExtension
   })
-  notocolUtil.listen();
   
+
+  chrome.runtime.onMessageExternal.addListener(
+    function (request, sender, sendResponse) {
+      
+        if (request.reloadExtension)
+            chrome.runtime.reload();
+  });
   //Notocol Specifici Action Handlers
   chrome.extension.onMessage.addListener(function (request, sender, sendResponse) {
       if (request.greeting === "PageDetails") {
+          //if (!notocolUtil.userLoggedIn) {
+          //    //Redirect to login
+          //    chrome.tabs.create({ url: "https://localhost:44301/User/Login" });
+          //}
           chrome.tabs.query({ active: true }, function (tabs) {
               if (!(tabs.length === 0)) {
                   var tabInfo = notocolUtil.gettabsData(tabs[0]);
@@ -90,5 +100,6 @@
       }
       return true;
   });
+  notocolUtil.listen();
 
 })();

@@ -10,7 +10,7 @@ namespace Notocol.Controllers.Api
 {
     public class BaseApiController : ApiController
     {
- 
+
         
     }
 }

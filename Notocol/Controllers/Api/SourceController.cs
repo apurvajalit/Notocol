@@ -12,16 +12,50 @@ using Business;
 using Notocol.Models;
 using Model.Extended.Extension;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 
 namespace Notocol.Controllers.Api
 {
-    public class SourceController : BaseApiController
+    public class SourceController : ApiController
     {
         SourceHelper sourceHelper = new SourceHelper();
-        
+        private bool CheckUser()
+        {
+            if (Utility.GetCurrentUserID() <= 0)
+            {
+                CookieHeaderValue tokenInfoCookie = null;
+                tokenInfoCookie = Request.Headers.GetCookies
+                                    ("TOKEN-INFO").SingleOrDefault();
+
+                string data = (tokenInfoCookie != null) ? tokenInfoCookie["TOKEN-INFO"].Value : null;
+                //Check if tokenInfo cookie exists, if found set session with values found in that
+
+                if (data != null)
+                {
+                    long userID = 0;
+                    string userName = null;
+                    if (Utility.GetUserInfoFromCookieData(data, out userID, out userName))
+                    {
+                        Utility.SetUserSession(userID, userName);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            return true;
+        }
+
         [HttpPost]
         public JObject SaveSource([FromBody]SaveSourceData saveSourceData)
-        {   
+        {
+            if (!CheckUser())
+                return JObject.FromObject(new
+                {
+                    status = "failure",
+                });
+
+
             if (saveSourceData.addedFolders != null)
             {
                 FolderHelper folderHelper = new FolderHelper();
@@ -72,12 +106,26 @@ namespace Notocol.Controllers.Api
         [HttpDelete]
         public bool DeleteSource(long sourceUserID)
         {
+            
+            if (!CheckUser())
+            {
+                return false;
+
+            }
             return sourceHelper.DeleteSourceUser(sourceUserID, Utility.GetCurrentUserID());
         }
 
         [HttpGet]
         public JObject GetSourceData(string URI, string Link)
         {
+            
+            if (!CheckUser())
+            {
+                return JObject.FromObject(new
+                {
+                    status = "failure",
+                });
+            }
             SourceDataForExtension sourceData = sourceHelper.GetSourceDataForExtension(URI, Link, Utility.GetCurrentUserID());
             return JObject.FromObject(new
             {

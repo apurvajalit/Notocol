@@ -22,6 +22,7 @@
             Children: []
         }
         var userFolderTreeJson = null;
+        this.userLoggedIn = false;
 
         function FillChildrenForNode(node, folders)
         {
@@ -253,7 +254,7 @@
             chromeTabs.onUpdated.addListener(onTabUpdated);
             chromeTabs.onRemoved.addListener(onTabRemoved);
 
-            
+            CheckUserLoginStatus();
             chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 if (message.type == "PDFInformation") {
                     if (typeof sender.tab.id != "undefined" && typeof tabsData[sender.tab.id] != "undefined") {
@@ -265,6 +266,20 @@
                 
                 }
             });
+        }
+
+        function CheckUserLoginStatus() {
+            $.ajax({
+                url: SERVER_BASE_URL + "Api/User/IsUserLoggedIn",
+                type: 'Get',
+                success: function (data) {
+                    this.userLoggedIn = data;
+                }
+            });
+        }
+
+        function SetUserLoginStatus(value) {
+            this.userLoggedIn = false;
         }
     }
     

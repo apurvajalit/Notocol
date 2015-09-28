@@ -7,14 +7,13 @@
 
   "description": "Collaboratively annotate, highlight, and tag web pages and PDF documents.",
   "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
+    "16": "images/16-active.png",
+    "48": "images/48-active.png",
+    "128": "images/128-active.png"
   },
 "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrHOmAA0B1dDZN4PSkokSBq1ckGVbxGCteOWUx8rkD8DhSxnq6bV89sH9py8tDNrRmt4oG7uJ8AWNFT17uDDVMI+cl2OAN5qn88g89Mlvj04BXZdv1X2Y4gKJj6/9ZdyJL7hh8gitjRkYtTUSPUFZi1v8IPoFcJiAgseAT4LQ9LPq+1u4LBZhMxwjhbO6h353BR6Lva1Y2mURvoOHePH9PfFcR+1ZVKdGmSC1efrvNbqvD1YlxXdKU8xT7r++28Ar2aKlB2KSI22nVHYUPso4/zcVVzXQN8tSGRQazscOCDdeZp0Uu0gpGDn6gT94ArIh3UihciLH9C/1mjV7njEFQIDAQAB",
   "homepage_url": "https://hypothes.is/",
   "incognito": "split",
-
   "offline_enabled": false,
   "permissions": [
     "<all_urls>",
@@ -47,8 +46,8 @@
 
   "browser_action": {
     "default_icon": {
-      "19": "images/notocol-inactive.png",
-      "38": "images/notocol-inactive.png"
+      "19": "images/notocol-19-inactive.png",
+      "38": "images/notocol-38-inactive.png"
     },
     "default_popup": "public/index.html"
   },
@@ -60,6 +59,6 @@
         "content/web/viewer.html"
     ],
     "externally_connectable": {
-     "matches": ["chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/content/web/viewer.html"]
+     "matches": ["chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/content/web/viewer.html", "https://localhost:44301/*"]
     }
 }

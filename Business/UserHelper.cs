@@ -11,6 +11,8 @@ namespace Business
 {
     public class UserHelper
     {
+        public const string USER_INFO_TOKEN = "TOKEN-INFO";
+
         static UserRepository userRepository = new UserRepository();
 
 
@@ -57,5 +59,7 @@ namespace Business
         {
             return userRepository.CheckIfUserNameExists(username);
         }
+
+        
     }
 }

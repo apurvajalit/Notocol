@@ -81,6 +81,7 @@ namespace Notocol.Controllers
         {
 
             SetupForLogout();
+            ViewBag.RefreshExtension = true;
             return RedirectToAction("Index", "Home", new { refresh = true });
         }
         public ActionResult ExternalLoginsList(string returnUrl)
@@ -248,6 +249,7 @@ namespace Notocol.Controllers
             if ((authRet = userHelper.AuthenticateOwnUser(userName, password, out user)) == UserRepository.AUTH_USER_AUTHENTICATED)
             {
                 SetupForLogin(user);
+                ViewBag.RefreshExtension = true;
                 return RedirectToAction("Home", "Home");
             }
             else

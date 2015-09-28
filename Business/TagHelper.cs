@@ -61,5 +61,19 @@ namespace Business
             return new TagRepository().GetAnnotationTagNames(annotationID);
             
         }
+
+        public IList<SourceTagData> GetTagNames(string tagQuery)
+        {
+            IList<SourceTagData> tags = new List<SourceTagData>();
+            IList<string> tagNames =  new TagRepository().GetTagNames(tagQuery);
+            if (tagNames != null)
+            {
+                foreach (var tag in tagNames)
+                {
+                    tags.Add(new SourceTagData() { text = tag });
+                }
+            }
+            return tags;
+        }
     }
 }

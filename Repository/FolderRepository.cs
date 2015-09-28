@@ -1,4 +1,5 @@
 ﻿using Model;
+using Repository.Search;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -34,7 +35,9 @@ namespace Repository
             {
                 DisposeContext();
             }
-            //}
+            ElasticSearchTest es = new ElasticSearchTest();
+            es.AddFolder(folder);
+            
             return folder;
         }
 
@@ -191,6 +194,15 @@ namespace Repository
             }
 
             return folder;
+        }
+
+        public IList<string> GetFolderNames(string folderQuery, long userID)
+        {
+            IList<string> folderNames = new List<string>();
+            ElasticSearchTest es = new ElasticSearchTest();
+            folderNames = es.GetFolderSuggestions(folderQuery, userID);
+
+            return folderNames;
         }
     }
 }

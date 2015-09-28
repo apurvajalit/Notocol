@@ -33,20 +33,23 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                 //$scope.currentParentFolder = RootFolder;
                 $scope.selectedFolder = RootFolder;
                 $scope.folderTree = RootFolder;
-                $scope.selectedFoldername = null;
+                $scope.selectedFoldername = "";
                 $scope.currentParent = null;
                 $scope.selectFolder = function (folder) {
-                    $scope.selectedFoldername = folder.Name;
-                    $scope.pageDetails.folderData = $scope.pageDetails.folderData || {}
-                    $scope.pageDetails.folderData.selectedFolder = {
-                        "folderID": folder.ID,
-                        "folderName": folder.Name
+                    if (folder != null) {
+                        $scope.selectedFoldername = folder.Name;
+                        $scope.pageDetails.folderData = $scope.pageDetails.folderData || {}
+                        $scope.pageDetails.folderData.selectedFolder = {
+                            "folderID": folder.ID,
+                            "folderName": folder.Name
+                        }
                     }
                     $scope.SetFolderSelect(false);
                 }
                 $scope.setCurrentParent = function(folder){
                     $scope.currentParent = folder;
-                    $scope.selectedFoldername = null;
+                    $scope.selectedFoldername = "";
+
                 }
 
                 function RunForEachFolderTreeNode(folderTreeNode, functionToRun) {
@@ -59,11 +62,15 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
 
                     }
                 }
+                $scope.AddTag = function (tag) {
+                    $scope.pageDetails.tags.push(tag);
+                }
 
                 $scope.AddFolder = function () {
                     var selectedFolder = null;
-                    if ($scope.selectedFoldername == "") {
-                        selectedFolder = $scope.folderTree;
+                    if ($scope.selectedFoldername == null) {
+                        $scope.SetFolderSelect(false);
+                        return;
                     }
 
                     if ($scope.currentParent != null && $scope.currentParent.Children.length > 0) {
@@ -170,8 +177,8 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                     });
                 }
 
-                var loadTags = function (query) {
-                    return TagStore.filter(query);
+                $scope.loadTags = function (query) {
+                    return $http.get(baseURL + 'api/Tag/Tag?tagQuery=' + query);
                 };
 
                 $scope.TogglePrivacy = function () {
@@ -180,12 +187,13 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
 
                 $scope.ToggleAnnotation = function () {
                     console.log("Sending message to background");
-                    
+                    $scope.pageDetails.annotator = ($scope.pageDetails.annotator == 0) ? 1 : 0;
                     chrome.extension.sendMessage({ greeting: "ToggleAnnotation" },
                          function (response) {
                              console.log("Received message from toggle:" + response.message);
                          });
                 }
+                
 
                 $scope.ClosePopup = function () {
                     window.close();
@@ -278,82 +286,46 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                         });
                 }
 
-                $scope.folderData = {}
-
-                
-                $scope.init = function () {
-                    //$scope.listOfBookmarkFolders = [];
-                    //for (var z = 0; z < $scope.folderData.children.length; z++) {
-                    //    var p = $scope.folderData.children[z];
-                    //    $scope.listOfBookmarkFolders.push({ name: p.name, children: p.children });
-                    //};
+                $scope.SetFolderSelect = function (value) {
+                    $scope.folderSelect = value;
                 };
-                $scope.getTags = function () {
-                    var data = [
+                //$scope.getTags = function () {
+                $scope.getTagOptions = function () {
+                    return [
                         {
                             "id": 1,
-                            "Name": "war"
+                            "text": "war"
                         },
                         {
                             "id": 2,
-                            "Name": "India"
+                            "text": "India"
                         },
                         {
                             "id": 3,
-                            "Name": "Egypt"
+                            "text": "Egypt"
                         },
                         {
                             "id": 4,
-                            "Name": "Internship"
+                            "text": "Internship"
                         },
                         {
                             "id": 5,
-                            "Name": "GradSchools"
+                            "text": "GradSchools"
                         },
                         {
                             "id": 6,
-                            "Name": "MIT2014"
+                            "text": "MIT2014"
                         },
 
                         {
                             "id": 7,
-                            "Name": "IITMadrass"
+                            "text": "IITMadrass"
                         }
                     ];
-                    for (var x = 0; x < data.length; x++) {
-                        $scope.tags.push({ 'text': data[x].Name });
-                    }
 
                 }
-                $scope.init();
-                //$scope.getTags();
-
-
-
-                $scope.SetFolderSelect = function (value) {
-                    $scope.folderSelect = value;
-                };
-
-
-
-                $scope.showSubFolder = function (f, visibility) {
-                    if (visibility) {
-                        $scope.listOfBookmarkFolders = [];
-                        for (var z = 0; z < f.children.length; z++) {
-                            var p = f.children[z];
-                            $scope.listOfBookmarkFolders.push({ name: p.name, children: p.children });
-                        };
-
-                    } else {
-                        $scope.addFolderVisibility = true;
-                        $scope.createFolderVisibility = false;
-                    }
-                    $scope.selectedFolder = f;
-                    $scope.hideList = visibility;
-
-                };
             }
-
+            
 
         };
         return obj;

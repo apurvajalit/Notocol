@@ -24,10 +24,14 @@ tags-input .tags {
   word-wrap: break-word;
   cursor: text;
   background-color: transparent;
-  border: 1px solid darkgray;
-  box-shadow: 1px 1px 1px 0 lightgray inset;
+  /*border: 1px groove lightgray;*/
+  border:1px solid lightgray;
+  border-radius:5px;
+  /*box-shadow: 1px 1px 1px 0 lightgray none;*/
   height: 100%;
 }
+
+
 tags-input .tags.focused {
   outline: none;
   -webkit-box-shadow: 0 0 3px 1px rgba(5, 139, 242, 0.6);
@@ -78,7 +82,8 @@ tags-input .tags .input {
   float: left;
   height: 26px;
   font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background:transparent
+  background:transparent;
+  color:white;
 }
 tags-input .tags .input.invalid-tag {
   color: red;
@@ -110,12 +115,12 @@ tags-input .autocomplete .suggestion-list {
   list-style-type: none;
 }
 tags-input .autocomplete .suggestion-item {
-  padding: 5px 10px;
+  padding: 2px 2px;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: black;
   background-color: white;
 }
@@ -128,7 +133,7 @@ tags-input .autocomplete .suggestion-item.selected em {
   background-color: #0097cf;
 }
 tags-input .autocomplete .suggestion-item em {
-  font: normal bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: normal bold 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: black;
   background-color: white;
 }

@@ -506,5 +506,14 @@ namespace Repository
             }
             return tags;
         }
+
+        public IList<string> GetTagNames(string tagQuery)
+        {
+            IList<string> tagNames = new List<string>();
+            ElasticSearchTest es = new ElasticSearchTest();
+            tagNames = es.GetTagNames(tagQuery);
+
+            return tagNames;
+        }
     }
 }   

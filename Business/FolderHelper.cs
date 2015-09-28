@@ -233,5 +233,10 @@ namespace Business
             }
             return addedFolderIDs;
         }
+
+        public IList<string> GetUserFolderNameSuggestions(string query, long userID)
+        {
+            return folderRepository.GetFolderNames(query, userID);
+        }
     }
 }
