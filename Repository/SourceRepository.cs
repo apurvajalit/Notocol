@@ -361,23 +361,32 @@ namespace Repository
 
         public bool DeleteSourceUser(SourceUser sourceuser)
         {
-            using (GetDataContext())
+            bool deleteSource = false;
+
+            using (var con = new SqlConnection(GetDataContext().Database.Connection.ConnectionString))
             {
-                try
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand("DeleteSourceUser", con))
                 {
-                    context.DeleteSourceUser(sourceuser.ID);
-                }
-                catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    DisposeContext();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@SourceUserID", sourceuser.ID);
+                    cmd.Parameters.AddWithValue("@SourceID", sourceuser.SourceID);
+                    
+                    SqlParameter outPutParameter = new SqlParameter();
+                    outPutParameter.ParameterName = "@DeleteSource";
+                    outPutParameter.SqlDbType = System.Data.SqlDbType.Bit;
+                    outPutParameter.Direction = System.Data.ParameterDirection.Output;
+                    cmd.Parameters.Add(outPutParameter);
+                    cmd.ExecuteNonQuery();
+                    deleteSource = Convert.ToBoolean(outPutParameter.Value.ToString());
                 }
             }
             ElasticSearchTest es = new ElasticSearchTest();
             es.DeleteUserForSource(sourceuser);
+            if (deleteSource) es.DeleteSource((long)sourceuser.SourceID);
+            
+            
             return true;
         }
 

@@ -1,5 +1,15 @@
 ﻿(function (h) {
     'use strict';
+    
+    var NOTOCOL_ACTIVE_ICON = {
+        19: 'images/notocol-19-active.png',
+        38: 'images/notocol-38-active.png'
+    };
+    var NOTOCOL_INACTIVE_ICON = {
+        19: 'images/notocol-19-inactive.png',
+        38: 'images/notocol-38-inactive.png'
+    };
+
     function NotocolUtil(dependencies) {
         var vm = this;
         var chromeTabs = dependencies.chromeTabs;
@@ -14,7 +24,8 @@
         var WEB_HTML_URL = 2;
         var LOCAL_PDF_URL = 3;
         var WEB_PDF_URL = 4;
-        var SERVER_BASE_URL = "https://localhost:44301/";
+        var SERVER_BASE_URL = "https://notocol.tenet.res.in:8443/";
+        //var SERVER_BASE_URL = "https://localhost:44301/";
         var userFolderTree = {
             ID: 0,
             Parent: null,
@@ -60,9 +71,19 @@
             });
         }
         GenerateUserFolderTreeJson();
+
         function isPDFURL(url) {
-            return url.toLowerCase().indexOf('.pdf') > 0;
+            console.log("URL Extension Check " + url.split('.').pop().split(/\#|\?/)[0]);
+            return (url.split('.').pop().split(/\#|\?/)[0] == "pdf");
+
+            //var index = url.toLowerCase().indexOf('.pdf');
+            //if(index < 0) return false;
+            //if (url.indexOf("https://www.google.co.in/url") == 0) return false; //Google redirect URL
+
+            //return true;
+
         }
+
         function isFileURL(url) {
             return url.indexOf("file:") === 0 || url.indexOf("file=") === 0;
         }
@@ -93,6 +114,7 @@
             }else return false;
         }
         var checkForUserPageData = function (tabId) {
+        
           $.ajax({
                 url: SERVER_BASE_URL + "Api/Source/GetSourceData",
                 type: 'Get',
@@ -106,7 +128,7 @@
                         var data = pageData.sourceData;
                         var currenttabsData = tabsData[tabId] || {};
 
-                        if (data != "undefined") {
+                        if (typeof data != "undefined") {
                             if (data.noteCount > 0) {
                                 hypothesis.enableHypothesis(tabId);
                                 vm.updateAnnotatorStatus(tabId);
@@ -118,6 +140,7 @@
                             currenttabsData.folderData = data.folderData;
                             currenttabsData.noteCount = data.noteCount;
                             currenttabsData.privacy = data.privacy;
+                            
                         } else {
                             currenttabsData.sourceID = 0;
                             currenttabsData.sourceUserID = 0;
@@ -178,14 +201,15 @@
                         sourceID: 0
                     };
                     checkServer = true;
-                    console.log("Setting data for first time for tab "+ tab.id);
+                    //console.log("Setting data for first time for tab "+ tab.id);
 
                 } else {
-                    if (!isPDF && (link != currenttabsData.uri || link != currenttabsData.url)){
+                    if (link != currenttabsData.uri || link != currenttabsData.url){
                         checkServer = true;
                         currenttabsData.uri = currenttabsData.url = link;
                         
                     }
+
                     currenttabsData.favIconUrl = tab.faviconUrl;
                     currenttabsData.title = tab.title;
                     
@@ -197,6 +221,14 @@
             tabsData[tab.id].status = true;
             tabsData[tab.id].tabID = tab.id;
             vm.updateAnnotatorStatus(tab.id);
+            if (tabsData[tab.id].sourceUserID > 0) {
+                chrome.browserAction.setIcon({ tabId: tab.id, path: NOTOCOL_ACTIVE_ICON });
+                chrome.browserAction.setTitle({ tabId: tab.id, title: 'Notocol is active' });
+            } else {
+                chrome.browserAction.setIcon({ tabId: tab.id, path: NOTOCOL_INACTIVE_ICON });
+                chrome.browserAction.setTitle({ tabId: tab.id, title: 'Notocol is inactive' });
+            }
+            console.log("Tab data for tab " + tab.id + "set as " + JSON.stringify(tabsData[tab.id]));
         }
 
         function unsettabsData(tabId) {
@@ -204,7 +236,7 @@
         }
 
         this.gettabsData = function (tab) {
-            console.log("Request for tabsData for " + tab.id);
+            //console.log("Request for tabsData for " + tab.id);
             return tabsData[tab.id];
         }
 
@@ -225,7 +257,7 @@
             var curr_url = "";
             if (typeof tabsData[tabId] != "undefined") curr_url = tabsData[tabId].uri;
 
-            console.log("Tab updated for tab " + tab.id + " with status " + changeInfo.status + "  " + tab.url + "/" + curr_url);
+            console.log("Tab updated for tab " + tab.id + " with status " + changeInfo.status + " and url as " + tab.url);
             vm.settabsData(tab);
             if (changeInfo.status !== TAB_STATUS_COMPLETE) {
                 return;
@@ -246,7 +278,7 @@
                 tabsData[tabId].annotator = true;
             else tabsData[tabId].annotator = false;
 
-            console.log("Setting annotator status to " + tabsData[tabId].annotator + " for tab " + tabId)
+           //console.log("Setting annotator status to " + tabsData[tabId].annotator + " for tab " + tabId)
         }
         
         this.listen = function () {
@@ -258,7 +290,7 @@
             chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 if (message.type == "PDFInformation") {
                     if (typeof sender.tab.id != "undefined" && typeof tabsData[sender.tab.id] != "undefined") {
-                        console.log("Received urn for tab " + sender.tab.id + "as " + message.urn);
+                        //console.log("Received urn for tab " + sender.tab.id + "as " + message.urn);
                         vm.updateTabURI(sender.tab.id, message.urn.substring("urn:x-pdf:".length));
                     } else {
                         console.log("Did not find tab with ID " + sender.tab.id);

@@ -1,18 +1,18 @@
 {
-  "name": "Hypothesis - Web & PDF Annotation",
-  "short_name": "Hypothesis",
-  "version": "0.7.2.0",
-  "version_name": "0.7.2.0 (g12ed30e.dirty)",
+  "name": "Notocol Note Collector",
+  "short_name": "Notocol",
+  "version": "0.32",
+  "version_name": "0.32",
   "manifest_version": 2,
 
-  "description": "Collaboratively annotate, highlight, and tag web pages and PDF documents.",
+  "description": "Take notes by saving webpages, pdfs and annotating them",
   "icons": {
     "16": "images/16-active.png",
     "48": "images/48-active.png",
     "128": "images/128-active.png"
   },
-"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrHOmAA0B1dDZN4PSkokSBq1ckGVbxGCteOWUx8rkD8DhSxnq6bV89sH9py8tDNrRmt4oG7uJ8AWNFT17uDDVMI+cl2OAN5qn88g89Mlvj04BXZdv1X2Y4gKJj6/9ZdyJL7hh8gitjRkYtTUSPUFZi1v8IPoFcJiAgseAT4LQ9LPq+1u4LBZhMxwjhbO6h353BR6Lva1Y2mURvoOHePH9PfFcR+1ZVKdGmSC1efrvNbqvD1YlxXdKU8xT7r++28Ar2aKlB2KSI22nVHYUPso4/zcVVzXQN8tSGRQazscOCDdeZp0Uu0gpGDn6gT94ArIh3UihciLH9C/1mjV7njEFQIDAQAB",
-  "homepage_url": "https://hypothes.is/",
+
+  "homepage_url": "https://notocol.tenet.res.in:8443",
   "incognito": "split",
   "offline_enabled": false,
   "permissions": [
@@ -22,7 +22,7 @@
     "tabs"
   ],
   "content_security_policy":
-    "script-src 'self' 'unsafe-eval' https://localhost:44301/ https://cdn.mathjax.org; object-src 'self'; font-src 'self' data:;",
+    "script-src 'self' 'unsafe-eval' https://notocol.tenet.res.in:8443 https://cdn.mathjax.org; object-src 'self'; font-src 'self' data:;",
 
     "background": {
         "persistent": true,
@@ -43,7 +43,6 @@
             
         ]
     },
-
   "browser_action": {
     "default_icon": {
       "19": "images/notocol-19-inactive.png",
@@ -59,6 +58,7 @@
         "content/web/viewer.html"
     ],
     "externally_connectable": {
-     "matches": ["chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/content/web/viewer.html", "https://localhost:44301/*"]
-    }
+        "matches": [ "chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/content/web/viewer.html", "https://notocol.tenet.res.in:8443/*" ]
+    },
+     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm+D1zzev/XS4FkYOBJAU1jfSKX+0YjozhRL/g1cPGcfjRryOOPpboZQr+nwbUlsRgYccoEWMf9nctljWuQGZiiyHiBFq1NpeWV9ObGkEFYGfehsyzjFPkGbPyiTcV4vqVq7ZMVvBXzCxfkwtk0PBFvioZmp7ob9/CF74ROi3ccHfYyiTcIe0bTKDH1CCtU6X+qeDmQDVGZkFUcNVsGn54zN6NXP6rZXWYxMyMmh8rnhxZr0/HGRhZUiDU/1B8czp6yVSa/IQdu6dxLeJDSJ3EsYKlCbWsDq8ofFOf/56SBzVCtlQ9uEKfVcOybowB94Favo62Sp10sY2MnpmMc4E5wIDAQAB"
 }

@@ -54,7 +54,7 @@ window.hypothesisInstall = function (inject) {
   
 
   if (!window.document.evaluate) {
-    resources.push('chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/wgxpath.install.min.js?0cd5ec8a');
+    resources.push('chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/wgxpath.install.min.js?0cd5ec8a');
   }
 
   // https://github.com/Modernizr/Modernizr/blob/master/feature-detects/url/parser.js
@@ -68,12 +68,12 @@ window.hypothesisInstall = function (inject) {
     urlWorks = false;
   }
   if (!urlWorks) {
-    resources.push('chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/url.min.js?de686538');
+    resources.push('chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/url.min.js?de686538');
   }
 
   if (typeof window.Annotator === 'undefined') {
-    resources.push('chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/styles/hypothesis.min.css?99bfd14a');
-    resources.push('chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/hypothesis.min.js?8e970d82');
+    resources.push('chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/styles/hypothesis.min.css?53837104');
+    resources.push('chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/hypothesis.min.js?8e970d82');
   }
 
   (function next(err) {
@@ -90,7 +90,7 @@ window.hypothesisInstall = function (inject) {
 
 var baseUrl = document.createElement('link');
 baseUrl.rel = 'sidebar';
-baseUrl.href = 'chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/app.html';
+baseUrl.href = 'chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/app.html';
 baseUrl.type = 'application/annotator+html';
 document.head.appendChild(baseUrl);
 

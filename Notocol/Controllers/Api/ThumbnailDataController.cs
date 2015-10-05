@@ -8,6 +8,7 @@ using System.Web.Http;
 //using System.Web.Mvc;
 using Notocol.Models;
 using Newtonsoft.Json;
+using log4net;
 
 namespace Notocol.Controllers.Api
 {
@@ -18,7 +19,7 @@ namespace Notocol.Controllers.Api
         public void ThumbnailData(ThumbnailDataForSourceUser thumbnailData)
         {
             SourceHelper sourceHelper = new SourceHelper();
-            
+            LogManager.GetLogger(GetType().Name).Debug("API Hit");
             sourceHelper.SetPageThumbNailData(Utility.GetCurrentUserID(), thumbnailData);
             return;
         }

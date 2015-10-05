@@ -86,8 +86,8 @@
 
     /* Opens the onboarding page */
     this.firstRun = function () {
-      chromeTabs.create({url: 'https://hypothes.is/welcome'}, function (tab) {
-        vm.state.activateTab(tab.id);
+        chromeTabs.create({ url: 'https://notocol.tenet.res.in:8443' }, function (tab) {
+        //vm.state.activateTab(tab.id);
       });
     };
 

@@ -38,20 +38,20 @@
 
     /* Sets the active browser action appearance for the provided tab id. */
     this.activate = function (tabId) {
-      chromeBrowserAction.setIcon({tabId: tabId, path: icons[states.ACTIVE]});
-      chromeBrowserAction.setTitle({tabId: tabId, title: _('Hypothesis is active')});
+      //chromeBrowserAction.setIcon({tabId: tabId, path: icons[states.ACTIVE]});
+      //chromeBrowserAction.setTitle({tabId: tabId, title: _('Hypothesis is active')});
     };
 
     /* Sets the inactive browser action appearance for the provided tab id. */
     this.deactivate = function (tabId) {
-      chromeBrowserAction.setIcon({tabId: tabId, path: icons[states.INACTIVE]});
-      chromeBrowserAction.setTitle({tabId: tabId, title: _('Hypothesis is inactive')});
+      //chromeBrowserAction.setIcon({tabId: tabId, path: icons[states.INACTIVE]});
+      //chromeBrowserAction.setTitle({tabId: tabId, title: _('Hypothesis is inactive')});
     };
 
     /* Sets the errored browser action appearance for the provided tab id. */
     this.error = function (tabId) {
-      chromeBrowserAction.setIcon({tabId: tabId, path: icons[states.INACTIVE]});
-      chromeBrowserAction.setTitle({tabId: tabId, title: _('Hypothesis has failed to load')});
+      //chromeBrowserAction.setIcon({tabId: tabId, path: icons[states.INACTIVE]});
+      chromeBrowserAction.setTitle({tabId: tabId, title: _('Notocol note taker has failed to load')});
       chromeBrowserAction.setBadgeText({tabId: tabId, text: '!'});
     };
   }

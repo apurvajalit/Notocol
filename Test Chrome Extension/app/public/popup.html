@@ -1,6 +1,7 @@
 ﻿<div class="popup-body" ng-class="{true: 'popup-body-big', false: 'popup-body-small'}[folderSelect]">
-    <div class="userImage">
-    </div>
+    
+    <a href="https://notocol.tenet.res.in:8443" target="_blank"><div class="userImage"></div></a>
+    
     <div class="popup-body-top-icon-container">
         <span style="float:right">
             <a href=# tooltips tooltip-size="small" tooltip-side="left" tooltip-content="Close popup">
@@ -56,9 +57,7 @@
                 </tags-input>
                 <div class="tags-suggestions">
                     <img src="images/notocol/Default-10-Tag-27960023.png" style="width:20px; height:20px" />
-                    <a href="#" class="tag-suggest-options" ng-click="AddTag({'text':'Tag1'})"><span>Tag1</span></a>
-                    <a href="#" class="tag-suggest-options">Tag2</a>
-                    <a href="#" class="tag-suggest-options">Tag3</a>
+                    <a href="#" ng-repeat="value in tagSuggestions" class="tag-suggest-options" ng-click="AddTag({'text': value })"><span>{{value}}</span></a>
                 </div>
             </div>
         </div>

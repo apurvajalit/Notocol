@@ -91,6 +91,7 @@
               if (!(tabs.length === 0)) {
                   //Toggle Hypothesis Sidebar
                   browserExtension.onBrowserActionClicked(tabs[0]);
+                  
                   notocolUtil.updateAnnotatorStatus(tabs[0].id);
               }
           });

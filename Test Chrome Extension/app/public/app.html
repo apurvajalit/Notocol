@@ -12,18 +12,18 @@
     
 
     
-      <link rel="service" type="application/annotatorsvc+json" href="https://localhost:44301/api/" />
+      <link rel="service" type="application/annotatorsvc+json" href="https://notocol.tenet.res.in:8443/api/" />
     
     
   
-    <link rel="stylesheet" href="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/styles/app.min.css?d5c81bab">
+    <link rel="stylesheet" href="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/styles/app.min.css?e77bf26e">
   
 
 
     
 
     
-      <base target="_top" href="https://localhost:44301/" />
+      <base target="_top" href="https://notocol.tenet.res.in:8443/" />
     
   </head>
   
@@ -53,10 +53,12 @@
             --><i class="h-icon-arrow-drop-down"></i></span>
           <ul class="dropdown-menu pull-right" role="menu">
             <li ng-show="auth.user"><a href="" ng-click="accountDialog.visible='true'">Account</a></li>
-            <li><a href="mailto:support@hypothes.is">Feedback</a></li>
-            <li><a href="/docs/help" target="_blank">Help</a></li>
-            <li ng-show="auth.user"><a href="/stream?q=user:{{ auth.user|persona }}"
-                                       target="_blank">My Annotations</a></li>
+            <li><a href="mailto:notocoldev@gmail.com">Feedback</a></li>
+            
+	    <!--<li><a href="/docs/help" target="_blank">Help</a></li>-->
+
+            <li ng-show="auth.user"><a href="vm.baseURI"
+                                       target="_blank">Home</a></li>
             <li ng-show="auth.user"><a href="" ng-click="logout()">Sign out</a></li>
           </ul>
         </div>
@@ -533,12 +535,10 @@
          >{{vm.annotation.user | persona}}</a>
       <i class="h-icon-border-color" ng-show="vm.isHighlight() && !vm.editing" title="This is a highlight. Click 'edit' to add a note or tag."></i>
       
-     <!--
       <span ng-show="vm.isPrivate() && !vm.editing"
             title="This annotation is visible only to you.">
         <i class="h-icon-lock"></i> Private
       </span>
-      -->
 
       <span class="annotation-citation"
             ng-if="!vm.embedded"
@@ -631,7 +631,7 @@
        ng-if="vm.annotation.tags.length && !vm.editing">
     <ul class="tag-list">
       <li class="tag-item" ng-repeat="tag in vm.annotation.tags">
-        <a href="/stream?q=tag:'{{tag.text|urlencode}}'" target="_blank">{{tag.text}}</a>
+        <a href="{{vm.baseURI}}?q=tag:'{{tag.text|urlencode}}'" target="_blank">{{tag.text}}</a>
       </li>
     </ul>
   </div>
@@ -780,7 +780,7 @@
   <div class="form-vertical tabbable">
   <div class="form tab-pane" data-title="Share">
     <p>Share the link below to show anyone these annotations and invite them to contribute their own.</p>
-
+<!--
     <p><input id="via"
         class="form-input"
         type="text"
@@ -803,7 +803,7 @@
        title="Share via email"
        class="h-icon-mail"></a>
     </p>
-
+-->
 <p> Coming soon.... </p>
   </div>
   </div>
@@ -915,37 +915,37 @@
 
     
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/jquery.min.js?6c7b0544"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/jquery.min.js?6c7b0544"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular.min.js?43032a7b"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular.min.js?43032a7b"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-animate.min.js?b169e38b"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular-animate.min.js?b169e38b"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-bootstrap.min.js?87929dd2"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular-bootstrap.min.js?87929dd2"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-resource.min.js?fa339530"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular-resource.min.js?fa339530"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-route.min.js?8ca9dfb2"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular-route.min.js?8ca9dfb2"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-sanitize.min.js?e201751f"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular-sanitize.min.js?e201751f"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-tags-input.min.js?d15e66fe"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular-tags-input.min.js?d15e66fe"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angular-toastr.min.js?a85da403"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angular-toastr.min.js?a85da403"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angulartics.min.js?b802785c"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angulartics.min.js?b802785c"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/angulartics-ga.min.js?311b6a70"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/angulartics-ga.min.js?311b6a70"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/katex.min.js?fa536a3b"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/katex.min.js?fa536a3b"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/vendor/url.min.js?de686538"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/vendor/url.min.js?de686538"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/app.min.js?db7cd86a"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/app.min.js?31a9b327"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/config.min.js?033d1f1a"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/config.min.js?033d1f1a"></script>
   
-    <script src="chrome-extension://namhfjepbaaecpmpgehfppgnhhgaflne/public/scripts/account.min.js?0bfc97b3"></script>
+    <script src="chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/public/scripts/account.min.js?0bfc97b3"></script>
   
 
   </body>

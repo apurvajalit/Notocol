@@ -9,6 +9,7 @@ using Model.Extended.Extension;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
+using log4net;
 namespace Business
 {
     public class SourceHelper
@@ -44,7 +45,11 @@ namespace Business
                 return imageURL;
             }
 
-
+            LogManager.GetLogger(GetType().Name).Debug("1 " + pageImageInfo.Length);
+            
+            foreach(var temp in pageImageInfo){
+                LogManager.GetLogger(GetType().Name).Debug("Values: " + JsonConvert.ToString(temp));
+            }
 
             pageImageInfo = pageImageInfo.Where(pageImage =>
                                                         !pageImage.hidden &&
@@ -118,23 +123,25 @@ namespace Business
             
             SourceUser sourceUser = obSourceRepository.GetSourceUser(thumbnailData.sourceUserID);
             if (sourceUser == null) return;
-
+            
             int MaxThumbnailTextLength = 500;
 
 
             PageImageInfo[] pageImageInfo = JsonConvert.DeserializeObject<PageImageInfo[]>(thumbnailData.imageObjects);
-
+            
             string[] pageText = JsonConvert.DeserializeObject<string[]>(thumbnailData.textData);
-
+            //--
             string thumbnailImageURL = GetThumbNailImage(thumbnailData.pageLink, pageImageInfo);
-
+            
             if (thumbnailImageURL != null) MaxThumbnailTextLength = 200;
-
+            
             string thumbnailImageText = GetThumbNailText(pageText, MaxThumbnailTextLength);
-
+            
             sourceUser.thumbnailImageUrl = thumbnailImageURL;
             sourceUser.thumbnailText = thumbnailImageText;
-
+            
+            LogManager.GetLogger(GetType().Name).Debug("Setting values " + sourceUser.thumbnailImageUrl + " "+ thumbnailImageText);
+            
             obSourceRepository.UpdateSourceUser(sourceUser);
 
             return;

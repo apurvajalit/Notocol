@@ -15,10 +15,12 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                 //$scope.createFolderVisibility = false;
                 //$scope.selectedFolder = {};
                 $scope.showSublist = false;
+                $scope.tagSuggestions = ["solar", "policy", "content"];
                 //$scope.tags = [];
                 $scope.hideList = true;
                 $scope.pageDetails = {};
-                var baseURL = "https://localhost:44301/";
+                var baseURL = "https://notocol.tenet.res.in:8443/";
+                //var baseURL = "https://localhost:44301/";
                 var addedFolders = [];
 
                 var RootFolder = {
@@ -113,44 +115,59 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                     }
                     return retFolder;
                 }
+                var URLNotSupported = function (url) {
+                    if (url.indexOf("chrome://") == 0) {
+                        alert("Notocol not supported for this page");
+                            return true;
+                    }
+                    return false;
+                }
 
                 var GetCurrentPageDetails = function () {
                     chrome.extension.sendMessage({
                         greeting: "PageDetails"
                     },
                         function (response) {
-                            
+                            if (response == null)
+                                $scope.ClosePopup();
+
+                            if (response.tabInfo == null || !response.tabInfo.status) {
+                                if (!alert("Please refresh the page since the page was opened before Notocol was installed")) $scope.ClosePopup();
+                            }
+
+                            if (response.tabInfo.url.indexOf("chrome://newtab/") == 0) {
+                                chrome.tabs.update(null, { url: baseURL });
+                                //$scope.ClosePopup();
+                                return;
+                            }
+
+                            if (URLNotSupported(response.tabInfo.url)) {
+                                $scope.ClosePopup();
+                            }
+
                             $timeout(function () {
                                 if (response.userFolderTreeJson != null){
                                     $scope.folderTree = JSON.retrocycle(JSON.parse(response.userFolderTreeJson));
                                     //$scope.currentParentFolder = $scope.folderTree;
                                 }
 
-                                if (response.tabInfo != null && response.tabInfo.status) {
-                                    $scope.pageDetails = response.tabInfo;
-                                    if ($scope.pageDetails.sourceUserID <= 0) $scope.SavePage();
+                                console.log("Received page details as " + response.tabInfo);
+                                $scope.pageDetails = response.tabInfo;
 
-                                    if ($scope.pageDetails.tags != null) {
-                                        console.log("Received tags are " + $scope.pageDetails.tags);
+                                if ($scope.pageDetails.sourceUserID <= 0) $scope.SavePage();
 
-                                    }
+                                if ($scope.pageDetails.folderData != null && $scope.pageDetails.folderData.selectedFolder != null) {
+                                    
+                                    $scope.selectedFolder = GetSelectedFolderFromUserFolderTree(
+                                        $scope.pageDetails.folderData.selectedFolder.folderID, $scope.folderTree);
 
-                                    if ($scope.pageDetails.folderData != null && $scope.pageDetails.folderData.selectedFolder != null) {
-                                        console.log("Recieved folder is " +
-                                            JSON.stringify($scope.pageDetails.folderData.selectedFolder));
-                                        $scope.selectedFolder = GetSelectedFolderFromUserFolderTree(
-                                            $scope.pageDetails.folderData.selectedFolder.folderID, $scope.folderTree);
-                                        $scope.selectedFoldername = $scope.selectedFolder.Name;
-                                        $scope.currentParent = $scope.selectedFolder.Parent;
-                                    } else {
-                                        $scope.selectedFolder = $scope.folderTree;
-                                        $scope.currentParent = $scope.folderTree;
-                                    }
-
+                                    $scope.selectedFoldername = $scope.selectedFolder.Name;
+                                    $scope.currentParent = $scope.selectedFolder.Parent;
                                 } else {
-                                    //TODO Better way of asking
-                                    if (!alert("Please refresh the page since the page was opened before Notocol was installed")) $scope.ClosePopup();
+                                    $scope.selectedFolder = $scope.folderTree;
+                                    $scope.currentParent = $scope.folderTree;
                                 }
+
                             })
 
                         });
@@ -166,7 +183,7 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                         pageUrl: pageUrl,
                         ID: sourceUserID,
                         tabID: $scope.pageDetails.tabID,
-                        ThumbNailDataURl: "https://localhost:44301/Api/ThumbnailData"
+                        ThumbNailDataURl: baseURL+"/Api/ThumbnailData"
                     };
                     chrome.tabs.executeScript($scope.pageDetails.tabID, {
                         code: 'var inputVariables = ' + JSON.stringify(inputVariables)
@@ -231,7 +248,6 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                 }
 
                 $scope.SavePage = function () {
-            
                     
                     var data = { sourceData: $scope.pageDetails };
                     if (addedFolders.length > 0) {
@@ -289,41 +305,8 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                 $scope.SetFolderSelect = function (value) {
                     $scope.folderSelect = value;
                 };
-                //$scope.getTags = function () {
-                $scope.getTagOptions = function () {
-                    return [
-                        {
-                            "id": 1,
-                            "text": "war"
-                        },
-                        {
-                            "id": 2,
-                            "text": "India"
-                        },
-                        {
-                            "id": 3,
-                            "text": "Egypt"
-                        },
-                        {
-                            "id": 4,
-                            "text": "Internship"
-                        },
-                        {
-                            "id": 5,
-                            "text": "GradSchools"
-                        },
-                        {
-                            "id": 6,
-                            "text": "MIT2014"
-                        },
-
-                        {
-                            "id": 7,
-                            "text": "IITMadrass"
-                        }
-                    ];
-
-                }
+                
+                
             }
             
 

@@ -228,15 +228,6 @@ namespace Model
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_upgraddiagrams");
         }
     
-        public virtual int DeleteSourceUser(Nullable<long> sourceUserID)
-        {
-            var sourceUserIDParameter = sourceUserID.HasValue ?
-                new ObjectParameter("SourceUserID", sourceUserID) :
-                new ObjectParameter("SourceUserID", typeof(long));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteSourceUser", sourceUserIDParameter);
-        }
-    
         public virtual int DeleteAnnotation(Nullable<long> annotationID)
         {
             var annotationIDParameter = annotationID.HasValue ?
@@ -244,6 +235,15 @@ namespace Model
                 new ObjectParameter("AnnotationID", typeof(long));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteAnnotation", annotationIDParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<bool>> DeleteSourceUser(Nullable<long> sourceUserID, ObjectParameter deleteSource)
+        {
+            var sourceUserIDParameter = sourceUserID.HasValue ?
+                new ObjectParameter("SourceUserID", sourceUserID) :
+                new ObjectParameter("SourceUserID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("DeleteSourceUser", sourceUserIDParameter, deleteSource);
         }
     }
 }

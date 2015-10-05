@@ -261,6 +261,7 @@
         </Function>
         <Function Name="DeleteSourceUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SourceUserID" Type="bigint" Mode="In" />
+          <Parameter Name="DeleteSource" Type="bit" Mode="InOut" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="GetTagID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -488,11 +489,12 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UserTagUsage" EntitySet="UserTagUsages" />
           </AssociationSet>
-          <FunctionImport Name="DeleteSourceUser">
-          <Parameter Name="SourceUserID" Mode="In" Type="Int64" />
-          </FunctionImport>
           <FunctionImport Name="DeleteAnnotation">
           <Parameter Name="AnnotationID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="DeleteSourceUser" ReturnType="Collection(Boolean)">
+            <Parameter Name="SourceUserID" Mode="In" Type="Int64" />
+            <Parameter Name="DeleteSource" Mode="InOut" Type="Boolean" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="GetTags_Result">
@@ -810,6 +812,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="DeleteSourceUser_Result">
+          <Property Type="Int64" Name="ID" Nullable="false" />
+          <Property Type="Int64" Name="UserID" Nullable="false" />
+          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
+          <Property Type="Boolean" Name="Privacy" Nullable="true" />
+          <Property Type="Int32" Name="Rating" Nullable="true" />
+          <Property Type="DateTime" Name="ModifiedAt" Nullable="true" Precision="23" />
+          <Property Type="String" Name="thumbnailImageUrl" Nullable="true" />
+          <Property Type="String" Name="thumbnailText" Nullable="true" MaxLength="1000" />
+          <Property Type="Int64" Name="FolderID" Nullable="true" />
+          <Property Type="Int32" Name="noteCount" Nullable="false" />
+          <Property Type="Int64" Name="SourceID" Nullable="true" />
+          <Property Type="Boolean" Name="PrivacyOverride" Nullable="true" />
+          <Property Type="Int32" Name="PrivateNoteCount" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1012,8 +1029,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="DeleteSourceUser" FunctionName="NotColModel.Store.DeleteSourceUser" />
           <FunctionImportMapping FunctionImportName="DeleteAnnotation" FunctionName="NotColModel.Store.DeleteAnnotation" />
+          <FunctionImportMapping FunctionImportName="DeleteSourceUser" FunctionName="NotColModel.Store.DeleteSourceUser">
+          </FunctionImportMapping>
           </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

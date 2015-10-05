@@ -392,7 +392,9 @@ namespace Repository.Search
                                     {
                                         f.Query(q =>
                                         {
-                                            return Query<ESSource>.HasChild<ESSourceUser>(qc => qc.Query(qcq => { return tagsQuery; }));
+                                            return Query<ESSource>.HasChild<ESSourceUser>(qc => qc
+                                                .Score(ChildScoreType.Sum)
+                                                .Query(qcq => { return tagsQuery; }));
                                             
                                         });
                                     }
@@ -414,19 +416,11 @@ namespace Repository.Search
             if(!own) {
                 return searchResponse.Documents.ToList();
             }
-
-            
             foreach(var hit in searchResponse.Hits){
                hit.Source.sourceUserID = Convert.ToInt64(hit.InnerHits.First().Value.Hits.Hits.First().Id);
                hit.Source.tags = hit.InnerHits.First().Value.Hits.Hits.First().Source.As<ESSourceUser>().tags;
             }
-                        
-                        
-                        
-                    
-
             return searchResponse.Documents.ToList();
-
         }
 
         public const int SOURCE_TYPE_OWN = 1;
@@ -501,6 +495,7 @@ namespace Repository.Search
 
                                     f.Query(fq => fq.Bool(b => b.Should(
                                         s => s.HasChild<ESSourceUser>(c => c
+                                         .Score(ChildScoreType.Sum)
                                          .Query(cq => { return childMatchQuery; })
 
                                          .InnerHits(ih => ih
@@ -698,6 +693,13 @@ namespace Repository.Search
 
             //Assert.IsTrue(json.JsonEquals(expected), json);
             return null;
+        }
+
+        internal void DeleteSource(long sourceID)
+        {
+            Client.Delete<ESSource>(d => d
+                        .Id(sourceID));
+                        
         }
     }
 }

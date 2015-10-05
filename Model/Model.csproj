@@ -78,6 +78,9 @@
     <Compile Include="AnnotationTag.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
+    <Compile Include="DeleteSourceUser_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
     <Compile Include="Extended\Extension\ApplicationStatus.cs" />
     <Compile Include="Extended\Extension\ExtensionAnnotationData.cs" />
     <Compile Include="Extended\Extension\ExtensionSearchResponse.cs" />
