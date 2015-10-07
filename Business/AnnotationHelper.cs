@@ -10,6 +10,7 @@ using Model;
 using Repository;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Model.Extended;
 
 namespace Business
 {
@@ -152,7 +153,7 @@ namespace Business
                 
             }
             
-            sourceUser = sourceHelper.AddSourceUser(sourceUser);
+            sourceUser = sourceHelper.AddSourceUser(sourceUser, annotation.Consumer);
             return sourceUser;
         }
 
@@ -177,7 +178,7 @@ namespace Business
             if (IsAnnotationPrivate(annotation)) sourceUser.PrivateNoteCount++;
 
             SourceHelper sourceHelper = new SourceHelper();
-            sourceHelper.UpdateSourceUser(sourceUser);
+            sourceHelper.UpdateSourceUser(sourceUser, annotation.Consumer);
             extAnnotation.id = annotation.ID;
 
             if (extAnnotation.tags != null && extAnnotation.tags.Length > 0)
@@ -217,7 +218,7 @@ namespace Business
                 }
                 else
                 {
-                    sourceHelper.DecPrivateNoteCount(annotation.SourceUserID);
+                    sourceHelper.DecPrivateNoteCount(annotation.SourceUserID, annotation.Consumer);
                 }
             }
             
@@ -242,10 +243,71 @@ namespace Business
             if (annotation == null || annotation.UserID != userID) return false;
             
             if(objAnnotationRepository.DeleteAnnotation(annotationID)){
-                new SourceHelper().DecNoteCount(annotation.SourceUserID, IsAnnotationPrivate(annotation));
+                new SourceHelper().DecNoteCount(annotation.SourceUserID, IsAnnotationPrivate(annotation), annotation.Consumer);
                 return true;
             }
             return false;
+        }
+
+        public NoteData GetNoteData(Annotation annotation)
+        {
+            NoteData note = new NoteData();
+            note.NoteText = annotation.Text;
+            AnnotationHelper annotationHelper = new AnnotationHelper();
+            ExtensionAnnotationData extAnnData = annotationHelper.AnnotationToExtensionAnnotation(annotation);
+            if (extAnnData.target != null)
+            {
+                foreach (Selector selector in extAnnData.target[0].selector)
+                {
+                    if (selector.type == "TextQuoteSelector")
+                    {
+                        note.QuotedText = selector.exact;
+                        break;
+                    }
+                }
+            }
+            note.pageURL = annotation.Uri;
+            dynamic data = JObject.Parse(annotation.Document);
+            note.pageTitle = data.title;
+
+            note.username = annotation.Consumer;
+            note.id = annotation.ID;
+            note.tags = (from tags in annotation.AnnotationTags
+                            select tags.Tag.Name).ToArray();
+
+            note.updated = Convert.ToDateTime(annotation.Updated);
+            
+            return note;
+
+        }
+
+        public List<NoteData> GetNoteList(long sourceID, bool ownAtTop, long userID)
+        {
+            List<NoteData> notes = new List<NoteData>();
+            IList<Annotation> annotations = null;
+            if (ownAtTop)
+            {
+                annotations = objAnnotationRepository.GetAnnotationsForPageWithOwnAtTop(sourceID, userID);
+            }
+            else
+            {
+                annotations = objAnnotationRepository.GetAnnotationsForPage(sourceID);
+            }
+            
+            if (annotations.Count > 0)
+            {
+                foreach (Annotation annotation in annotations)
+                {
+                    NoteData note = GetNoteData(annotation);
+
+                    if ((note.NoteText != null && note.NoteText.Length > 0) ||
+                        (note.QuotedText != null && note.QuotedText.Length > 0))
+                    {
+                        notes.Add(note);
+                    }
+                }
+            }
+            return notes;
         }
     }
 }

@@ -46,7 +46,7 @@ namespace Notocol.Controllers
         public bool DeleteSourceUser(long sourceUserID)
         {
             SourceHelper sourceHelper = new SourceHelper();
-            return sourceHelper.DeleteSourceUser(sourceUserID, Utility.GetCurrentUserID());
+            return sourceHelper.DeleteSourceUser(sourceUserID, Utility.GetCurrentUserID(), Utility.GetCurrentUserName());
 
         }
     }

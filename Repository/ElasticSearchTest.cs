@@ -28,6 +28,7 @@ namespace Repository.Search
         public SuggestField user_suggest { get; set; }
     }
 
+    [ElasticType(Name = "keyphrase")]
     public class ESKeyPhrase
     {
         public long hitCount { get; set; }
@@ -53,7 +54,7 @@ namespace Repository.Search
 
         //TODO Following property is used just to return results. Need NOT be mapped in the index at all
         [ElasticProperty(Index = FieldIndexOption.No)]
-        public long sourceUserID { get; set; }
+        public long sourceUserID { get; set; } 
 
         public ESSourceHText[] hTexts { get; set; }
         
@@ -76,7 +77,9 @@ namespace Repository.Search
 
         //[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
         public SuggestField tag_suggest { get; set; }
-        
+
+        [ElasticProperty(Index = FieldIndexOption.No)]
+        public string[] publicUserNames { get; set; }
     }
 
     public class ESSourceUserNotes{
@@ -122,6 +125,10 @@ namespace Repository.Search
         const string update_su_tag = "if(ctx._source.tags == null) ctx._source.tags = tags;else{var i=0;for(;i<tags.length;i++){if (ctx._source.tags.indexOf(tags[i]) < 0) {ctx._source.tags[ctx._source.tags.length] = tags[i]}}}";
 
         const string update_s_tag = "if(ctx._source.tags == null){ ctx._source.tags = tags;ctx._source.tag_suggest = {}; ctx._source.tag_suggest = {'input':tags};}else{var i=0;for(;i<tags.length;i++){if (ctx._source.tags.indexOf(tags[i]) < 0) {ctx._source.tags[ctx._source.tags.length] = tags[i]; ctx._source.tag_suggest.input[ctx._source.tag_suggest.input.length] = tags[i];}}}";
+
+        const string update_s_add_public_user = "if(ctx._source.publicUserNames == null){ctx._source.publicUserNames = [username];}else{if(ctx._source.publicUserNames.indexOf(username) < 0) {ctx._source.publicUserNames[ctx._source.publicUserNames.length] = username}}";
+
+        const string update_s_delete_public_user = "if(ctx._source.publicUserNames != null){ctx._source.publicUserNames.remove(username);}";
 
         const string update_s_tnImage = "if(ctx._source.tnImage == null) ctx._source.tnImage = tnImage;";
         const string update_s_tnText = "if(ctx._source.tnText == null) ctx._source.tnText = tnText;";
@@ -591,12 +598,15 @@ namespace Repository.Search
                                         .Text(tagQuery)
                                         .OnField("tag_suggest")));
 
-            
-            if(result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0 ){
-                return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
-                            select options.Text).ToList();
-            } 
 
+            if (result.Suggest.Values.FirstOrDefault() != null)
+            {
+                if (result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0)
+                {
+                    return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
+                            select options.Text).ToList();
+                }
+            }
             //Assert.IsTrue(json.JsonEquals(expected), json);
             return null;
         }
@@ -700,6 +710,26 @@ namespace Repository.Search
             Client.Delete<ESSource>(d => d
                         .Id(sourceID));
                         
+        }
+
+        public void AddPublicUser(long sourceID, string username)
+        {
+            var response = Client.Update<ESSource, object>(u => u
+                        .Id(sourceID)
+                        .Script(update_s_add_public_user)
+                        .Language("javascript")
+                        .Params(p => p.Add("username", username)));
+
+        }
+
+        public void DeletePublicUser(long sourceID, string username)
+        {
+            var response = Client.Update<ESSource, object>(u => u
+                        .Id(sourceID)
+                        .Script(update_s_delete_public_user)
+                        .Language("javascript")
+                        .Params(p => p.Add("username", username)));
+
         }
     }
 }

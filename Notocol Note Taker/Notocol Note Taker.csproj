@@ -1,0 +1,555 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Test_Chrome_Extension</RootNamespace>
+    <AssemblyName>Test Chrome Extension</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="app\images\128-active.png" />
+    <Content Include="app\images\16-active.png" />
+    <Content Include="app\images\48-active.png" />
+    <Content Include="app\images\notocol-19-active.png" />
+    <Content Include="app\images\notocol-19-inactive.png" />
+    <Content Include="app\images\notocol-38-active.png" />
+    <Content Include="app\images\notocol-38-inactive.png" />
+    <Content Include="app\images\notocol-big-logo.png" />
+    <Content Include="app\public\images\notocol\appu.jpg" />
+    <Content Include="app\public\images\notocol\camera.png" />
+    <Content Include="app\public\images\notocol\close.png" />
+    <Content Include="app\public\images\notocol\Default-10-Tag-27960023.png" />
+    <Content Include="app\public\images\notocol\Default-11-Triangle-27960024.png" />
+    <Content Include="app\public\images\notocol\Default-12-Add-27960025.png" />
+    <Content Include="app\public\images\notocol\Default-15-New-27960028.png" />
+    <Content Include="app\public\images\notocol\delete.png" />
+    <Content Include="app\public\images\notocol\folder.png" />
+    <Content Include="app\public\images\notocol\lock.png" />
+    <Content Include="app\public\images\notocol\annotator-on.png" />
+    <Content Include="app\public\images\notocol\unlock.png" />
+    <Content Include="app\public\images\notocol\next2.png" />
+    <Content Include="app\public\images\notocol\annotator-off.png" />
+    <Content Include="app\public\index.html" />
+    <Content Include="app\public\scripts\notocol\angular-tooltips.js" />
+    <Content Include="app\public\scripts\notocol\angular.js" />
+    <Content Include="app\public\scripts\notocol\cycle.js" />
+    <Content Include="app\public\scripts\notocol\ng-tags-input.js" />
+    <Content Include="app\public\popup.html" />
+    <Content Include="app\public\styles\notocol\angular-toastr.min.css" />
+    <Content Include="app\public\styles\notocol\angular-tooltips.css" />
+    <Content Include="app\public\styles\notocol\bootstrap.min.css" />
+    <Content Include="app\content\build\pdf.js" />
+    <Content Include="app\content\build\pdf.worker.js" />
+    <Content Include="app\content\web\compatibility.js" />
+    <Content Include="app\content\web\debugger.js" />
+    <Content Include="app\content\web\images\annotation-check.svg" />
+    <Content Include="app\content\web\images\annotation-comment.svg" />
+    <Content Include="app\content\web\images\annotation-help.svg" />
+    <Content Include="app\content\web\images\annotation-insert.svg" />
+    <Content Include="app\content\web\images\annotation-key.svg" />
+    <Content Include="app\content\web\images\annotation-newparagraph.svg" />
+    <Content Include="app\content\web\images\annotation-noicon.svg" />
+    <Content Include="app\content\web\images\annotation-note.svg" />
+    <Content Include="app\content\web\images\annotation-paragraph.svg" />
+    <Content Include="app\content\web\images\findbarButton-next%402x.png" />
+    <Content Include="app\content\web\images\findbarButton-next-rtl%402x.png" />
+    <Content Include="app\content\web\images\findbarButton-next-rtl.png" />
+    <Content Include="app\content\web\images\findbarButton-next.png" />
+    <Content Include="app\content\web\images\findbarButton-previous%402x.png" />
+    <Content Include="app\content\web\images\findbarButton-previous-rtl%402x.png" />
+    <Content Include="app\content\web\images\findbarButton-previous-rtl.png" />
+    <Content Include="app\content\web\images\findbarButton-previous.png" />
+    <Content Include="app\content\web\images\grab.cur" />
+    <Content Include="app\content\web\images\grabbing.cur" />
+    <Content Include="app\content\web\images\loading-icon.gif" />
+    <Content Include="app\content\web\images\loading-small%402x.png" />
+    <Content Include="app\content\web\images\loading-small.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-documentProperties%402x.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-documentProperties.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-firstPage%402x.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-firstPage.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-handTool%402x.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-handTool.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-lastPage%402x.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-lastPage.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-rotateCcw%402x.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-rotateCcw.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-rotateCw%402x.png" />
+    <Content Include="app\content\web\images\secondaryToolbarButton-rotateCw.png" />
+    <Content Include="app\content\web\images\shadow.png" />
+    <Content Include="app\content\web\images\texture.png" />
+    <Content Include="app\content\web\images\toolbarButton-bookmark%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-bookmark.png" />
+    <Content Include="app\content\web\images\toolbarButton-download%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-download.png" />
+    <Content Include="app\content\web\images\toolbarButton-menuArrows%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-menuArrows.png" />
+    <Content Include="app\content\web\images\toolbarButton-openFile%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-openFile.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageDown%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageDown-rtl%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageDown-rtl.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageDown.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageUp%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageUp-rtl%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageUp-rtl.png" />
+    <Content Include="app\content\web\images\toolbarButton-pageUp.png" />
+    <Content Include="app\content\web\images\toolbarButton-presentationMode%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-presentationMode.png" />
+    <Content Include="app\content\web\images\toolbarButton-print%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-print.png" />
+    <Content Include="app\content\web\images\toolbarButton-search%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-search.png" />
+    <Content Include="app\content\web\images\toolbarButton-secondaryToolbarToggle%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-secondaryToolbarToggle-rtl%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-secondaryToolbarToggle-rtl.png" />
+    <Content Include="app\content\web\images\toolbarButton-secondaryToolbarToggle.png" />
+    <Content Include="app\content\web\images\toolbarButton-sidebarToggle%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-sidebarToggle-rtl%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-sidebarToggle-rtl.png" />
+    <Content Include="app\content\web\images\toolbarButton-sidebarToggle.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewAttachments%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewAttachments.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewOutline%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewOutline-rtl%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewOutline-rtl.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewOutline.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewThumbnail%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-viewThumbnail.png" />
+    <Content Include="app\content\web\images\toolbarButton-zoomIn%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-zoomIn.png" />
+    <Content Include="app\content\web\images\toolbarButton-zoomOut%402x.png" />
+    <Content Include="app\content\web\images\toolbarButton-zoomOut.png" />
+    <Content Include="app\content\web\l10n.js" />
+    <Content Include="app\content\web\viewer.css" />
+    <Content Include="app\content\web\viewer.html" />
+    <Content Include="app\content\web\viewer.js" />
+    <Content Include="app\help\index.html" />
+    <Content Include="app\help\index.js" />
+    <Content Include="app\help\sad-annotation.svg" />
+    <Content Include="app\help\step-1.png" />
+    <Content Include="app\help\step-2.png" />
+    <Content Include="app\img\icon.png" />
+    <Content Include="app\lib\blocklist.js" />
+    <Content Include="app\lib\browser-action.js" />
+    <Content Include="app\lib\errors.js" />
+    <Content Include="app\lib\help-page.js" />
+    <Content Include="app\lib\hypothesis-chrome-extension.js" />
+    <Content Include="app\lib\install.js" />
+    <Content Include="app\lib\sidebar-injector.js" />
+    <Content Include="app\lib\tab-error-cache.js" />
+    <Content Include="app\lib\tab-state.js" />
+    <Content Include="app\lib\tab-store.js" />
+    <Content Include="app\public\app.html" />
+    <Content Include="app\public\config.js" />
+    <Content Include="app\public\destroy.js" />
+    <Content Include="app\public\embed.js" />
+    <Content Include="app\public\images\help-arrow.svg" />
+    <Content Include="app\public\images\loader.gif" />
+    <Content Include="app\public\images\logo.png" />
+    <Content Include="app\public\images\noise_1.png" />
+    <Content Include="app\public\images\sad-annotation.svg" />
+    <Content Include="app\public\images\wordmark.png" />
+    <Content Include="app\public\popupbkp.html" />
+    <Content Include="app\public\scripts\account.min.js" />
+    <Content Include="app\public\scripts\app.min.js" />
+    <Content Include="app\public\scripts\hypothesis.min.js" />
+    <Content Include="app\public\scripts\notocol\pdfInfo.js" />
+    <Content Include="app\public\scripts\notocol\notocol-util.js" />
+    <Content Include="app\public\scripts\notocol\popupbkp.js" />
+    <Content Include="app\public\scripts\notocol\sendImageList.js" />
+    <Content Include="app\public\scripts\notocol\SendPdfUrn.js" />
+    <Content Include="app\public\scripts\vendor\angular-animate.min.js" />
+    <Content Include="app\public\scripts\vendor\angular-bootstrap.min.js" />
+    <Content Include="app\public\scripts\vendor\angular-resource.min.js" />
+    <Content Include="app\public\scripts\vendor\angular-route.min.js" />
+    <Content Include="app\public\scripts\vendor\angular-sanitize.min.js" />
+    <Content Include="app\public\scripts\vendor\angular-toastr.min.js" />
+    <Content Include="app\public\scripts\vendor\angular.min.js" />
+    <Content Include="app\public\scripts\vendor\angulartics-ga.min.js" />
+    <Content Include="app\public\scripts\vendor\angulartics.min.js" />
+    <Content Include="app\public\scripts\vendor\bootstrap.min.js" />
+    <Content Include="app\public\scripts\vendor\jquery.min.js" />
+    <Content Include="app\public\scripts\vendor\jstz.min.js" />
+    <Content Include="app\public\scripts\vendor\katex.min.js" />
+    <Content Include="app\public\scripts\vendor\moment-timezone-data.min.js" />
+    <Content Include="app\public\scripts\vendor\moment-timezone.min.js" />
+    <Content Include="app\public\scripts\vendor\moment.min.js" />
+    <Content Include="app\public\scripts\vendor\ng-tags-input.min.js" />
+    <Content Include="app\public\scripts\vendor\polyfills\autofill-event.min.js" />
+    <Content Include="app\public\scripts\vendor\polyfills\bind.min.js" />
+    <Content Include="app\public\scripts\vendor\polyfills\url.min.js" />
+    <Content Include="app\public\scripts\vendor\polyfills\wgxpath.install.min.js" />
+    <Content Include="app\public\styles\app.min.css" />
+    <Content Include="app\public\styles\hypothesis.min.css" />
+    <Content Include="app\public\scripts\notocol\popup.js" />
+    <Content Include="app\public\styles\notocol\main.css" />
+    <Content Include="app\public\styles\notocol\ng-tags-input.css" />
+    <Content Include="app\public\styles\notocol\ng-tags-input.min.css" />
+    <Content Include="app\public\styles\notocol\popupbkp.css" />
+    <Content Include="Properties\build\lib\Ionic.Zip.DLL" />
+    <Content Include="Properties\build\lib\MSBuild.ExtensionPack.dll" />
+    <Content Include="screenshots\screenshot.png" />
+    <Content Include="index.htm" />
+    <Content Include="Properties\build\ligershark.chrome.targets" />
+    <Content Include="screenshots\readme.txt" />
+    <Content Include="app\content\LICENSE" />
+    <Content Include="app\content\web\cmaps\78-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\78-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\78-H.bcmap" />
+    <Content Include="app\content\web\cmaps\78-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\78-RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\78-V.bcmap" />
+    <Content Include="app\content\web\cmaps\78ms-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\78ms-RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\83pv-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\90ms-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\90ms-RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\90msp-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\90msp-RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\90pv-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\90pv-RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\Add-H.bcmap" />
+    <Content Include="app\content\web\cmaps\Add-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\Add-RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\Add-V.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-0.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-1.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-2.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-3.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-4.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-5.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-6.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-CNS1-UCS2.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-GB1-0.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-GB1-1.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-GB1-2.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-GB1-3.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-GB1-4.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-GB1-5.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-GB1-UCS2.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-0.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-1.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-2.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-3.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-4.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-5.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-6.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Japan1-UCS2.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Korea1-0.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Korea1-1.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Korea1-2.bcmap" />
+    <Content Include="app\content\web\cmaps\Adobe-Korea1-UCS2.bcmap" />
+    <Content Include="app\content\web\cmaps\B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\B5pc-H.bcmap" />
+    <Content Include="app\content\web\cmaps\B5pc-V.bcmap" />
+    <Content Include="app\content\web\cmaps\CNS-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\CNS-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\CNS1-H.bcmap" />
+    <Content Include="app\content\web\cmaps\CNS1-V.bcmap" />
+    <Content Include="app\content\web\cmaps\CNS2-H.bcmap" />
+    <Content Include="app\content\web\cmaps\CNS2-V.bcmap" />
+    <Content Include="app\content\web\cmaps\ETen-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\ETen-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\ETenms-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\ETenms-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\ETHK-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\ETHK-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\Ext-H.bcmap" />
+    <Content Include="app\content\web\cmaps\Ext-RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\Ext-RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\Ext-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GB-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GB-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GB-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GB-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GBK-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GBK-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GBK2K-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GBK2K-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GBKp-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GBKp-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GBpc-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GBpc-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GBT-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GBT-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GBT-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GBT-V.bcmap" />
+    <Content Include="app\content\web\cmaps\GBTpc-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\GBTpc-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\H.bcmap" />
+    <Content Include="app\content\web\cmaps\Hankaku.bcmap" />
+    <Content Include="app\content\web\cmaps\Hiragana.bcmap" />
+    <Content Include="app\content\web\cmaps\HKdla-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\HKdla-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\HKdlb-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\HKdlb-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\HKgccs-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\HKgccs-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\HKm314-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\HKm314-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\HKm471-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\HKm471-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\HKscs-B5-H.bcmap" />
+    <Content Include="app\content\web\cmaps\HKscs-B5-V.bcmap" />
+    <Content Include="app\content\web\cmaps\Katakana.bcmap" />
+    <Content Include="app\content\web\cmaps\KSC-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\KSC-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\KSC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\KSC-Johab-H.bcmap" />
+    <Content Include="app\content\web\cmaps\KSC-Johab-V.bcmap" />
+    <Content Include="app\content\web\cmaps\KSC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\KSCms-UHC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\KSCms-UHC-HW-H.bcmap" />
+    <Content Include="app\content\web\cmaps\KSCms-UHC-HW-V.bcmap" />
+    <Content Include="app\content\web\cmaps\KSCms-UHC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\KSCpc-EUC-H.bcmap" />
+    <Content Include="app\content\web\cmaps\KSCpc-EUC-V.bcmap" />
+    <Content Include="app\content\web\cmaps\LICENSE" />
+    <Content Include="app\content\web\cmaps\NWP-H.bcmap" />
+    <Content Include="app\content\web\cmaps\NWP-V.bcmap" />
+    <Content Include="app\content\web\cmaps\RKSJ-H.bcmap" />
+    <Content Include="app\content\web\cmaps\RKSJ-V.bcmap" />
+    <Content Include="app\content\web\cmaps\Roman.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UCS2-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UCS2-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UTF16-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UTF16-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UTF32-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UTF32-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UTF8-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniCNS-UTF8-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UCS2-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UCS2-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UTF16-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UTF16-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UTF32-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UTF32-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UTF8-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniGB-UTF8-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UCS2-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UCS2-HW-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UCS2-HW-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UCS2-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UTF16-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UTF16-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UTF32-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UTF32-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UTF8-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS-UTF8-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS2004-UTF16-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS2004-UTF16-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS2004-UTF32-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS2004-UTF32-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS2004-UTF8-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJIS2004-UTF8-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJISPro-UCS2-HW-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJISPro-UCS2-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJISPro-UTF8-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJISX0213-UTF32-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJISX0213-UTF32-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJISX02132004-UTF32-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniJISX02132004-UTF32-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UCS2-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UCS2-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UTF16-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UTF16-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UTF32-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UTF32-V.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UTF8-H.bcmap" />
+    <Content Include="app\content\web\cmaps\UniKS-UTF8-V.bcmap" />
+    <Content Include="app\content\web\cmaps\V.bcmap" />
+    <Content Include="app\content\web\cmaps\WP-Symbol.bcmap" />
+    <Content Include="app\content\web\locale\ach\viewer.properties" />
+    <Content Include="app\content\web\locale\af\viewer.properties" />
+    <Content Include="app\content\web\locale\ak\viewer.properties" />
+    <Content Include="app\content\web\locale\an\viewer.properties" />
+    <Content Include="app\content\web\locale\ar\viewer.properties" />
+    <Content Include="app\content\web\locale\ast\viewer.properties" />
+    <Content Include="app\content\web\locale\as\viewer.properties" />
+    <Content Include="app\content\web\locale\az\viewer.properties" />
+    <Content Include="app\content\web\locale\be\viewer.properties" />
+    <Content Include="app\content\web\locale\bg\viewer.properties" />
+    <Content Include="app\content\web\locale\bn-BD\viewer.properties" />
+    <Content Include="app\content\web\locale\bn-IN\viewer.properties" />
+    <Content Include="app\content\web\locale\br\viewer.properties" />
+    <Content Include="app\content\web\locale\bs\viewer.properties" />
+    <Content Include="app\content\web\locale\ca\viewer.properties" />
+    <Content Include="app\content\web\locale\csb\viewer.properties" />
+    <Content Include="app\content\web\locale\cs\viewer.properties" />
+    <Content Include="app\content\web\locale\cy\viewer.properties" />
+    <Content Include="app\content\web\locale\da\viewer.properties" />
+    <Content Include="app\content\web\locale\de\viewer.properties" />
+    <Content Include="app\content\web\locale\el\viewer.properties" />
+    <Content Include="app\content\web\locale\en-GB\viewer.properties" />
+    <Content Include="app\content\web\locale\en-US\viewer.properties" />
+    <Content Include="app\content\web\locale\en-ZA\viewer.properties" />
+    <Content Include="app\content\web\locale\eo\viewer.properties" />
+    <Content Include="app\content\web\locale\es-AR\viewer.properties" />
+    <Content Include="app\content\web\locale\es-CL\viewer.properties" />
+    <Content Include="app\content\web\locale\es-ES\viewer.properties" />
+    <Content Include="app\content\web\locale\es-MX\viewer.properties" />
+    <Content Include="app\content\web\locale\et\viewer.properties" />
+    <Content Include="app\content\web\locale\eu\viewer.properties" />
+    <Content Include="app\content\web\locale\fa\viewer.properties" />
+    <Content Include="app\content\web\locale\ff\viewer.properties" />
+    <Content Include="app\content\web\locale\fi\viewer.properties" />
+    <Content Include="app\content\web\locale\fr\viewer.properties" />
+    <Content Include="app\content\web\locale\fy-NL\viewer.properties" />
+    <Content Include="app\content\web\locale\ga-IE\viewer.properties" />
+    <Content Include="app\content\web\locale\gd\viewer.properties" />
+    <Content Include="app\content\web\locale\gl\viewer.properties" />
+    <Content Include="app\content\web\locale\gu-IN\viewer.properties" />
+    <Content Include="app\content\web\locale\he\viewer.properties" />
+    <Content Include="app\content\web\locale\hi-IN\viewer.properties" />
+    <Content Include="app\content\web\locale\hr\viewer.properties" />
+    <Content Include="app\content\web\locale\hu\viewer.properties" />
+    <Content Include="app\content\web\locale\hy-AM\viewer.properties" />
+    <Content Include="app\content\web\locale\id\viewer.properties" />
+    <Content Include="app\content\web\locale\is\viewer.properties" />
+    <Content Include="app\content\web\locale\it\viewer.properties" />
+    <Content Include="app\content\web\locale\ja\viewer.properties" />
+    <Content Include="app\content\web\locale\ka\viewer.properties" />
+    <Content Include="app\content\web\locale\kk\viewer.properties" />
+    <Content Include="app\content\web\locale\km\viewer.properties" />
+    <Content Include="app\content\web\locale\kn\viewer.properties" />
+    <Content Include="app\content\web\locale\ko\viewer.properties" />
+    <Content Include="app\content\web\locale\ku\viewer.properties" />
+    <Content Include="app\content\web\locale\lg\viewer.properties" />
+    <Content Include="app\content\web\locale\lij\viewer.properties" />
+    <Content Include="app\content\web\locale\locale.properties" />
+    <Content Include="app\content\web\locale\lt\viewer.properties" />
+    <Content Include="app\content\web\locale\lv\viewer.properties" />
+    <Content Include="app\content\web\locale\mai\viewer.properties" />
+    <Content Include="app\content\web\locale\mk\viewer.properties" />
+    <Content Include="app\content\web\locale\ml\viewer.properties" />
+    <Content Include="app\content\web\locale\mn\viewer.properties" />
+    <Content Include="app\content\web\locale\mr\viewer.properties" />
+    <Content Include="app\content\web\locale\ms\viewer.properties" />
+    <Content Include="app\content\web\locale\my\viewer.properties" />
+    <Content Include="app\content\web\locale\nb-NO\viewer.properties" />
+    <Content Include="app\content\web\locale\nl\viewer.properties" />
+    <Content Include="app\content\web\locale\nn-NO\viewer.properties" />
+    <Content Include="app\content\web\locale\nso\viewer.properties" />
+    <Content Include="app\content\web\locale\oc\viewer.properties" />
+    <Content Include="app\content\web\locale\or\viewer.properties" />
+    <Content Include="app\content\web\locale\pa-IN\viewer.properties" />
+    <Content Include="app\content\web\locale\pl\viewer.properties" />
+    <Content Include="app\content\web\locale\pt-BR\viewer.properties" />
+    <Content Include="app\content\web\locale\pt-PT\viewer.properties" />
+    <Content Include="app\content\web\locale\rm\viewer.properties" />
+    <Content Include="app\content\web\locale\ro\viewer.properties" />
+    <Content Include="app\content\web\locale\ru\viewer.properties" />
+    <Content Include="app\content\web\locale\rw\viewer.properties" />
+    <Content Include="app\content\web\locale\sah\viewer.properties" />
+    <Content Include="app\content\web\locale\si\viewer.properties" />
+    <Content Include="app\content\web\locale\sk\viewer.properties" />
+    <Content Include="app\content\web\locale\sl\viewer.properties" />
+    <Content Include="app\content\web\locale\son\viewer.properties" />
+    <Content Include="app\content\web\locale\sq\viewer.properties" />
+    <Content Include="app\content\web\locale\sr\viewer.properties" />
+    <Content Include="app\content\web\locale\sv-SE\viewer.properties" />
+    <Content Include="app\content\web\locale\sw\viewer.properties" />
+    <Content Include="app\content\web\locale\ta-LK\viewer.properties" />
+    <Content Include="app\content\web\locale\ta\viewer.properties" />
+    <Content Include="app\content\web\locale\te\viewer.properties" />
+    <Content Include="app\content\web\locale\th\viewer.properties" />
+    <Content Include="app\content\web\locale\tl\viewer.properties" />
+    <Content Include="app\content\web\locale\tn\viewer.properties" />
+    <Content Include="app\content\web\locale\tr\viewer.properties" />
+    <Content Include="app\content\web\locale\uk\viewer.properties" />
+    <Content Include="app\content\web\locale\ur\viewer.properties" />
+    <Content Include="app\content\web\locale\vi\viewer.properties" />
+    <Content Include="app\content\web\locale\wo\viewer.properties" />
+    <Content Include="app\content\web\locale\xh\viewer.properties" />
+    <Content Include="app\content\web\locale\zh-CN\viewer.properties" />
+    <Content Include="app\content\web\locale\zh-TW\viewer.properties" />
+    <Content Include="app\content\web\locale\zu\viewer.properties" />
+    <Content Include="app\blocklist.json" />
+    <Content Include="bin\Test Chrome Extension.zip" />
+    <None Include="scripts\_references.js" />
+    <None Include="scripts\chrome-api-vsdoc.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="app\manifest.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app\css\" />
+    <Folder Include="app\scripts\" />
+    <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <!-- insert a condition to ensure that these are not imported -->
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" Condition="false" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="false and '$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>1530</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:46950/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <AppFolder Condition=" '$(AppFolder)'=='' ">app\</AppFolder>
+    <AppFileName Condition=" '$(AppFileName)'=='' ">$(AssemblyName).zip</AppFileName>
+    <BuildFolder Condition=" '$(BuildFolder)'=='' ">$(MSBuildProjectDirectory)\properties\build\</BuildFolder>
+    <BuildLib Condition=" '$(BuildLib)'=='' ">$(BuildFolder)Lib\</BuildLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppFileNameItem Include="$(OutputPath)$(AppFilename)" />
+    <AppFolderItem Include="$(AppFolder)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <LigerSharkChromeTargetsPath>$(BuildFolder)\ligershark.chrome.targets</LigerSharkChromeTargetsPath>
+  </PropertyGroup>
+  <Import Project="$(LigerSharkChromeTargetsPath)" Condition="Exists($(LigerSharkChromeTargetsPath))" />
+</Project>

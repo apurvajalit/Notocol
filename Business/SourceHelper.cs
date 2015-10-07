@@ -164,21 +164,21 @@ namespace Business
             return source;
         }
 
-        internal SourceUser AddSourceUser(SourceUser sourceUser)
+        internal SourceUser AddSourceUser(SourceUser sourceUser, string username)
         {
             sourceUser.PrivateNoteCount = sourceUser.noteCount = 0;
-            sourceUser = obSourceRepository.AddSourceUser(sourceUser);
+            sourceUser = obSourceRepository.AddSourceUser(sourceUser, username);
             
 
             return sourceUser;
         }
 
-        internal SourceUser UpdateSourceUser(SourceUser sourceUser)
+        internal SourceUser UpdateSourceUser(SourceUser sourceUser, string username)
         {
-            return obSourceRepository.UpdateSourceUser(sourceUser);
+            return obSourceRepository.UpdateSourceUser(sourceUser, username);
         }
 
-        public SourceDataForExtension SaveSource(SourceDataForExtension sourceData, long userID)
+        public SourceDataForExtension SaveSource(SourceDataForExtension sourceData, long userID, string username)
         {
             SourceUser sourceUser = null;
             TagHelper tagHelper = new TagHelper();
@@ -200,7 +200,7 @@ namespace Business
                 if (sourceUser == null) {
                     //Call self to create sourceUser for data
                     sourceData.sourceUserID = 0;
-                    return SaveSource(sourceData, userID);
+                    return SaveSource(sourceData, userID, username);
                 }
 
                 sourceUser.FolderID = (sourceData.folderData == null)? 0 : 
@@ -215,7 +215,7 @@ namespace Business
                 }
                 
                 tagHelper.UpdateSourceTags(sourceUser, sourceData.tags);
-                sourceUser = UpdateSourceUser(sourceUser);
+                sourceUser = UpdateSourceUser(sourceUser, username);
             }
             else
             {
@@ -251,7 +251,7 @@ namespace Business
 
                     sourceUser.UserID = userID;
                     sourceUser.noteCount = 0;
-                    sourceUser = AddSourceUser(sourceUser);
+                    sourceUser = AddSourceUser(sourceUser, username);
                 }
                     
                 if (sourceUser == null || sourceUser.ID <= 0) return null;
@@ -297,7 +297,7 @@ namespace Business
             return sourceDataForExtension;
         }
 
-        public bool DeleteSourceUser(long sourceUserID, long userID)
+        public bool DeleteSourceUser(long sourceUserID, long userID, string username)
         {
             SourceRepository sourceRepository = new SourceRepository();
 
@@ -305,7 +305,7 @@ namespace Business
 
             if (sourceuser != null && sourceuser.UserID == userID)
             {
-                return sourceRepository.DeleteSourceUser(sourceuser);
+                return sourceRepository.DeleteSourceUser(sourceuser, username);
 
             }
             return false;
@@ -323,26 +323,28 @@ namespace Business
             obSourceRepository.UpdateSourceUser(su);
         }
 
-        public void DecNoteCount(long id, bool isPrivate)
+        public void DecNoteCount(long id, bool isPrivate, string username)
         {
             SourceUser su = obSourceRepository.GetSourceUser(id);
             su.noteCount--;
             if(isPrivate)su.PrivateNoteCount--;
-            if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) su.Privacy = false;
+            if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) 
+                su.Privacy = false;
 
-            obSourceRepository.UpdateSourceUser(su);
+            obSourceRepository.UpdateSourceUser(su, username);
 
         }
 
 
 
-        internal void DecPrivateNoteCount(long id)
+        internal void DecPrivateNoteCount(long id, string username)
         {
             SourceUser su = obSourceRepository.GetSourceUser(id);
             su.PrivateNoteCount--;
-            if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) su.Privacy = false;
+            if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) 
+                su.Privacy = false;
 
-            obSourceRepository.UpdateSourceUser(su);
+            obSourceRepository.UpdateSourceUser(su, username);
         }
     }
 }

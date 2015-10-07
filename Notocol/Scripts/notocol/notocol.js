@@ -1,1 +1,1 @@
-﻿var app = angular.module('notcolApp', []);
+﻿var app = angular.module('notcolApp');

@@ -30,3 +30,5 @@
 /// <reference path="angular-ui/ui-bootstrap.js" />
 /// <reference path="boostrap3-typeahead.min.js" />
 /// <reference path="bootstrap-tagsinput.js" />
+/// <reference path="notocol/searchbarcontroller.js" />
+/// <reference path="ng-tags-input.js" />

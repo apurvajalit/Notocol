@@ -3,17 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chrome Extension", "Chrome Extension\Chrome Extension.csproj", "{9D141603-1A9D-4EEC-82D8-C473EA436839}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notocol", "Notocol\Notocol.csproj", "{52C188A2-684C-4825-AF76-FF8FDA7A0069}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{0AEA8AC7-73DA-4371-8EB1-916939E08209}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{EEE21EE8-D5C2-4F87-A2D8-162C3A2262C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test Chrome Extension", "Test Chrome Extension\Test Chrome Extension.csproj", "{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{2764862F-31DD-405A-A2E0-28520D8ECB04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notocol Note Taker", "Notocol Note Taker\Notocol Note Taker.csproj", "{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +21,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9D141603-1A9D-4EEC-82D8-C473EA436839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D141603-1A9D-4EEC-82D8-C473EA436839}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D141603-1A9D-4EEC-82D8-C473EA436839}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9D141603-1A9D-4EEC-82D8-C473EA436839}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D141603-1A9D-4EEC-82D8-C473EA436839}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D141603-1A9D-4EEC-82D8-C473EA436839}.Release|x64.ActiveCfg = Release|Any CPU
 		{52C188A2-684C-4825-AF76-FF8FDA7A0069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{52C188A2-684C-4825-AF76-FF8FDA7A0069}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52C188A2-684C-4825-AF76-FF8FDA7A0069}.Debug|x64.ActiveCfg = Debug|x64
@@ -53,17 +45,18 @@ Global
 		{EEE21EE8-D5C2-4F87-A2D8-162C3A2262C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EEE21EE8-D5C2-4F87-A2D8-162C3A2262C3}.Release|x64.ActiveCfg = Release|x64
 		{EEE21EE8-D5C2-4F87-A2D8-162C3A2262C3}.Release|x64.Build.0 = Release|x64
-		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|x64.ActiveCfg = Release|Any CPU
 		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2764862F-31DD-405A-A2E0-28520D8ECB04}.Release|x64.ActiveCfg = Release|Any CPU
+		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A5774EA-E42B-4F85-89CC-3EEF3EC5C99B}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

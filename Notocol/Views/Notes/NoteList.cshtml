@@ -14,8 +14,7 @@
         if (Model.Count > 0) {
             string pattern = @"!\[Image Description\]\((?<link>.*)\)";
             string replacement = "<img src=\"${link}\">";
-            //string input = "Detailed Flipflop diagram ![Image Description](http://cpuville.com/images/register_2.jpg) to use";
-             
+                         
             foreach (var note in Model)
             {
                 string noteText = "";
@@ -28,7 +27,28 @@
                 <div class="single-note-box">
                     <p class="text-primary"><em>@annotatedText</em></p>
                     <p class="text-info"><small>@noteText</small></p>
+                    <div id="pageTags">
+                        <ul class="list-inline">
+                            @{if (note.tags != null)
+                            {
+                                int i = 0;
+                                for (; i < note.tags.Length; i++)
+                                {
+                                    var tagName = "\"" + note.tags[i] + "\"";
+                                    <li><a href="#" onclick="AddTagToTagInput(@tagName)"><span class="label label-default"> @note.tags[i]</span></a> </li>
+
+                                }
+                            }
+                            }
+
+                        </ul>
+                    </div>
+                    @if (note.username != Session["username"])
+                    {
+                    <p class="text-primary" style="float:right;"><i> -@note.username on @note.updated</i></p>
+                    }
                 </div>
+                
             }
         }
         else

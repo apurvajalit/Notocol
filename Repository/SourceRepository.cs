@@ -268,7 +268,7 @@ namespace Repository
             return sourceUser;
         }
 
-        public SourceUser UpdateSourceUser(SourceUser sourceUser)
+        public SourceUser UpdateSourceUser(SourceUser sourceUser, string username = null)
         {
             if (sourceUser.FolderID == 0) sourceUser.FolderID = null;
             using (GetDataContext())
@@ -292,10 +292,22 @@ namespace Repository
             es.UpdateSourceUserSummary(sourceUser);
             if (sourceUser.thumbnailImageUrl != null || sourceUser.thumbnailText != null)
                 es.UpdateSourceTNData((long)sourceUser.SourceID, sourceUser.thumbnailText, sourceUser.thumbnailImageUrl);
+
+            if (username != null)
+            {
+                if (sourceUser.Privacy == null || !((bool)sourceUser.Privacy))
+                {
+                    es.AddPublicUser((long)sourceUser.SourceID, username);
+                }
+                else
+                {
+                    es.DeletePublicUser((long)sourceUser.SourceID, username);
+                }
+            }
             return sourceUser;
         }
 
-        public SourceUser AddSourceUser(SourceUser sourceUser)
+        public SourceUser AddSourceUser(SourceUser sourceUser, string username)
         {
             if (sourceUser.FolderID == 0) sourceUser.FolderID = null;
             using (GetDataContext())
@@ -321,6 +333,10 @@ namespace Repository
                 es.AddUserToSource(sourceUser);
                 if (sourceUser.thumbnailImageUrl != null || sourceUser.thumbnailText != null){
                     es.UpdateSourceTNData((long)sourceUser.SourceID, sourceUser.thumbnailText, sourceUser.thumbnailImageUrl);
+                }
+                if (sourceUser.Privacy == null || !((bool)sourceUser.Privacy))
+                {
+                    es.AddPublicUser((long)sourceUser.SourceID, username);
                 }
             }
             return sourceUser;
@@ -359,7 +375,7 @@ namespace Repository
             return source;
         }
 
-        public bool DeleteSourceUser(SourceUser sourceuser)
+        public bool DeleteSourceUser(SourceUser sourceuser, string username)
         {
             bool deleteSource = false;
 
@@ -384,8 +400,15 @@ namespace Repository
             }
             ElasticSearchTest es = new ElasticSearchTest();
             es.DeleteUserForSource(sourceuser);
+
             if (deleteSource) es.DeleteSource((long)sourceuser.SourceID);
-            
+            else
+            {
+                if (sourceuser.Privacy != null && ((bool)sourceuser.Privacy))
+                {
+                    es.DeletePublicUser((long)sourceuser.SourceID, username);
+                }
+            }
             
             return true;
         }

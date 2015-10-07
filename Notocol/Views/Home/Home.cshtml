@@ -16,10 +16,12 @@
         <div class="col-sm-12">
             <div class="col-sm-12 text-center">
                 <form class="form-inline" role="form" id="searchParamters" style="min-width:100%">
-                    <label class="sr-only" id="keywordlabel"></label>
                     <input type="text" class="form-control" id="keyword" placeholder="Enter keywords for search" value=@ViewBag.QueryFilter>
-                    <label id="tag-tree">under</label>
-                    <input type="text" id="filterTag"  data-provide="typeahead" placeholder="Enter tags to filter">
+                    <label id="tag-tree" @*style="position: relative; top: -30px; left: -73px;"*@>under</label>
+                    @*<tags-input ng-model="tags" style="position: relative; top: -59px; width: 300px;left:514px"></tags-input>*@
+                        
+                     
+                    <input type="text" id="filterTag" data-provide="typeahead" placeholder="Enter tags to filter">
                     @*<button class="btn btn-default" id="searchForPages">Search</button>*@
                 </form>
                 <br />
@@ -93,19 +95,19 @@
             });
         }
 
-        function UpdateTagNameSource(){
-            //$.get(urlToUse, function(tagData){
-            //    alert("Tag data fetched!");
-            var autocomplete = $('#filterTag').typeahead();
-            autocomplete.data('typeahead').source = function (query, process) {
-                return $.get(getAllTagNamesUrl+'?q=' + query);
-            }
-        }
+        //function UpdateTagNameSource(){
+        //    //$.get(urlToUse, function(tagData){
+        //    //    alert("Tag data fetched!");
+        //    var autocomplete = $('#filterTag').typeahead();
+        //    autocomplete.data('typeahead').source = function (query, process) {
+        //        return $.get(getAllTagNamesUrl+'?q=' + query);
+        //    }
+        //}
 
         function AddTagToTagInput(value){
             //var element = {};
             //element.Name = value;
-            $('#filterTag').tagsinput('add', value);
+            $('#filterTag').tagsinput('add', {'text': value});
         };
 
         $(function(){
@@ -113,22 +115,23 @@
             var prefilledTags = '@(ViewBag.TagFilter)';
             
             $('#filterTag').tagsinput({
-                //itemValue: 'Name',
-                //itemText: 'Name',
+                itemValue: 'text',
+                itemText: 'text',
                 typeahead: {
-                    //source: function (query, process) {
-                    //    return $.get(urlToUse+'?q=' + query);
-                    //},
-                    //displayKey: 'Name',
+
+                    source: function (query, process) {
+                        return $.get("/api/Tag/Tags?tagQuery="+ query);
+                    },
+                    minLength: 2,
+                    displayKey: 'text',
                     //source: tagData,
                     afterSelect: function (val) {
-                    this.$element.val("");
-                },
-                displayText:function(a) {
-                    return a
-                },
-                autoSelect: true,
-                
+                        this.$element.val("");
+                    },
+                    displayText:function(a) {
+                        return a
+                    },
+                    autoSelect: true,
                 }
             });
 
@@ -143,7 +146,7 @@
             var $this = $(this);
             tabSelected = $this.attr('value');
             GetPages();
-            UpdateTagNameSource();
+            //UpdateTagNameSource();
             $this.tab('show');
 
             return false;

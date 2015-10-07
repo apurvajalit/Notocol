@@ -16,54 +16,14 @@ namespace Notocol.Controllers
 
     public class NotesController : Controller
     {
-        // GET: Annotation
-        //public IList<NoteData> Notes(string url, long userID)
-        //{
-        //    AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-        //    List<Annotation> annotations = objAnnotationRepository.getAnnotations(url, userID);
-        //    IList<NoteData> notes = new List<NoteData>();
-
-        //    return notes;
-        //}
-        private NoteData GetNoteData(Annotation annotation)
+               
+        public ActionResult NoteList(long sourceID, bool ownAtTop = false)
         {
-            NoteData note = new NoteData();
-            note.NoteText = annotation.Text;
-            AnnotationHelper annotationHelper = new AnnotationHelper();
-            ExtensionAnnotationData extAnnData = annotationHelper.AnnotationToExtensionAnnotation(annotation);
-            if (extAnnData.target != null)
-            {
-                foreach (Selector selector in extAnnData.target[0].selector)
-                {
-                    if (selector.type == "TextQuoteSelector")
-                    {
-                        note.QuotedText = selector.exact;
-                        break;
-                    }
-                }
-            }
-            note.pageURL = annotation.Uri;
-            dynamic data = JObject.Parse(annotation.Document);
-            note.pageTitle = data.title;
+            AnnotationHelper notesHelper = new AnnotationHelper();
             
-            return note;
-
-        }
-        public ActionResult NoteList(long sourceID)
-        {
             AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-            IList<NoteData> notes = new List<NoteData>();
-            IList<Annotation> annotations = objAnnotationRepository.GetAnnotationsForPage(sourceID);
-            if (annotations.Count > 0)
-            {
-                foreach (Annotation annotation in annotations)
-                {
-                    NoteData note = GetNoteData(annotation);
-                    
-                    if ((note.NoteText != null && note.NoteText.Length > 0) || (note.QuotedText != null && note.QuotedText.Length > 0)) notes.Add(note);
-                }
-            }
-            return PartialView("NoteList", notes);
+            
+            return PartialView("NoteList", notesHelper.GetNoteList(sourceID, ownAtTop, Utility.GetCurrentUserID()));
 
         }
 
@@ -72,7 +32,7 @@ namespace Notocol.Controllers
             Annotation annotation = new AnnotationRepository().GetAnnotation(ID);
             if (annotation == null)
                 return View(annotation);   //passing null
-            return View(GetNoteData(annotation));
+            return View(new AnnotationHelper().GetNoteData(annotation));
         }
     }
 }

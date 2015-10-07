@@ -237,6 +237,7 @@
     <Compile Include="Controllers\SessionStateRouteHandler.cs" />
     <Compile Include="Controllers\SourceController.cs" />
     <Compile Include="Controllers\TagController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -247,6 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-tagsinput.css" />
+    <Content Include="Content\ng-tags-input.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
@@ -1106,7 +1108,10 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Content\ng-tags-input.bootstrap.css" />
+    <Content Include="Scripts\ng-tags-input.js" />
     <Content Include="Scripts\notocol\notocol.js" />
+    <Content Include="Scripts\notocol\SearchBarController.js" />
     <Content Include="Scripts\notocol\UserController.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
@@ -1140,6 +1145,7 @@
     <Content Include="Views\User\ExternalUsername.cshtml" />
     <Content Include="Views\ElasticSearchTest\Index.cshtml" />
     <Content Include="Views\Source\ESSource.cshtml" />
+    <Content Include="Views\Test\LongPageLoad.cshtml" />
     <None Include="Views\User\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Notes\Note.cshtml" />
     <Content Include="Views\Home\Welcome.cshtml" />

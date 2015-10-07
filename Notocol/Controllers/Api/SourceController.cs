@@ -10,9 +10,9 @@ using Model.Extended.Extension;
 using Model.Extended;
 using Business;
 using Notocol.Models;
-using Model.Extended.Extension;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using System.Web;
 
 namespace Notocol.Controllers.Api
 {
@@ -49,6 +49,9 @@ namespace Notocol.Controllers.Api
         [HttpPost]
         public JObject SaveSource([FromBody]SaveSourceData saveSourceData)
         {
+            saveSourceData.sourceData.uri = HttpUtility.UrlDecode(saveSourceData.sourceData.uri);
+            saveSourceData.sourceData.url = HttpUtility.UrlDecode(saveSourceData.sourceData.url);
+
             if (!CheckUser())
                 return JObject.FromObject(new
                 {
@@ -88,7 +91,7 @@ namespace Notocol.Controllers.Api
                 }
 
             }
-            saveSourceData.sourceData = sourceHelper.SaveSource(saveSourceData.sourceData, Utility.GetCurrentUserID());
+            saveSourceData.sourceData = sourceHelper.SaveSource(saveSourceData.sourceData, Utility.GetCurrentUserID(), Utility.GetCurrentUserName());
             if (saveSourceData.sourceData != null && saveSourceData.sourceData.sourceUserID != 0)
             {
                 return JObject.FromObject(new{
@@ -112,12 +115,14 @@ namespace Notocol.Controllers.Api
                 return false;
 
             }
-            return sourceHelper.DeleteSourceUser(sourceUserID, Utility.GetCurrentUserID());
+            return sourceHelper.DeleteSourceUser(sourceUserID, Utility.GetCurrentUserID(), Utility.GetCurrentUserName());
         }
 
         [HttpGet]
         public JObject GetSourceData(string URI, string Link)
         {
+            URI = HttpUtility.UrlDecode(URI);
+            Link = HttpUtility.UrlDecode(Link);
             
             if (!CheckUser())
             {

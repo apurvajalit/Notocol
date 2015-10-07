@@ -31,8 +31,8 @@ namespace Repository
                     if (sourceID != 0)
                     {
 
-                        lstAnnotations = (from annotations in context.Annotations
-                                          where annotations.SourceUserID == sourceID
+                        lstAnnotations = (from annotations in context.Annotations.Include("AnnotationTags.Tag")
+                                          where annotations.SourceID == sourceID && annotations.SourceUserID != 0
                                           select annotations).ToList();
                     }
 
@@ -60,7 +60,7 @@ namespace Repository
                 using (GetDataContext())
                 {
                     annotation = (from annotations in context.Annotations
-                                  where annotations.ID == annotationID
+                                  where annotations.ID == annotationID && annotations.SourceUserID != 0
                                   select annotations).ToList();
                 }
             }
@@ -332,6 +332,31 @@ namespace Repository
                                   where annotations.UserID == userID && 
                                         annotations.SourceUserID != 0 && 
                                         annotations.Uri == uri
+                                  select annotations).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return annotation;
+        }
+
+        public IList<Annotation> GetAnnotationsForPageWithOwnAtTop(long sourceID, long userID)
+        {
+            List<Annotation> annotation = new List<Annotation>();
+            try
+            {
+                using (GetDataContext())
+                {
+                    annotation = (from annotations in context.Annotations
+                                                             .Include("AnnotationTags.Tag")
+                                  where annotations.SourceID == sourceID && annotations.SourceUserID != 0
+                                  orderby annotations.UserID == userID ? 1 : 0 descending
                                   select annotations).ToList();
                 }
             }

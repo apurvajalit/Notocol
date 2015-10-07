@@ -4,19 +4,20 @@
 @{
     int count = 0;
     var onclickAction = "";
+    string currentUserName = (string)Session["userName"];
     foreach (var source in Model)
     {
         string title = source.title != null ? source.title.Length > 25 ? source.title.Substring(0, 25) + "..." : source.title : null;
         string tnText = (source.tnText != null) ? source.tnText.Length > 150 ? source.tnText.Substring(0, 150) + "..." : source.tnText : null;
-
+        
         if (count % 4 == 0)
         { 
             @:<div class="row table-row">
         }
         count++;
 
-        <div class="col-sm-3 table-col">
-            <div class="pageOptions" style="position: absolute;bottom:4px;right: 80px;" >
+                  <div class="col-sm-3 table-col">
+                      <div class="pageOptions" style="position: absolute;bottom:4px;right: 80px;" >
                 @{if (source.sourceUserID != 0)
                   { 
                     onclickAction = "DeleteSource(" + source.sourceUserID + ")";
@@ -25,7 +26,7 @@
                 }
             </div>
 
-                <div style="padding-bottom:15px">
+                      <div style="padding-bottom:15px">
                     
                     
                     @if (!(source.link.StartsWith("localfile")))
@@ -37,6 +38,39 @@
                     else
                     {
                         <p class="page-title text-info">@title</p>
+                    }
+                    @if (source.publicUserNames != null)
+                    {   
+                        @:<div style="font-style: italic;">
+
+                            var validNames = false;
+                            int charCount = 0;
+                            for(int i=0; i< source.publicUserNames.Length; i++)
+                            {
+                                if (source.publicUserNames[i] != currentUserName)
+                                {
+                                  if (!validNames)
+                                  {
+                                      @:-
+                                      charCount += 1;
+                                      validNames = true;
+
+                                  }
+                                  else
+                                  {
+                                      @:,
+                                  }
+                                  
+                                 <span style="margin-left: -1px; margin-right:-2px">@source.publicUserNames[i]</span>
+                                    charCount += source.publicUserNames[i].Length;
+                                  if (charCount > 15)
+                                  {
+                                      <span style="margin-left: 3px;">and @(source.publicUserNames.Length - i) others</span> 
+                                      break;
+                                  }
+                                }
+                            }
+                        @:</div>
                     }
                     @if (source.tnImage != null) { 
                         <img src="@source.tnImage" class="img-thumbnail" width="175" height="175" />
@@ -63,12 +97,12 @@
                     </div>
                 </div>
 
-                <div class="viewNotesButton">
+                      <div class="viewNotesButton">
                     <button class="btn btn-default btn-xs " href="@Url.Action("NoteList", "Notes", new { sourceID = @source.Id })" data-toggle="modal" data-target='#notesModal'>View Notes</button>
                     
                 </div>
             
-        </div>
+                 </div>
 
         if (((count) % 4 == 0) || count == Model.Count)
         {
