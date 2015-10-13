@@ -115,6 +115,29 @@ namespace Notocol.Controllers
             return View();
         }
 
+        public ActionResult HomeAngular(string queryFilter = "", string tagFilter = "")
+        {
+            if (!checkSession())
+            {
+                RedirectToAction("Index");
+            }
+
+
+            long userID = Convert.ToInt64(Session["userID"]);
+            if (TempData["RefreshExtension"] != null)
+            {
+                ViewBag.RefreshExtension = 1;
+
+            }
+            else
+                ViewBag.RefreshExtension = 0;
+
+
+            ViewBag.QueryFilter = queryFilter;
+            ViewBag.TagFilter = tagFilter;
+            return View();
+        }
+
         public ActionResult DownloadChromeExtension()
         {
             string filename = "chrome.crx";

@@ -60,6 +60,12 @@ namespace Business
             return userRepository.CheckIfUserNameExists(username);
         }
 
-        
+
+
+        public User GetUser(string username)
+        {
+            return userRepository.GetUser(username);
+
+        }
     }
 }

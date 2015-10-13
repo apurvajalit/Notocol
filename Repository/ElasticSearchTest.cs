@@ -11,6 +11,7 @@ using Model.Extended;
 using System.IO;
 
 
+
 namespace Repository.Search
 {
     [ElasticType(Name = "userfolder")]
@@ -360,7 +361,7 @@ namespace Repository.Search
            
         }
 
-        public List<ESSource> GetSource(SearchFilter filter, long userID, bool own, int offset, int size)
+        public List<ESSource> GetSource(SourceListFilter filter, long userID, bool own, int offset, int size)
         {
             bool applyTagFilter = (filter.tags != null) ? ((filter.tags.Length > 0) ? true : false) : false;
             QueryContainer tagsQuery = new TermsQuery
@@ -434,7 +435,7 @@ namespace Repository.Search
         public const int SOURCE_TYPE_OTHERS = 2;
         public const int SOURCE_TYPE_ALL = 3;
 
-        public List<ESSource> SearchUsingQuery(string searchString, SearchFilter filter, long userID, int sourceType, int offset, int size)
+        public List<ESSource> SearchUsingQuery(SourceListFilter filter, long userID, int sourceType, int offset, int size)
         {
             bool applyTagFilter = (filter.tags != null) ? ((filter.tags.Length > 0) ? true : false) : false;
             List<ESSource> source = new List<ESSource>();
@@ -457,19 +458,17 @@ namespace Repository.Search
             childMatchClauses.Add(userQuery);
             childMatchClauses.Add(new MultiMatchQuery
             {
-                Query = searchString,
-                
+                Query = filter.query,
+                //Fuzziness = 6, //TODO Need to set AUTO Here
                 Fields = new PropertyPathMarker[] { "note", "usernotes.note" }
-                
             });
             
-
             List<QueryContainer> sourceMatchClauses = new List<QueryContainer>();
-            sourceMatchClauses.Add(new MultiMatchQuery
+            sourceMatchClauses.Add(new MultiMatchQuery()
             {
-                Query = searchString,
+                Query = filter.query,
+                //Fuzziness = 6, //TODO Need to set AUTO Here
                 Fields = new PropertyPathMarker[] { "title", "hTexts.htext", "tnText" }
-
             });
 
             if (applyTagFilter){
@@ -503,8 +502,7 @@ namespace Repository.Search
                                     f.Query(fq => fq.Bool(b => b.Should(
                                         s => s.HasChild<ESSourceUser>(c => c
                                          .Score(ChildScoreType.Sum)
-                                         .Query(cq => { return childMatchQuery; })
-
+                                         .Query(cq => {return childMatchQuery;})
                                          .InnerHits(ih => ih
                                           .Highlight(h => h
                                             .PreTags("<b style='background-color:yellow'>")
@@ -588,6 +586,8 @@ namespace Repository.Search
 
         internal IList<string> GetTagNames(string tagQuery)
         {
+            if (tagQuery == null) return null;
+
             var completionSuggestDescriptor = new CompletionSuggestDescriptor<ESSource>()
                 .OnField("tag_suggest")
                 .Text("tagQuery");

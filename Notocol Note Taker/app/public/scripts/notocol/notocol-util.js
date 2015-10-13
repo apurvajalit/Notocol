@@ -24,8 +24,8 @@
         var WEB_HTML_URL = 2;
         var LOCAL_PDF_URL = 3;
         var WEB_PDF_URL = 4;
-        var SERVER_BASE_URL = "https://notocol.tenet.res.in:8443/";
-        //var SERVER_BASE_URL = "https://localhost:44301/";
+        //var SERVER_BASE_URL = "https://notocol.tenet.res.in:8443/";
+        var SERVER_BASE_URL = "https://localhost:44301/";
         var userFolderTree = {
             ID: 0,
             Parent: null,
@@ -193,10 +193,10 @@
                  
                 if (typeof currenttabsData == "undefined") {
                     tabsData[tab.id] = {
-                        title: tab.title,
+                        //title: tab.title,
                         url: link,
                         uri: link,
-                        faviconUrl: tab.faviconUrl,
+                        //faviconUrl: tab.faviconUrl,
                         sourceUserID: 0,
                         sourceID: 0
                     };
@@ -210,8 +210,8 @@
                         
                     }
 
-                    currenttabsData.favIconUrl = tab.faviconUrl;
-                    currenttabsData.title = tab.title;
+                    //currenttabsData.favIconUrl = tab.faviconUrl;
+                    //currenttabsData.title = tab.title;
                     
                 }
                 
@@ -256,7 +256,7 @@
         function onTabUpdated(tabId, changeInfo, tab) {
             var curr_url = "";
             if (typeof tabsData[tabId] != "undefined") curr_url = tabsData[tabId].uri;
-
+            
             console.log("Tab updated for tab " + tab.id + " with status " + changeInfo.status + " and url as " + tab.url);
             vm.settabsData(tab);
             if (changeInfo.status !== TAB_STATUS_COMPLETE) {
@@ -285,6 +285,7 @@
             chromeTabs.onCreated.addListener(onTabCreated);
             chromeTabs.onUpdated.addListener(onTabUpdated);
             chromeTabs.onRemoved.addListener(onTabRemoved);
+            
 
             CheckUserLoginStatus();
             chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -296,8 +297,16 @@
                         console.log("Did not find tab with ID " + sender.tab.id);
                     }
                 
+                }else if(message.type == "OpenTab" && message.link != null){
+                    chromeTabs.create({ url:message.link});
                 }
             });
+            chrome.runtime.onMessageExternal.addListener(function (message, sender, sendResponse) {
+                if (message.type == "OpenPDF" && message.link != null) {
+                    chromeTabs.create({ url: "content/web/viewer.html?file="+message.link });
+                }
+            });
+
         }
 
         function CheckUserLoginStatus() {

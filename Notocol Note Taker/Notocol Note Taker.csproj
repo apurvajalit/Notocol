@@ -66,6 +66,8 @@
     <Content Include="app\public\scripts\notocol\cycle.js" />
     <Content Include="app\public\scripts\notocol\ng-tags-input.js" />
     <Content Include="app\public\popup.html" />
+    <Content Include="app\public\scripts\vendor\url.min.js" />
+    <Content Include="app\public\scripts\vendor\wgxpath.install.min.js" />
     <Content Include="app\public\styles\notocol\angular-toastr.min.css" />
     <Content Include="app\public\styles\notocol\angular-tooltips.css" />
     <Content Include="app\public\styles\notocol\bootstrap.min.css" />
@@ -199,18 +201,9 @@
     <Content Include="app\public\scripts\vendor\angular.min.js" />
     <Content Include="app\public\scripts\vendor\angulartics-ga.min.js" />
     <Content Include="app\public\scripts\vendor\angulartics.min.js" />
-    <Content Include="app\public\scripts\vendor\bootstrap.min.js" />
     <Content Include="app\public\scripts\vendor\jquery.min.js" />
-    <Content Include="app\public\scripts\vendor\jstz.min.js" />
     <Content Include="app\public\scripts\vendor\katex.min.js" />
-    <Content Include="app\public\scripts\vendor\moment-timezone-data.min.js" />
-    <Content Include="app\public\scripts\vendor\moment-timezone.min.js" />
-    <Content Include="app\public\scripts\vendor\moment.min.js" />
     <Content Include="app\public\scripts\vendor\ng-tags-input.min.js" />
-    <Content Include="app\public\scripts\vendor\polyfills\autofill-event.min.js" />
-    <Content Include="app\public\scripts\vendor\polyfills\bind.min.js" />
-    <Content Include="app\public\scripts\vendor\polyfills\url.min.js" />
-    <Content Include="app\public\scripts\vendor\polyfills\wgxpath.install.min.js" />
     <Content Include="app\public\styles\app.min.css" />
     <Content Include="app\public\styles\hypothesis.min.css" />
     <Content Include="app\public\scripts\notocol\popup.js" />

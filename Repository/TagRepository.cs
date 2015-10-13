@@ -175,7 +175,7 @@ namespace Repository
         public void UpdateSourceUserTags(SourceUser sourceuser, string[] tagNames)
         {
             IList<long> addedTagIDs = null;
-            IList<long> tagIDs = tagNames != null ? GetTagIDs(tagNames.ToArray()): new List<long>();
+            IList<long> tagIDs = tagNames != null ? GetTagIDs(ref tagNames): new List<long>();
             using (GetDataContext())
             {
 
@@ -349,7 +349,7 @@ namespace Repository
             return true;
 
         }
-        public List<long> GetTagIDs(string[] tagNames)
+        public List<long> GetTagIDs(ref string[] tagNames)
         {
             
             List<long> tagIDs = new List<long>();
@@ -357,7 +357,7 @@ namespace Repository
             SqlConnection conn = new SqlConnection(GetDataContext().Database.Connection.ConnectionString);
             conn.Open();
 
-            foreach (string tag in tagNames){
+            for(int i=0; i<tagNames.Length; i++){
             
                 //Following stored procedur get tagIDs for each of the tagnames in tags list
                 //If the tag exists, it simply returns
@@ -368,10 +368,19 @@ namespace Repository
                 {
                    Direction = ParameterDirection.Output
                 };
+
+                SqlParameter outputNameParam = new SqlParameter("@TagNameOut", SqlDbType.VarChar, 500)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                cmd.Parameters.AddWithValue("@TagName", tagNames[i].Trim());
                 cmd.Parameters.Add(outputIdParam);
-                cmd.Parameters.AddWithValue("@TagName", tag.Trim());
+                cmd.Parameters.Add(outputNameParam);
+                
                 cmd.ExecuteNonQuery();
                 tagIDs.Add(outputIdParam.Value as int? ?? default(int));
+                tagNames[i] = outputNameParam.Value != null?  outputNameParam.Value.ToString(): default(string);
             }        
             conn.Close();
 
@@ -381,7 +390,7 @@ namespace Repository
         public void UpdateAnnotationTags(Annotation annotation, string[] tagNames, long sourceID = 0)
         {
 
-            List<long> tagIDs = tagNames != null ? GetTagIDs(tagNames) : new List<long>();
+            List<long> tagIDs = tagNames != null ? GetTagIDs(ref tagNames) : new List<long>();
             List<long> newTagIDs = null;
             using(GetDataContext()){
 

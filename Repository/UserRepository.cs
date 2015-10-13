@@ -245,5 +245,42 @@ namespace Repository
             return true;
             
         }
+
+        public User GetUser(long id)
+        {
+            User user = null;
+            try
+            {
+                using (GetDataContext())
+                {
+                    user = (from users in context.Users
+                            where users.ID == id
+                            select users).FirstOrDefault();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return user;
+        }
+        public User GetUser(string username)
+        {
+            User user = null;
+            try
+            {
+                using (GetDataContext())
+                {
+                    user = (from users in context.Users
+                            where users.Username == username
+                            select users).FirstOrDefault();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return user;
+        }
     }
 }

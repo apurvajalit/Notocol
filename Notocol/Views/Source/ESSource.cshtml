@@ -29,15 +29,15 @@
                       <div style="padding-bottom:15px">
                     
                     
-                    @if (!(source.link.StartsWith("localfile")))
+                    @if (!(source.link.StartsWith("file:///")))
                     {
-                        
-                        <a href="@source.link" target="_blank" class="page-title text-info">@title</a>
+
+                        <a href="@source.link" target="_blank" class="page-title text-info" class="page-title text-info">@title</a>
 
                     }
                     else
                     {
-                        <p class="page-title text-info">@title</p>
+                        <a href="#" onclick="CheckOpenTab(@source.sourceUserID, '@source.link'); return false;" class="page-title text-info">@title</a>
                     }
                     @if (source.publicUserNames != null)
                     {   
@@ -135,7 +135,18 @@
         $(this).removeData('bs.modal').find(".modal-content").empty();;
     });
 
-
+    function CheckOpenTab(sourceUserID, link){
+        if(sourceUserID > 0){
+            var message = {
+                "type" : "OpenTab",
+                "link" : link
+            };
+            
+            chrome.runtime.sendMessage("bcdabflpgoedlefkdiaedmeokndnfafa", message);
+        }else{
+            alert("Cannot open this page since it is not available on the web");
+        }
+    }
 
     function DeleteSource(sourceUserID) {
         var url = '@Url.Action("DeleteSourceUser", "Source")?sourceUserID=' + sourceUserID;

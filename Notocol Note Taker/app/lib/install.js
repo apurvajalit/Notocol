@@ -69,6 +69,8 @@
           chrome.tabs.query({ active: true }, function (tabs) {
               if (!(tabs.length === 0)) {
                   var tabInfo = notocolUtil.gettabsData(tabs[0]);
+                  tabInfo.favIconUrl = tabs[0].faviconUrl;
+                  tabInfo.title = tabs[0].title;
                   var userFolderTreeJson = notocolUtil.getUserFolderTreeJson();
                   if (typeof tabInfo != "undefined") {
                       sendResponse({ "tabInfo": tabInfo, "userFolderTreeJson" : userFolderTreeJson });

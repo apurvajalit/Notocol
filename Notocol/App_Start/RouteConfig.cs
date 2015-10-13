@@ -53,6 +53,11 @@ namespace Notocol
             ).RouteHandler = new SessionStateRouteHandler();
             ////Web API Session Enabled Route Configurations end here
 
+            routes.MapRoute(
+                name: "Templates",
+                url: "Templates/{controller}/{template}",
+                defaults: new { action = "Template" }
+            );
 
             routes.MapRoute(
                 name: "Default",

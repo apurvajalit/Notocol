@@ -295,6 +295,12 @@ namespace Notocol.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        [HttpGet]
+        public ActionResult Profile(string username)
+        {
+            User user = new UserHelper().GetUser(username);
+            return View(user);
+        }
         //[HttpPost]
         //public ActionResult DeleteUser(long userID)
         //{

@@ -48,7 +48,7 @@ namespace Business
             LogManager.GetLogger(GetType().Name).Debug("1 " + pageImageInfo.Length);
             
             foreach(var temp in pageImageInfo){
-                LogManager.GetLogger(GetType().Name).Debug("Values: " + JsonConvert.ToString(temp));
+                LogManager.GetLogger(GetType().Name).Debug("Values: " + JsonConvert.ToString(temp.url));
             }
 
             pageImageInfo = pageImageInfo.Where(pageImage =>
@@ -183,15 +183,6 @@ namespace Business
             SourceUser sourceUser = null;
             TagHelper tagHelper = new TagHelper();
             FolderHelper folderHelper = new FolderHelper();
-                 
-            
-            //Handle folder info here
-            //if (sourceData.folderData != null && sourceData.folderData.addedFolders != null)
-            //{
-            //    sourceData.folderData = folderHelper.ProcessExtensionFolderData(sourceData.folderData, userID);
-                
-            //}
-            
 
             if (sourceData.sourceUserID > 0)
             {

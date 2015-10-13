@@ -19,8 +19,8 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                 //$scope.tags = [];
                 $scope.hideList = true;
                 $scope.pageDetails = {};
-                var baseURL = "https://notocol.tenet.res.in:8443/";
-                //var baseURL = "https://localhost:44301/";
+                //var baseURL = "https://notocol.tenet.res.in:8443/";
+                var baseURL = "https://localhost:44301/";
                 var addedFolders = [];
 
                 var RootFolder = {

@@ -39,13 +39,13 @@ namespace Model
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserTagUsage> UserTagUsages { get; set; }
     
-        public virtual ObjectResult<Nullable<int>> GetTagID(string tagName, ObjectParameter tagID)
+        public virtual ObjectResult<Nullable<int>> GetTagID(string tagName, ObjectParameter tagID, ObjectParameter tagNameOut)
         {
             var tagNameParameter = tagName != null ?
                 new ObjectParameter("TagName", tagName) :
                 new ObjectParameter("TagName", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetTagID", tagNameParameter, tagID);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetTagID", tagNameParameter, tagID, tagNameOut);
         }
     
         public virtual ObjectResult<GetTags_Result> GetTags(Nullable<long> userID, string strToSearch)
@@ -237,13 +237,17 @@ namespace Model
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteAnnotation", annotationIDParameter);
         }
     
-        public virtual ObjectResult<Nullable<bool>> DeleteSourceUser(Nullable<long> sourceUserID, ObjectParameter deleteSource)
+        public virtual ObjectResult<Nullable<bool>> DeleteSourceUser(Nullable<long> sourceUserID, Nullable<long> sourceID, ObjectParameter deleteSource)
         {
             var sourceUserIDParameter = sourceUserID.HasValue ?
                 new ObjectParameter("SourceUserID", sourceUserID) :
                 new ObjectParameter("SourceUserID", typeof(long));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("DeleteSourceUser", sourceUserIDParameter, deleteSource);
+            var sourceIDParameter = sourceID.HasValue ?
+                new ObjectParameter("SourceID", sourceID) :
+                new ObjectParameter("SourceID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("DeleteSourceUser", sourceUserIDParameter, sourceIDParameter, deleteSource);
         }
     }
 }

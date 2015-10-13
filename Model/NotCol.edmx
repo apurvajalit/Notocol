@@ -261,12 +261,14 @@
         </Function>
         <Function Name="DeleteSourceUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SourceUserID" Type="bigint" Mode="In" />
+          <Parameter Name="SourceID" Type="bigint" Mode="In" />
           <Parameter Name="DeleteSource" Type="bit" Mode="InOut" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="GetTagID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TagName" Type="varchar(max)" Mode="In" />
           <Parameter Name="TagID" Type="int" Mode="InOut" />
+          <Parameter Name="TagNameOut" Type="varchar(max)" Mode="InOut" />
         </Function>
         <Function Name="GetTags" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="userID" Type="bigint" Mode="In" />
@@ -383,6 +385,7 @@
           <FunctionImport Name="GetTagID" ReturnType="Collection(Int32)">
             <Parameter Name="TagName" Mode="In" Type="String" />
             <Parameter Name="TagID" Mode="InOut" Type="Int32" />
+            <Parameter Name="TagNameOut" Mode="InOut" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetTags" ReturnType="Collection(NotColModel.GetTags_Result)">
             <Parameter Name="userID" Mode="In" Type="Int64" />
@@ -494,6 +497,7 @@
           </FunctionImport>
           <FunctionImport Name="DeleteSourceUser" ReturnType="Collection(Boolean)">
             <Parameter Name="SourceUserID" Mode="In" Type="Int64" />
+            <Parameter Name="SourceID" Mode="In" Type="Int64" />
             <Parameter Name="DeleteSource" Mode="InOut" Type="Boolean" />
           </FunctionImport>
           </EntityContainer>
