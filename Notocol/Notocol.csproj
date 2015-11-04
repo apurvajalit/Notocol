@@ -73,6 +73,9 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\packages\iTextSharp.5.5.7\lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -215,10 +218,13 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\FileController.cs" />
     <Compile Include="Controllers\Api\FolderController.cs" />
     <Compile Include="Controllers\Api\ThumbnailDataController.cs" />
     <Compile Include="Controllers\Api\UserController.cs" />
     <Compile Include="Controllers\ElasticSearchTestController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Controllers\FolderController.cs" />
     <Compile Include="Controllers\NotesController.cs" />
     <Compile Include="Controllers\Api\AnnotationControllerBackup.cs" />
     <Compile Include="Controllers\Api\annotationsController.cs" />
@@ -248,15 +254,52 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-tagsinput.css" />
+    <Content Include="Content\Home\chrometheme\chromebg-over.gif" />
+    <Content Include="Content\Home\chrometheme\chromebg.gif" />
+    <Content Include="Content\Home\chrometheme\chromebg2-over.gif" />
+    <Content Include="Content\Home\chrometheme\chromebg2.gif" />
+    <Content Include="Content\Home\chrometheme\chromebg3-over.gif" />
+    <Content Include="Content\Home\chrometheme\chromebg3.gif" />
+    <Content Include="Content\Home\chrometheme\chromebg4-over.gif" />
+    <Content Include="Content\Home\chrometheme\chromebg4.gif" />
+    <Content Include="Content\Home\chrometheme\chromestyle.css" />
+    <Content Include="Content\Home\chrometheme\chromestyle2.css" />
+    <Content Include="Content\Home\chrometheme\chromestyle3.css" />
+    <Content Include="Content\Home\chrometheme\chromestyle4.css" />
+    <Content Include="Content\Home\example.css" />
+    <Content Include="Content\Home\multiple-datasets.css" />
+    <Content Include="Content\Home\simpletree.css" />
+    <Content Include="Content\Home\style.css" />
+    <Content Include="Content\Home\stylesheet.css" />
+    <Content Include="Content\images\bg-nav.png" />
+    <Content Include="Content\images\closed.gif" />
+    <Content Include="Content\images\down.gif" />
+    <Content Include="Content\images\icon-alert-h.png" />
+    <Content Include="Content\images\icon-alert.png" />
+    <Content Include="Content\images\icon-filter.png" />
+    <Content Include="Content\images\icon-folders.png" />
+    <Content Include="Content\images\icon-home-h.png" />
+    <Content Include="Content\images\icon-home.png" />
+    <Content Include="Content\images\icon-tags.png" />
+    <Content Include="Content\images\image_1.jpg" />
+    <Content Include="Content\images\image_10.jpg" />
+    <Content Include="Content\images\image_2.jpg" />
+    <Content Include="Content\images\image_3.jpg" />
+    <Content Include="Content\images\image_4.jpg" />
+    <Content Include="Content\images\image_5.jpg" />
+    <Content Include="Content\images\image_6.jpg" />
+    <Content Include="Content\images\image_7.jpg" />
+    <Content Include="Content\images\image_8.jpg" />
+    <Content Include="Content\images\image_9.jpg" />
+    <Content Include="Content\images\list.gif" />
+    <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\open.gif" />
+    <Content Include="Content\images\profile-img.png" />
     <Content Include="Content\ng-tags-input.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\img\add.png" />
-    <Content Include="Content\img\delete.png" />
-    <Content Include="Content\img\downloadIcon.png" />
-    <Content Include="Content\img\Hierarchy.png" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\notocol-home.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -293,7 +336,17 @@
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\Arimo-Bold-demo.html" />
+    <Content Include="fonts\Arimo-Bold-webfont.svg" />
+    <Content Include="fonts\Arimo-Italic-demo.html" />
+    <Content Include="fonts\Arimo-Italic-webfont.svg" />
+    <Content Include="fonts\Arimo-Regular-demo.html" />
+    <Content Include="fonts\Arimo-Regular-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\Roboto-Regular-demo.html" />
+    <Content Include="fonts\Roboto-Regular-webfont.svg" />
+    <Content Include="fonts\RobotoCondensed-Regular-demo.html" />
+    <Content Include="fonts\RobotoCondensed-Regular-webfont.svg" />
     <Content Include="Global.asax" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -303,9 +356,31 @@
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\boostrap3-typeahead.min.js" />
     <Content Include="Scripts\bootstrap-tagsinput.js" />
+    <Content Include="fonts\Arimo-Bold-webfont.eot" />
+    <Content Include="fonts\Arimo-Bold-webfont.ttf" />
+    <Content Include="fonts\Arimo-Bold-webfont.woff" />
+    <Content Include="fonts\Arimo-Italic-webfont.eot" />
+    <Content Include="fonts\Arimo-Italic-webfont.ttf" />
+    <Content Include="fonts\Arimo-Italic-webfont.woff" />
+    <Content Include="fonts\Arimo-Regular-webfont.eot" />
+    <Content Include="fonts\Arimo-Regular-webfont.ttf" />
+    <Content Include="fonts\Arimo-Regular-webfont.woff" />
+    <Content Include="fonts\Roboto-Regular-webfont.eot" />
+    <Content Include="fonts\Roboto-Regular-webfont.ttf" />
+    <Content Include="fonts\Roboto-Regular-webfont.woff" />
+    <Content Include="fonts\RobotoCondensed-Regular-webfont.eot" />
+    <Content Include="fonts\RobotoCondensed-Regular-webfont.ttf" />
+    <Content Include="Content\Home\chrometheme\Thumbs.db" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\Home\angular-typeahead.min.js" />
+    <Content Include="Scripts\Home\angular.min.js" />
+    <Content Include="Scripts\Home\app.js" />
+    <Content Include="Scripts\Home\chrome.js" />
+    <Content Include="Scripts\Home\jquery-1.11.3.min.js" />
+    <Content Include="Scripts\Home\simpletreemenu.js" />
+    <Content Include="Scripts\Home\typeahead.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -322,8 +397,10 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\Home\jquery.wookmark.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Content\ng-tags-input.bootstrap.css" />
+    <Content Include="Scripts\notocol\fileUploadController.js" />
     <Content Include="Scripts\notocol\HomeController.js" />
     <Content Include="Scripts\notocol\notocolApp.js" />
     <Content Include="Scripts\notocol\SearchBarController.js" />
@@ -365,6 +442,10 @@
     <Content Include="Views\Source\Partials\PageTile.cshtml" />
     <Content Include="Views\Home\HomeAngular.cshtml" />
     <Content Include="Views\Source\Partials\PageTileGrid.cshtml" />
+    <Content Include="Views\User\SelectGroup.cshtml" />
+    <Content Include="Views\File\FileUploader.cshtml" />
+    <Content Include="Views\Test\Test.cshtml" />
+    <Content Include="Views\Home\HomeNew.cshtml" />
     <None Include="Views\User\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Notes\Note.cshtml" />
     <Content Include="Views\Home\Welcome.cshtml" />
@@ -374,9 +455,11 @@
     <Content Include="Views\Source\test.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\FileUploads\" />
     <Folder Include="Areas\" />
+    <Folder Include="Content\Shared\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Scripts\Shared\" />
     <Folder Include="Views\AuthActionFilter\" />
     <Folder Include="Views\Authentication\" />
     <Folder Include="Views\Base\" />

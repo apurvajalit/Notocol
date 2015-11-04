@@ -1,13 +1,44 @@
 ﻿@using Repository.Search
 @model IList<ESSource>
+<script>
+    function DeleteSource(sourceUserID) {
+        var url = '@Url.Action("DeleteSourceUser", "Source")?sourceUserID=' + sourceUserID;
+        var r = confirm("Deleting a page will delete all the notes with it too. Press OK to continue");
+        if (r == true) {
 
+            $.ajax({
+                url: url,
+                method: "delete"
+            }).success(function (data) {
+                if (data == "True")
+                    GetPages();
+                else
+                    alert("Failed to delete!Contact the server for any help");
+            }).fail(function () {
+                alert("Failed to delete!Contact the server for any help");
+            })
+        }
+    };
+    function CheckOpenTab(sourceUserID, link) {
+        if (sourceUserID > 0) {
+            var message = {
+                "type": "OpenTab",
+                "link": link
+            };
+
+            chrome.runtime.sendMessage("bcdabflpgoedlefkdiaedmeokndnfafa", message);
+        } else {
+            alert("Cannot open this page since it is not available on the web");
+        }
+    }
+</script>
 @{
     int count = 0;
     var onclickAction = "";
     string currentUserName = (string)Session["userName"];
     foreach (var source in Model)
     {
-        string title = source.title != null ? source.title.Length > 25 ? source.title.Substring(0, 25) + "..." : source.title : null;
+        string title = source.title != null ? source.title.Length > 60 ? source.title.Substring(0, 60) + "..." : source.title : null;
         string tnText = (source.tnText != null) ? source.tnText.Length > 150 ? source.tnText.Substring(0, 150) + "..." : source.tnText : null;
         
         if (count % 4 == 0)
@@ -32,7 +63,7 @@
                     @if (!(source.link.StartsWith("file:///")))
                     {
 
-                        <a href="@source.link" target="_blank" class="page-title text-info" class="page-title text-info">@title</a>
+                        <a href="@source.link" target="_blank" class="page-title text-info" >@title</a>
 
                     }
                     else
@@ -61,7 +92,7 @@
                                       @:,
                                   }
                                   
-                                 <span style="margin-left: -1px; margin-right:-2px">@source.publicUserNames[i]</span>
+                                 <span style="margin-left: -1px; margin-right:-2px"><a href="#" onclick="AddUserFilter('@source.publicUserNames[i]')">@source.publicUserNames[i]</a></span>
                                     charCount += source.publicUserNames[i].Length;
                                   if (charCount > 15)
                                   {
@@ -77,7 +108,7 @@
                     }
                     @if (source.tnText != null) {
                         
-                        <p>@Html.Raw(tnText)</p>
+                        <p style="font-size:13px">@Html.Raw(tnText)</p>
                     }
                     <div id="pageTags">
                         <ul class="list-inline">
@@ -131,41 +162,25 @@
     </div>
 </div>
 <script>
-    $('body').on('hidden.bs.modal', '.modal', function () {
-        $(this).removeData('bs.modal').find(".modal-content").empty();;
+    $(function () {
+        $('body').on('hidden.bs.modal', '.modal', function () {
+            $(this).removeData('bs.modal').find(".modal-content").empty();;
+        });
+
+        
+
+        $(".page-title").on("click", function sendLinkClick() {
+            console.log("Sending link clicked event");
+            sendTrackEvent(
+                         "Link Clicked On Home",
+                         {
+                             "user": '@Session["userName"]',
+                             "ownLink": tabSelected == 0 ? 'Own' : 'Others'
+
+                         }
+                     );
+        });
     });
-
-    function CheckOpenTab(sourceUserID, link){
-        if(sourceUserID > 0){
-            var message = {
-                "type" : "OpenTab",
-                "link" : link
-            };
-            
-            chrome.runtime.sendMessage("bcdabflpgoedlefkdiaedmeokndnfafa", message);
-        }else{
-            alert("Cannot open this page since it is not available on the web");
-        }
-    }
-
-    function DeleteSource(sourceUserID) {
-        var url = '@Url.Action("DeleteSourceUser", "Source")?sourceUserID=' + sourceUserID;
-        var r = confirm("Deleting a page will delete all the notes with it too. Press OK to continue");
-        if (r == true) {
-            
-            $.ajax({
-                url: url,
-                method : "delete"
-            }).success(function (data) {
-                if(data == "True")
-                    GetPages();
-                else
-                    alert("Failed to delete!Contact the server for any help");
-            }).fail(function () {
-                alert("Failed to delete!Contact the server for any help");
-            })
-        } 
-    };
 
 </script>
 

@@ -1,0 +1,28 @@
+.treeview { padding:0px; margin:0px; font-family: 'Roboto', sans-serif; font-size:13px; }
+
+.treeview ul{ /*CSS for Simple Tree Menu*/
+margin: 0;
+padding: 0;
+}
+
+.treeview li{ /*Style for LI elements in general (excludes an LI that contains sub lists)*/
+background: #d8d8d8 url(../../Content/images/bg-nav.png) no-repeat left top;
+list-style-type: none;
+padding: 13px 0 10px 27px;
+margin-bottom: 1px;
+}
+
+.treeview li.submenu{ /* Style for LI that contains sub lists (other ULs). */
+background: #d8d8d8 url(../../Content/images/bg-nav.png) no-repeat left top;
+cursor: hand !important;
+cursor: pointer !important;  
+}
+
+
+.treeview li.submenu ul{ /*Style for ULs that are children of LIs (submenu) */
+display: none; /*Hide them by default. Don't delete. */
+}
+
+.treeview .submenu ul li{ /*Style for LIs of ULs that are children of LIs (submenu) */
+cursor: default;  
+}

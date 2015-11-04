@@ -172,9 +172,10 @@ namespace Repository
             return lstTags;
         }
 
-        public void UpdateSourceUserTags(SourceUser sourceuser, string[] tagNames)
+        public List<string> UpdateSourceUserTags(SourceUser sourceuser, string[] tagNames)
         {
             IList<long> addedTagIDs = null;
+            List<string> tagNamesToAdd = null;
             IList<long> tagIDs = tagNames != null ? GetTagIDs(ref tagNames): new List<long>();
             using (GetDataContext())
             {
@@ -219,7 +220,7 @@ namespace Repository
                 if (addedTagIDs.Count > 0)
                 {
                     ElasticSearchTest es = new ElasticSearchTest();
-                    List<string> tagNamesToAdd = new List<string>();
+                    tagNamesToAdd = new List<string>();
                     foreach (var id in addedTagIDs)
                     {
                          tagNamesToAdd.Add(tagNames[tagIDs.IndexOf(id)]);
@@ -227,9 +228,10 @@ namespace Repository
                     }
 
                     es.AddSourceUserTagsData(sourceID, sourceuser.ID, tagNamesToAdd.ToArray());
+                    
                 }
             }
-
+            return tagNamesToAdd;
         }
                 
         /* Gets all the tags associated with a source */
@@ -387,11 +389,12 @@ namespace Repository
             
             return tagIDs;
         }
-        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames, long sourceID = 0)
+        public List<string> UpdateAnnotationTags(Annotation annotation, string[] tagNames, long sourceID = 0)
         {
 
             List<long> tagIDs = tagNames != null ? GetTagIDs(ref tagNames) : new List<long>();
             List<long> newTagIDs = null;
+            List<string> tagNamesToAdd = null;
             using(GetDataContext()){
 
                  try{
@@ -440,7 +443,7 @@ namespace Repository
                      }
                      if (sourceID > 0)
                      {
-                         List<string> tagNamesToAdd = new List<string>();
+                         tagNamesToAdd = new List<string>();
                          foreach (var id in newTagIDs)
                          {
                              tagNamesToAdd.Add(tagNames[tagIDs.IndexOf(id)]);
@@ -448,12 +451,14 @@ namespace Repository
                          }
 
                          es.AddSourceUserTagsData(sourceID, annotation.SourceUserID, tagNamesToAdd.ToArray());
+                         
                      }
                  }
 
                  UpdateRecentUserTag(annotation.UserID, tagIDs);
 
              }
+            return tagNamesToAdd;
         }
 
         private void UpdateRecentUserTag(long userID, IList<long> tagIDs)
@@ -523,6 +528,28 @@ namespace Repository
             tagNames = es.GetTagNames(tagQuery);
 
             return tagNames;
+        }
+
+        public List<long> GetUsersForTags(List<string> tags)
+        {
+            List<long> users = null;
+            try
+            {
+                //TODO Need to select userID from sourceUSER
+                //users  = (from userTags in context.SourceUserTags
+                //              .Include("Tag")
+                //              .Include("SourceUser")
+                //              where tags.Contains(userTags.Tag.Name)
+                //              select userTags.SourceUserID 
+                //              ).ToList();
+
+            }
+            catch
+            {
+                throw;
+            }
+            //TODO Need to fix navigation property in EF
+            return new List<long>();
         }
     }
 }   

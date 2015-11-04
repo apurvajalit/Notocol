@@ -51,9 +51,14 @@
 
 
 @section scripts{
-<script>
-    $(function(){
-        
-    })
-</script>
+
+    <script>
+
+        if (@ViewBag.UserLogout == 1){
+            var editorExtensionId = "bcdabflpgoedlefkdiaedmeokndnfafa";
+            chrome.runtime.sendMessage(editorExtensionId, {type: "UserLogout"})
+        }
+
+    </script>
+
 }

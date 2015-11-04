@@ -67,5 +67,35 @@ namespace Business
             return userRepository.GetUser(username);
 
         }
+        public bool AddFollower(long follower, long followee)
+        {
+            FollowerRepository repo = new FollowerRepository();
+            if(!repo.IsUserFollower(followee, follower))
+                return repo.AddFollower(follower, followee);
+
+            return false;
+        }
+
+        public bool DeleteFollower(long follower, long followee)
+        {
+            return new FollowerRepository().DeleteFollower(follower, followee);
+        }
+
+        public void SubscribeUserToGroup(long userID, string groupName)
+        {
+            List<long> groupUsers = userRepository.GetAllUsersOfSolar();
+            FollowerRepository follower = new FollowerRepository();
+            foreach (var user in groupUsers)
+            {
+                follower.AddFollower(user, userID);
+                follower.AddFollower(userID, user);
+            }
+            userRepository.AddToSolar(userID);
+        }
+
+        internal List<long> GetAllFollowers(long userID)
+        {
+            return new FollowerRepository().GetAllFollowers(userID);
+        }
     }
 }

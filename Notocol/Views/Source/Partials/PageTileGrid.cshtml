@@ -1,0 +1,12 @@
+﻿<div ng-repeat="page in pages">
+    @*<div ng-if="$index % max_col == 0">
+        <div class="row table-row">
+    </div>*@
+    <div class="col-sm-3 table-col">
+        <page-tile page="page" user="user" delete-source="deleteSource(sourceUserID)"></page-tile>
+    </div>
+    @*<div ng-if="(($index + 1)% max_col == 0) || $last">
+        </div>
+    </div>*@
+</div>
+

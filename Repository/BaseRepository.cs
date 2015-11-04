@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Model;
 using System.Configuration;
+using System.Data;
+using System.ComponentModel;
 
 namespace Repository
 {
@@ -49,5 +51,33 @@ namespace Repository
         }
 
 
+        public static DataTable ConvertToDataTable<T>(IList<T> list)
+        {
+            PropertyDescriptorCollection propertyDescriptorCollection = TypeDescriptor.GetProperties(typeof(T));
+            DataTable table = new DataTable();
+            for (int i = 0; i < propertyDescriptorCollection.Count; i++)
+            {
+                PropertyDescriptor propertyDescriptor = propertyDescriptorCollection[i];
+                Type propType = propertyDescriptor.PropertyType;
+                if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    table.Columns.Add(propertyDescriptor.Name, Nullable.GetUnderlyingType(propType));
+                }
+                else
+                {
+                    table.Columns.Add(propertyDescriptor.Name, propType);
+                }
+            }
+            object[] values = new object[propertyDescriptorCollection.Count];
+            foreach (T listItem in list)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = propertyDescriptorCollection[i].GetValue(listItem);
+                }
+                table.Rows.Add(values);
+            }
+            return table;
+        }
     }
 }

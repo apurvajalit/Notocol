@@ -17,8 +17,8 @@ namespace Model
         public Tag()
         {
             this.AnnotationTags = new HashSet<AnnotationTag>();
-            this.SourceUserTags = new HashSet<SourceUserTag>();
             this.UserTagUsages = new HashSet<UserTagUsage>();
+            this.SourceUserTags = new HashSet<SourceUserTag>();
         }
     
         public long ID { get; set; }
@@ -26,7 +26,7 @@ namespace Model
         public System.DateTime updated { get; set; }
     
         public virtual ICollection<AnnotationTag> AnnotationTags { get; set; }
-        public virtual ICollection<SourceUserTag> SourceUserTags { get; set; }
         public virtual ICollection<UserTagUsage> UserTagUsages { get; set; }
+        public virtual ICollection<SourceUserTag> SourceUserTags { get; set; }
     }
 }

@@ -47,11 +47,25 @@ namespace Notocol
             ).RouteHandler = new SessionStateRouteHandler();
 
             routes.MapHttpRoute(
+                name: "FileUploadAPI",
+                routeTemplate: "api/Files/{action}/{id}",
+                defaults: new { controller = "Files", action = "", id = RouteParameter.Optional }
+            ).RouteHandler = new SessionStateRouteHandler();
+
+            routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             ).RouteHandler = new SessionStateRouteHandler();
             ////Web API Session Enabled Route Configurations end here
+            
+            
+            routes.MapRoute(
+                name: "UploadFileViewer",
+                url: "File/GetFile/{userId}/{version}/{fileName}",
+                defaults: new { controller = "File", action = "GetFile", userId = "", version = "", fileName = "" }
+
+            );
 
             routes.MapRoute(
                 name: "Templates",

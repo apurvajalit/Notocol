@@ -33,11 +33,16 @@ namespace Model
         public virtual DbSet<Folder> Folders { get; set; }
         public virtual DbSet<Source> Sources { get; set; }
         public virtual DbSet<SourceUser> SourceUsers { get; set; }
-        public virtual DbSet<SourceUserTag> SourceUserTags { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserTagUsage> UserTagUsages { get; set; }
+        public virtual DbSet<SolarGroupUser> SolarGroupUsers { get; set; }
+        public virtual DbSet<Follow> Follows { get; set; }
+        public virtual DbSet<UploadedFileMapping> UploadedFileMappings { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<SourceUserTag> SourceUserTags { get; set; }
+        public virtual DbSet<Notification> Notifications { get; set; }
+        public virtual DbSet<NotificationTemp> NotificationTemps { get; set; }
     
         public virtual ObjectResult<Nullable<int>> GetTagID(string tagName, ObjectParameter tagID, ObjectParameter tagNameOut)
         {

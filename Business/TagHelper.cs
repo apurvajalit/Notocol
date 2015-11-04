@@ -39,9 +39,11 @@ namespace Business
         public bool UpdateSourceTags(SourceUser sourceUser, List<SourceTagData> tags)
         {
             TagRepository tagRepository = new TagRepository();
-            string[] tagNames = new string[] { };
-            
-            tagRepository.UpdateSourceUserTags(sourceUser, (from tag in tags select tag.text).ToArray());
+            List<string> tagNames = tagRepository.UpdateSourceUserTags(sourceUser, (from tag in tags select tag.text).ToArray());
+            if (tagNames != null && tagNames.Count > 0)
+            {
+                new NotificationHelper().UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_TAG, tagNames);
+            }
             return true;
         }
 
@@ -50,10 +52,15 @@ namespace Business
             return new TagRepository().GetRecentTags(userID);
         }
 
-        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames, long sourceID = 0)
+        public void UpdateAnnotationTags(Annotation annotation, string[] tagNames, SourceUser sourceUser)
         {
             TagRepository tagRepository = new TagRepository();
-            tagRepository.UpdateAnnotationTags(annotation, tagNames, sourceID);
+            List<string> addedtags = tagRepository.UpdateAnnotationTags(annotation, tagNames, sourceUser.ID);
+            if (!new AnnotationHelper().IsAnnotationPrivate(annotation) &&
+                addedtags != null && addedtags.Count > 0  )
+            {
+                new NotificationHelper().UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_TAG);
+            }
         }
 
         public string[] GetAnnotationTagNames(long annotationID)
@@ -74,6 +81,11 @@ namespace Business
                 }
             }
             return tags;
+        }
+
+        internal List<long> GetUsersForTags(List<string> tags)
+        {
+            return new TagRepository().GetUsersForTags(tags);
         }
     }
 }

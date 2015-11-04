@@ -35,6 +35,14 @@
         var userFolderTreeJson = null;
         this.userLoggedIn = false;
 
+        this.install = function () {
+            chromeTabs.query({}, function (tabs) {
+                tabs.forEach(function (tab) {
+                    vm.settabsData(tab);
+                });
+            });
+        }
+
         function FillChildrenForNode(node, folders)
         {
             node.Children = [];
@@ -73,7 +81,7 @@
         GenerateUserFolderTreeJson();
 
         function isPDFURL(url) {
-            console.log("URL Extension Check " + url.split('.').pop().split(/\#|\?/)[0]);
+            //console.log("URL Extension Check " + url.split('.').pop().split(/\#|\?/)[0]);
             return (url.split('.').pop().split(/\#|\?/)[0] == "pdf");
 
             //var index = url.toLowerCase().indexOf('.pdf');
@@ -114,7 +122,8 @@
             }else return false;
         }
         var checkForUserPageData = function (tabId) {
-        
+            if (!vm.userLoggedIn) return;
+
           $.ajax({
                 url: SERVER_BASE_URL + "Api/Source/GetSourceData",
                 type: 'Get',
@@ -175,12 +184,14 @@
         this.settabsData = function (tab, info) {
             
             var checkServer = false;
-            if (tab.url == "undefined") return;
+            
 
             if (typeof info != "undefined") {
                 if (typeof tabsData[tab.id] == "undefined" || tabsData[tab.id].uri != info.uri || tabsData[tab.id].url != info.url) checkServer = true;
                 tabsData[tab.id] = info;
-            }else{
+            } else {
+                if (typeof tab.url == "undefined") return;
+                tab.url = tab.url.substring(0, tab.url.indexOf("#") >= 0 ? tab.url.indexOf("#") : tab.url.length);
                 var link = tab.url;
                 
                 var currenttabsData = tabsData[tab.id];
@@ -254,10 +265,10 @@
         }
 
         function onTabUpdated(tabId, changeInfo, tab) {
-            var curr_url = "";
-            if (typeof tabsData[tabId] != "undefined") curr_url = tabsData[tabId].uri;
+            //var curr_url = "";
+            //if (typeof tabsData[tabId] != "undefined") curr_url = tabsData[tabId].uri;
             
-            console.log("Tab updated for tab " + tab.id + " with status " + changeInfo.status + " and url as " + tab.url);
+            //console.log("Tab updated for tab " + tab.id + " with status " + changeInfo.status + " and url as " + tab.url);
             vm.settabsData(tab);
             if (changeInfo.status !== TAB_STATUS_COMPLETE) {
                 return;
@@ -271,6 +282,28 @@
 
         function onTabRemoved(tabId) {
             unsettabsData(tabId);
+        }
+
+        function handleUserLogin() {
+            vm.userLoggedIn = true;
+            chromeTabs.query({}, function (tabs) {
+                tabs.forEach(function (tab) {
+                    checkForUserPageData(tab.id);
+                });
+            });
+            
+        }
+
+        function handleUserLogout() {
+            vm.userLoggedIn = false;
+            chromeTabs.query({}, function (tabs) {
+                tabs.forEach(function (tab) {
+                    vm.settabsData(tab, {
+                        url: tabsData[tab.id].url, 
+                        uri: tabsData[tab.id].uri,
+                    })
+                });
+            });
         }
 
         this.updateAnnotatorStatus = function(tabId){
@@ -304,8 +337,14 @@
             chrome.runtime.onMessageExternal.addListener(function (message, sender, sendResponse) {
                 if (message.type == "OpenPDF" && message.link != null) {
                     chromeTabs.create({ url: "content/web/viewer.html?file="+message.link });
+                } else if (message.type == "UserLogin") {
+                    handleUserLogin();
+                } else if (message.type == "UserLogout") {
+                    handleUserLogout();
                 }
             });
+
+            chrome.runtime.onStartup.addListener(this.install);
 
         }
 
@@ -314,13 +353,13 @@
                 url: SERVER_BASE_URL + "Api/User/IsUserLoggedIn",
                 type: 'Get',
                 success: function (data) {
-                    this.userLoggedIn = data;
+                    vm.userLoggedIn = data;
                 }
             });
         }
 
         function SetUserLoginStatus(value) {
-            this.userLoggedIn = false;
+            vm.userLoggedIn = false;
         }
     }
     

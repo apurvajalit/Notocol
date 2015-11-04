@@ -1,5 +1,7 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +16,16 @@ namespace Business
 
             static AdServer()
             {
-                adServersFilePath = "C:\\Users\\apurva.jalit\\Workspace\\Notocol\\Business\\adServerList.txt";
+                string baseDirPath = AppDomain.CurrentDomain.BaseDirectory;
+                adServersFilePath = baseDirPath + "App_Data\\adServerList.txt";
+                LogManager.GetLogger(new AdServer().GetType().Name).Debug("Using file for adServers " + adServersFilePath);
+
+                if (!System.IO.File.Exists(adServersFilePath))
+                {
+                    LogManager.GetLogger(new AdServer().GetType().Name).Debug("Could not find file" + adServersFilePath);
+                    return;
+
+                }
                 string[] servers = System.IO.File.ReadAllLines(@adServersFilePath);
                 adServers = new List<string>();
                 foreach (string line in servers)

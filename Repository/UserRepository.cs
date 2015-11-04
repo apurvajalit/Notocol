@@ -282,5 +282,60 @@ namespace Repository
             }
             return user;
         }
+
+        public List<long> GetAllUsersOfSolar()
+        {
+            List<long> users = null;
+            try
+            {
+                using (GetDataContext())
+                {
+                    users = (from user in context.SolarGroupUsers
+                             select user.userID).ToList();
+                }
+                
+            }
+            catch
+            {
+                throw;
+            }
+            return users;
+        }
+
+        public void AddToSolar(long userID)
+        {
+            SolarGroupUser su = new SolarGroupUser();
+            su.userID = userID;
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.Entry(su).State = EntityState.Added;
+                    context.SaveChanges();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void DeleteFromSolar(long userID)
+        {
+            SolarGroupUser su = new SolarGroupUser();
+            su.userID = userID;
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.Entry(su).State = EntityState.Deleted;
+                    context.SaveChanges();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

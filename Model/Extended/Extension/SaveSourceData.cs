@@ -10,9 +10,9 @@ namespace Model.Extended.Extension
     {
         public SourceDataForExtension sourceData { get; set; }
 
-        public FolderTree folderTree { get; set; }
+        public FolderTreeRecursive folderTree { get; set; }
 
-        public List<FolderTree> addedFolders { get; set; }
+        public List<FolderTreeRecursive> addedFolders { get; set; }
         public Dictionary<string, long> addedFolderIDs { get; set; }
         
     }

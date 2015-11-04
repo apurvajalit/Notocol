@@ -1,0 +1,21 @@
+﻿
+<a ng-if="page.tnImage"
+   target="_blank"
+   style="background:url('{{page.tnImage}}')"
+   class="tile-image"
+   ng-href="{{page.link}}" imageonload></a>
+
+<h1>{{page.title|truncateStringWithEllipsis: 60}}</h1>
+
+<div ng-if="page.tnText"
+     class="card-text">
+    {{page.tnText|truncateStringWithEllipsis: 150}}
+</div>
+
+<div class="card-users">
+    <a href="#" ng-repeat="user in page.publicUserNames">{{user|capitalizeFirst}}</a>
+</div>
+
+<div class="card-tags">
+    <a href="#" ng-repeat="tag in page.tags">{{tag}}</a>
+</div>

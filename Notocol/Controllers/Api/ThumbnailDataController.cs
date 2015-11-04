@@ -19,7 +19,7 @@ namespace Notocol.Controllers.Api
         public void ThumbnailData(ThumbnailDataForSourceUser thumbnailData)
         {
             SourceHelper sourceHelper = new SourceHelper();
-            LogManager.GetLogger(GetType().Name).Debug("API Hit");
+            
             sourceHelper.SetPageThumbNailData(Utility.GetCurrentUserID(), thumbnailData);
             return;
         }

@@ -18,6 +18,7 @@ namespace Model
         {
             this.Annotations = new HashSet<Annotation>();
             this.SourceUsers = new HashSet<SourceUser>();
+            this.Notifications = new HashSet<Notification>();
         }
     
         public long ID { get; set; }
@@ -29,5 +30,6 @@ namespace Model
     
         public virtual ICollection<Annotation> Annotations { get; set; }
         public virtual ICollection<SourceUser> SourceUsers { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

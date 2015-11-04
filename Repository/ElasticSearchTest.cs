@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using Model;
 using Model.Extended;
 using System.IO;
+using log4net;
 
 
 
@@ -27,6 +28,7 @@ namespace Repository.Search
     {
         public long id { get; set; }
         public SuggestField user_suggest { get; set; }
+        //public long[] followees { get; set; }
     }
 
     [ElasticType(Name = "keyphrase")]
@@ -135,7 +137,9 @@ namespace Repository.Search
         const string update_s_tnText = "if(ctx._source.tnText == null) ctx._source.tnText = tnText;";
 
 
-        
+        const string update_u_add_followee = "if(ctx._source.followees == null){ctx._source.followees = [followee];}else{if(ctx._source.followees.indexOf(followee) < 0) {ctx._source.followees[ctx._source.followees.length] = followee}}";
+
+        const string update_u_delete_followee = "if(ctx._source.followees != null){ctx._source.followees.remove(followee);}";
 
         static Uri uri = new Uri("http://localhost:9200/");//Address of local ElasticSearch instance. On a production ready code, address to access ElasticSearch should be a config entry
         public static ElasticClient Client = null;
@@ -360,25 +364,57 @@ namespace Repository.Search
  
            
         }
-
-        public List<ESSource> GetSource(SourceListFilter filter, long userID, bool own, int offset, int size)
+        public List<ESSource> GetSourceFromOthers(SourceListFilter filter, long userID, int offset, int size)
         {
             bool applyTagFilter = (filter.tags != null) ? ((filter.tags.Length > 0) ? true : false) : false;
-            QueryContainer tagsQuery = new TermsQuery
-                                            {
-                                                Field = "tags",
-                                                Terms = filter.tags,
-                                                MinimumShouldMatch = "1"
-                                            };
-
-            FilterContainer ownSourceFilter = new HasChildFilter
+            bool applyUserFilter = (filter.user != null && filter.user.Length > 0)?true:false;
+            List<QueryContainer> queryClauses = new List<QueryContainer>();
+            
+            if (!applyTagFilter && !applyUserFilter)
             {
-                Type = "sourceuser",
-                Query = Query<ESSourceUser>.Term("userID", userID),
-                InnerHits = new InnerHits() //Needed to get hold of sourceUserID from the child doc
-                
-            };
+                List<string> tagInterests = (from tags in new TagRepository().GetRecentTags(userID)
+                                                    select tags.Name).ToList();
 
+                List<object> followees = new List<object>();
+                
+                new FollowerRepository().GetAllFollowees(userID).ForEach(e => 
+                    followees.Add((object)e));
+
+                if (tagInterests != null && tagInterests.Count > 0)
+                {
+                    queryClauses.Add(new TermsQuery
+                    {
+                        Terms = tagInterests,
+                        Field = "tags"
+                    });
+                }
+
+                if (followees.Count > 0)
+                {
+                    queryClauses.Add(new HasChildQuery
+                    {
+                        Type = "sourceuser",
+                        Query = new TermsQuery{
+                                          Field = "userID",
+                                          Terms = followees
+                                }.ToContainer(),
+                        ScoreType = ChildScoreType.Sum
+                    });
+                }
+            }
+            else
+            {
+                if (applyTagFilter)
+                {
+                    queryClauses.Add(new TermsQuery
+                    {
+                        Field = "tags",
+                        Terms = filter.tags,
+                        MinimumShouldMatch = "1"
+                    });
+                }
+                
+            }
 
             FilterContainer notOwnSourceFilter = new NotFilter
             {
@@ -386,47 +422,139 @@ namespace Repository.Search
                 {
                     Type = "sourceuser",
                     Query = Query<ESSourceUser>.Term("userID", userID),
-                    
+
                 }.ToContainer()
             };
 
+            FilterContainer userSourceFilter = new TermFilter
+            {
+                Field = "publicUserNames",
+                Value = filter.user
+            };
+           
             var query = Query<ESSource>
-                            .Filtered(f => {
-                                f.Filter(fq => { if (own)return ownSourceFilter ; else return notOwnSourceFilter; });
+
+                            .Filtered(f =>
+                            {
+                                f.Filter(fq => { return (applyUserFilter)?userSourceFilter:notOwnSourceFilter; });
+                                f.Query(q => q
                                     
+                                   .Bool(qb => qb.Should(qbs =>
+                                        {
+                                            return new BoolQuery
+                                            {
+                                                Should = queryClauses
+                                                
+                                            };
+                                        })));
+                                    
+                            });
+
+            SearchDescriptor<ESSource> searchDescriptor = new SearchDescriptor<ESSource>();
+            searchDescriptor.From(offset);
+            searchDescriptor.Size(size);
+            searchDescriptor.Query(query);
+            if (applyTagFilter)
+            {
+                searchDescriptor.SortDescending("_score");
+                searchDescriptor.SortDescending("lastUsed");
+            }
+            else
+            {
+                searchDescriptor.SortDescending("lastUsed");
+                searchDescriptor.SortDescending("_score");
+            }
+            
+            ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(searchDescriptor);
+
+            if(applyUserFilter){
+                ILog log = LogManager.GetLogger(GetType().Name);
+
+                 log.Debug("Returning "+ searchResponse.Documents.ToList().Count+" results for user "+filter.user);
+                 log.Debug("Result status: " + searchResponse.ServerError);
+            }
+            
+            return searchResponse.Documents.ToList();
+
+        }
+        
+        
+        public List<ESSource> GetOwnSource(SourceListFilter filter, long userID, int offset, int size)
+        {
+            bool applyTagFilter = (filter.tags != null) ? ((filter.tags.Length > 0) ? true : false) : false;
+            
+            QueryContainer tagsQuery = new TermsQuery
+            {
+                Field = "tags",
+                Terms = filter.tags,
+                MinimumShouldMatch = "1"
+            };
+
+            //if (applyTagFilter)
+            //{
+            //    queryDescriptor.Query = new TermsQuery
+            //                                {
+            //                                    Field = "tags",
+            //                                    Terms = filter.tags,
+            //                                    MinimumShouldMatch = "1"
+            //                                }.ToContainer();
+            //}
+            //else
+            //{
+            //    IList<KeyValuePair<PropertyPathMarker, ISort>> sortDescriptor = new List<KeyValuePair<PropertyPathMarker, ISort>>();
+
+            //    sortDescriptor.Add(new KeyValuePair<PropertyPathMarker, ISort>(
+            //        "lastUsed", new Sort{
+            //            Order=SortOrder.Descending, 
+            //            Field="lastUsed"}));
+
+            //    queryDescriptor.InnerHits = new InnerHits
+            //    {
+                                      
+            //        Sort = sortDescriptor
+            //    };
+            //}
+            
+            FilterContainer ownSourceFilter = new HasChildFilter
+            {
+                Type = "sourceuser",
+                Query = Query<ESSourceUser>.Term("userID", userID),
+                InnerHits = new InnerHits()
+
+            };
+
+            var query = Query<ESSource>
+                           
+                            .Filtered(f => {
+                                f.Filter(fq => { return ownSourceFilter; });
                                 if (applyTagFilter)
                                 {
-                                    if (own)
+                                    f.Query(q =>
                                     {
-                                        f.Query(q =>
-                                        {
-                                            return Query<ESSource>.HasChild<ESSourceUser>(qc => qc
-                                                .Score(ChildScoreType.Sum)
-                                                .Query(qcq => { return tagsQuery; }));
-                                            
-                                        });
-                                    }
-                                    else
-                                    {
-                                        f.Query(q =>
-                                        {
-                                            return tagsQuery;
-                                        });
-                                    }
+                                        return Query<ESSource>.HasChild<ESSourceUser>(qc => qc
+                                            .Score(ChildScoreType.Sum)
+                                            .Query(qcq => { return tagsQuery; }));
+                                    });    
                                 }
+                                
+                                
                             });
 
             ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(s => s
                                .From(offset)
                                .Size(size)
-                               .Query(query));
-                               
-            if(!own) {
-                return searchResponse.Documents.ToList();
-            }
+                               .Query(query)
+                            
+                                );
+
             foreach(var hit in searchResponse.Hits){
+                ESSourceUser su = hit.InnerHits.First().Value.Hits.Hits.First().Source.As<ESSourceUser>();
                hit.Source.sourceUserID = Convert.ToInt64(hit.InnerHits.First().Value.Hits.Hits.First().Id);
-               hit.Source.tags = hit.InnerHits.First().Value.Hits.Hits.First().Source.As<ESSourceUser>().tags;
+               hit.Source.tags = su.tags;
+               if (su.note != null && su.note.Length > 0)
+               {
+                   hit.Source.tnText = su.note;
+               }
             }
             return searchResponse.Documents.ToList();
         }
@@ -438,6 +566,7 @@ namespace Repository.Search
         public List<ESSource> SearchUsingQuery(SourceListFilter filter, long userID, int sourceType, int offset, int size)
         {
             bool applyTagFilter = (filter.tags != null) ? ((filter.tags.Length > 0) ? true : false) : false;
+            bool applyUserFilter = (filter.user != null && filter.user.Length > 0) ? true : false;
             List<ESSource> source = new List<ESSource>();
             QueryContainer tagsQuery = new TermsQuery
             {
@@ -490,8 +619,17 @@ namespace Repository.Search
                                 {
                                     if (sourceType == SOURCE_TYPE_OTHERS)
                                     {
-                                        f.Filter(of => of.Not(ofn => ofn.HasChild<ESSourceUser>(ofnc => ofnc.Query
+                                        if (applyUserFilter)
+                                        {
+                                            f.Filter(uf => uf
+                                                .Term("publicUserNames", filter.user));
+                                        }
+                                        else
+                                        {
+                                            f.Filter(of => of.Not(ofn => ofn.HasChild<ESSourceUser>(ofnc => ofnc.Query
                                             (ofncq => { return userQuery; }))));
+                                        }
+                                        
                                     }
                                     else if (sourceType == SOURCE_TYPE_OWN)
                                     {
@@ -563,18 +701,6 @@ namespace Repository.Search
             return source;
         }
 
-        public List<ESSource> PopulateDefaultFeed(long userID, int offset = 0, int size = 40)
-        {
-            var query = Query<Source>.MatchAll();
-            ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(s =>s
-                               .From(offset)
-                               .Size(size)
-                               .Query(query));
-            
-                                
-
-            return searchResponse.Documents.ToList();
-        }
 
         public void DeleteSourceUser(long sourceUserID, long sourceID)
         {
@@ -731,5 +857,25 @@ namespace Repository.Search
                         .Params(p => p.Add("username", username)));
 
         }
+
+        internal void AddFollower(long follower, long followee)
+        {
+            var response = Client.Update<ESUser, Object>(f => f
+                        .Id(follower)
+                        .Script(update_u_add_followee)
+                        .Language("javascript")
+                        .Params(p => p.Add("followee", followee)));
+        }
+
+        internal void DeleteFollower(long follower, long followee)
+        {
+            var response = Client.Update<ESUser, Object>(f => f
+                        .Id(follower)
+                        .Script(update_u_delete_followee)
+                        .Language("javascript")
+                        .Params(p => p.Add("followee", followee)));
+        }
+
+        
     }
 }

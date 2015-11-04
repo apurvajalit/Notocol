@@ -13,6 +13,21 @@ button:hover
 }
 .new-folder-text-box-container{
     display: flex;
+    width: 270px
+}
+
+.highlighter-label{
+     position:relative;
+     top:-10px;
+     font-size: 106%;
+     color:lightgray;
+}
+
+.privacy-icon{
+    float:left;
+    padding-right:5px;
+    /*position: absolute;*/
+    top: 5px
 }
 .new-folder-text-box-container input[type="text"]{
     flex: 1;
@@ -121,7 +136,7 @@ button:hover
     background:white!important
     
 }
-.coln-fol {
+/*.coln-fol {
     height: 29px;
     position: absolute;
     -webkit-transform: none;
@@ -180,7 +195,7 @@ button:hover
     opacity: 0.5;
     position: absolute;
     width: 29px;
-}
+}*/
 
 
 
@@ -203,7 +218,7 @@ button:hover
 .popup-body{
     background:#636464;
     width:250px;
-    display:table;
+    /*display:table;*/
     margin:-10px;
     border: 2px solid lightgray;
     border-radius: 5px;
@@ -216,14 +231,16 @@ button:hover
     min-height: 432px;
 }
 
+
 .note-button{
     background:#e60000;color:white;border:0px; border-radius:2px; width:80px;height:30px;
+    margin-bottom: 10px
 }
 .userImage{
     width: 38px;
     height: 38px;
     /*border-radius: 25px;*/
-    position: absolute;
+    position: relative;
     top: 7px;
     left: 10px;
     background-image: url(../../../images/notocol-38-active.png);
@@ -241,12 +258,17 @@ button:hover
 
 }
 .page-data-body{
-    position:absolute;
+    /*position:absolute;*/
     top:60px;
 
 }
-.page-summary{
-    width:100%
+.page-summary {
+    width: 100%;
+}
+.page-summary textarea{  
+    border-radius: 3px;
+    border: solid 2px white;
+
 }
 
 .page-summary textarea{

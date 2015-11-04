@@ -45,12 +45,6 @@ namespace Business
                 return imageURL;
             }
 
-            LogManager.GetLogger(GetType().Name).Debug("1 " + pageImageInfo.Length);
-            
-            foreach(var temp in pageImageInfo){
-                LogManager.GetLogger(GetType().Name).Debug("Values: " + JsonConvert.ToString(temp.url));
-            }
-
             pageImageInfo = pageImageInfo.Where(pageImage =>
                                                         !pageImage.hidden &&
                                                         pageImage.width > 100 &&
@@ -60,17 +54,19 @@ namespace Business
 
             if (pageImageInfo.Length <= 0) return null;
 
-
+            
             int i = 0;
             int max_area = 0, max_area_index = 0;
             foreach (PageImageInfo page in pageImageInfo)
             {
+                
                 string imageServer = new Uri(page.url).Host;
                 imageServer = imageServer.Split(new char[] { '.' }, 2)[1];
-
+                
                 if (AdServer.isAdServer(imageServer)) page.score = -1;
                 else
                 {
+                    
                     page.score += (pageImageInfo.Length - i);
                     if (max_area < (page.height * page.width))
                     {
@@ -78,24 +74,25 @@ namespace Business
                         max_area_index = i;
                     }
                 }
+                
                 i++;
             }
-
+            
 
             if (pageImageInfo[max_area_index].score > 0) pageImageInfo[max_area_index].score += 3;
 
             pageImageInfo = pageImageInfo.Where(pageImage =>
                                                     pageImage.score > 0).ToArray<PageImageInfo>();
-
+            
             Array.Sort(pageImageInfo, new ImageInfoComparer());
-
+            
             IList<string> imageLinks = new List<string>();
 
             imageLinks = (from imageLink in pageImageInfo
                           select imageLink.url).ToList();
-
+            
             if (imageLinks.Count > 0) return imageLinks[0];
-
+            
             return null;
         }
         private string GetThumbNailText(string[] pageText, int maxThumbnailTextLength)
@@ -140,8 +137,6 @@ namespace Business
             sourceUser.thumbnailImageUrl = thumbnailImageURL;
             sourceUser.thumbnailText = thumbnailImageText;
             
-            LogManager.GetLogger(GetType().Name).Debug("Setting values " + sourceUser.thumbnailImageUrl + " "+ thumbnailImageText);
-            
             obSourceRepository.UpdateSourceUser(sourceUser);
 
             return;
@@ -164,11 +159,15 @@ namespace Business
             return source;
         }
 
-        internal SourceUser AddSourceUser(SourceUser sourceUser, string username)
+        internal SourceUser AddSourceUser(SourceUser sourceUser, string username, bool notify = false)
         {
             sourceUser.PrivateNoteCount = sourceUser.noteCount = 0;
             sourceUser = obSourceRepository.AddSourceUser(sourceUser, username);
-            
+            if (notify)
+            {
+                NotificationHelper n = new NotificationHelper();
+                n.UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_PAGE_SAVE);
+            }
 
             return sourceUser;
         }
@@ -180,6 +179,8 @@ namespace Business
 
         public SourceDataForExtension SaveSource(SourceDataForExtension sourceData, long userID, string username)
         {
+            bool notificationRequired = false;
+            int notifReason = 0;
             SourceUser sourceUser = null;
             TagHelper tagHelper = new TagHelper();
             FolderHelper folderHelper = new FolderHelper();
@@ -198,11 +199,22 @@ namespace Business
                     (sourceData.folderData.selectedFolder == null? 0 : 
                        Convert.ToInt64(sourceData.folderData.selectedFolder.folderID));
 
-                sourceUser.Summary = sourceData.summary;
+                if (sourceUser.Summary != sourceData.summary)
+                {
+                    if (sourceData.summary != null && sourceData.summary.Length > 0)
+                    {
+                        notificationRequired = true;
+                        notifReason |= NotificationHelper.NOTIFICATION_REASON_NOTE;
+                    }
+                    sourceUser.Summary = sourceData.summary;
+                }
+
                 if (sourceUser.Privacy != sourceData.privacy)
                 {
                     sourceUser.Privacy = sourceData.privacy;
                     sourceUser.PrivacyOverride = true;
+                    new NotificationHelper().DeleteNotificationForSourceUser(sourceUser.ID);
+                    notificationRequired = false;
                 }
                 
                 tagHelper.UpdateSourceTags(sourceUser, sourceData.tags);
@@ -229,6 +241,8 @@ namespace Business
                 sourceUser = obSourceRepository.GetSourceUser(sourceData.sourceID, userID);
                 if (sourceUser == null)
                 {
+                    notifReason |= NotificationHelper.NOTIFICATION_REASON_PAGE_SAVE;
+
                     sourceUser = new SourceUser();
                     sourceUser.SourceID = sourceData.sourceID;
 
@@ -237,8 +251,21 @@ namespace Business
                         Convert.ToInt64((sourceData.folderData.selectedFolder.folderID))); 
 
                     sourceUser.Summary = sourceData.summary;
+                    if (sourceUser.Summary != null && sourceUser.Summary.Length > 0)
+                    {
+                        notifReason |= NotificationHelper.NOTIFICATION_REASON_NOTE;
+                    }
+
                     sourceUser.Privacy = sourceData.privacy;
-                    if (sourceData.privacy == true) sourceUser.PrivacyOverride = true;
+                    if (sourceData.privacy == true)
+                    {
+                        notificationRequired = false;
+                        sourceUser.PrivacyOverride = true;
+                    }
+                    else
+                    {
+                        notificationRequired = true;
+                    }
 
                     sourceUser.UserID = userID;
                     sourceUser.noteCount = 0;
@@ -254,7 +281,10 @@ namespace Business
                 sourceData.sourceUserID = sourceUser.ID;
 
             }
-
+            if (notificationRequired)
+            {
+                new NotificationHelper().UpdateNotifications(sourceUser, notifReason);
+            }
             return sourceData;
         }
 
@@ -307,16 +337,16 @@ namespace Business
             return obSourceRepository.GetSourceUser(id);
         }
 
-        public void IncPrivateNoteCount(long id)
+        public void IncPrivateNoteCount(SourceUser su)
         {
-            SourceUser su = obSourceRepository.GetSourceUser(id);
+            
             su.PrivateNoteCount++;
             obSourceRepository.UpdateSourceUser(su);
         }
 
-        public void DecNoteCount(long id, bool isPrivate, string username)
+        public void DecNoteCount(SourceUser su, bool isPrivate, string username)
         {
-            SourceUser su = obSourceRepository.GetSourceUser(id);
+            
             su.noteCount--;
             if(isPrivate)su.PrivateNoteCount--;
             if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) 
@@ -328,14 +358,49 @@ namespace Business
 
 
 
-        internal void DecPrivateNoteCount(long id, string username)
+        internal void DecPrivateNoteCount(SourceUser su, string username)
         {
-            SourceUser su = obSourceRepository.GetSourceUser(id);
             su.PrivateNoteCount--;
             if (su.PrivateNoteCount == 0 && (su.PrivacyOverride == null || !(bool)su.PrivacyOverride)) 
                 su.Privacy = false;
 
             obSourceRepository.UpdateSourceUser(su, username);
+        }
+
+        public void SendEventNewPageAdded(SaveSourceData saveSourceData, string userName, bool firstSave)
+        {
+            
+            Dictionary<string, object> trackingValues = new Dictionary<string, object>();
+
+            if (!firstSave)
+            {
+                trackingValues.Add("tagsUsed", (saveSourceData.sourceData.tags != null && saveSourceData.sourceData.tags.Count > 0));
+                trackingValues.Add("folderUsed",
+                    (saveSourceData.sourceData.folderData != null && saveSourceData.sourceData.folderData.selectedFolder != null &&
+                      saveSourceData.sourceData.folderData.selectedFolder.folderID != "0"
+                    ));
+                trackingValues.Add("summaryAdded", saveSourceData.sourceData.summary != null);
+                trackingValues.Add("privacy", saveSourceData.sourceData.privacy);
+            }
+            
+            
+            trackingValues.Add("firstSave", firstSave);
+            
+            string eventName = "Saved Page";
+            
+            new ActivityTracker().TrackEvent(eventName, userName, trackingValues);
+
+        }
+
+        public List<NoteData> GetSourceUserSummaries(long sourceID, long userID)
+        {
+            return (userID == 0)? obSourceRepository.GetSourceSummaries(sourceID) : obSourceRepository.GetSourceSummarysWithUserAtTop(userID, userID);
+
+        }
+
+        internal List<long> GetSourceUsers(long sourceID)
+        {
+            return obSourceRepository.GetSourceUsers(sourceID);
         }
     }
 }

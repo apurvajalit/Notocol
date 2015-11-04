@@ -21,22 +21,21 @@
         Twitter Blogs
     </div>-->
     <div class="page-data-body">
-        <form name="pageDetailsForm">
+        <form name="pageDetailsForm" id="pageDetailsForm">
             <div style="width:230px;margin-left:10px;margin-right:10px">
                 <div style="width:100%">
-                    <span style="float:left;padding-right:5px;position: absolute;
-    top: 5px">
-                        <a href=# tooltips tooltip-size="small" tooltip-side="right" tooltip-content="Save page privately" ng-click="TogglePrivacy()" ng-show="!pageDetails.privacy">
+                    <span class="privacy-icon">
+                        <a href=# tooltips tooltip-size="small" tooltip-side="right" tooltip-content="Save page privately" ng-click="TogglePrivacy()" ng-if="!pageDetails.privacy">
                             <img style="width:20px;height:25px" src="images/notocol/unlock.png" />
                         </a>
-                        <a href=# tooltips tooltip-size="small" tooltip-side="right" tooltip-content="Save page publicly" ng-click="TogglePrivacy()" ng-show="pageDetails.privacy">
+                        <a href=# tooltips tooltip-size="small" tooltip-side="right" tooltip-content="Save page publicly" ng-click="TogglePrivacy()" ng-if="pageDetails.privacy">
                             <img style="width:20px;height:30px" src="images/notocol/lock.png" />
                         </a>
 
                     </span>
 
                     <span style="float:right;padding-right:5px">
-                        <label style="position:relative;top:-10px;font-size: 106%;color:lightgray">Highlighter</label>
+                        <label class="highlighter-label">Highlighter</label>
                         <a href=# ng-click="ToggleAnnotation()">
                             <img style="width:30px;height:30px" tooltips tooltip-size="small" tooltip-side="left" tooltip-content="Enable note taker" src="images/notocol/annotator-off.png" ng-show="!pageDetails.annotator" />
                             <img style="width:30px;height:30px" tooltips tooltip-size="small" tooltip-side="left" tooltip-content="Disable note taker" src="images/notocol/annotator-on.png" ng-show="pageDetails.annotator" />
@@ -114,7 +113,7 @@
 
             </div>
             <div style="text-align: center;padding-top:15px;">
-                <button class="note-button" ng-click="SavePage()">Note</button>
+                <button type="button" class="note-button" ng-click="SavePage()">Note</button>
             </div>
         </form>
     </div>

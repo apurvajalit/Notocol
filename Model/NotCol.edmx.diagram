@@ -10,8 +10,6 @@
         <EntityTypeShape EntityType="NotColModel.Folder" Width="1.5" PointX="3" PointY="14" />
         <EntityTypeShape EntityType="NotColModel.Source" Width="1.5" PointX="0.75" PointY="1.375" />
         <EntityTypeShape EntityType="NotColModel.SourceUser" Width="1.5" PointX="5.25" PointY="10.125" />
-        <EntityTypeShape EntityType="NotColModel.SourceUserTag" Width="1.5" PointX="5.25" PointY="0.75" />
-        <EntityTypeShape EntityType="NotColModel.sysdiagram" Width="1.5" PointX="7.75" PointY="1" />
         <EntityTypeShape EntityType="NotColModel.Tag" Width="1.5" PointX="3" PointY="2.5" />
         <EntityTypeShape EntityType="NotColModel.User" Width="1.5" PointX="0.75" PointY="5.625" />
         <EntityTypeShape EntityType="NotColModel.UserTagUsage" Width="1.5" PointX="6" PointY="6.5" />
@@ -23,9 +21,21 @@
         <AssociationConnector Association="NotColModel.fk_user" />
         <AssociationConnector Association="NotColModel.FK__SourceUse__Sourc__758D6A5C" />
         <AssociationConnector Association="NotColModel.FK_Source_User" />
-        <AssociationConnector Association="NotColModel.FK__SourceUse__tagID__08D548FA" />
         <AssociationConnector Association="NotColModel.FK__UserTagUs__tagID__39788055" />
         <AssociationConnector Association="NotColModel.FK__UserTagUs__userI__38845C1C" />
+        <EntityTypeShape EntityType="NotColModel.SolarGroupUser" Width="1.5" PointX="7.375" PointY="3.75" />
+        <EntityTypeShape EntityType="NotColModel.Follow" Width="1.5" PointX="3" PointY="10.75" />
+        <AssociationConnector Association="NotColModel.FK_Follower_Followee" />
+        <AssociationConnector Association="NotColModel.FK_Follower_Follower" />
+        <EntityTypeShape EntityType="NotColModel.UploadedFileMapping" Width="1.5" PointX="8.375" PointY="6.75" />
+        <EntityTypeShape EntityType="NotColModel.sysdiagram" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="NotColModel.SourceUserTag" Width="1.5" PointX="4.875" PointY="0.75" />
+        <AssociationConnector Association="NotColModel.FK_SourceUserTag_Tag" />
+        <EntityTypeShape EntityType="NotColModel.Notification" Width="1.5" PointX="8" PointY="10.25" />
+        <EntityTypeShape EntityType="NotColModel.NotificationTemp" Width="1.5" PointX="9.375" PointY="0.75" />
+        <AssociationConnector Association="NotColModel.FK_Notification_SecUser" />
+        <AssociationConnector Association="NotColModel.FK_Notification_Source" />
+        <AssociationConnector Association="NotColModel.FK_Notification_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

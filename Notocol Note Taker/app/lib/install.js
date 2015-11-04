@@ -18,29 +18,6 @@
     chrome.runtime.onUpdateAvailable.addListener(onUpdateAvailable);
   });
 
-  function onInstalled(installDetails) {
-    if (installDetails.reason === 'install') {
-      browserExtension.firstRun();
-    }
-
-    // We need this so that 3rd party cookie blocking does not kill us.
-    // See https://github.com/hypothesis/h/issues/634 for more info.
-    // This is intended to be a temporary fix only.
-    var details = {
-      primaryPattern: 'https://hypothes.is/*',
-      setting: 'allow'
-    };
-    chrome.contentSettings.cookies.set(details);
-    chrome.contentSettings.images.set(details);
-    chrome.contentSettings.javascript.set(details);
-
-    browserExtension.install();
-  }
-
-  function onUpdateAvailable() {
-    chrome.runtime.reload();
-  }
-
   var notocolUtil = new h.NotocolUtil({
       chromeTabs: chrome.tabs,
       extensionURL: function (path) {
@@ -51,6 +28,32 @@
       },
       hypothesis: browserExtension
   })
+
+
+  function onInstalled(installDetails) {
+    if (installDetails.reason === 'install') {
+      browserExtension.firstRun();
+    }
+
+    // We need this so that 3rd party cookie blocking does not kill us.
+    // See https://github.com/hypothesis/h/issues/634 for more info.
+    // This is intended to be a temporary fix only.
+    var details = {
+      primaryPattern: 'https://notocol.tenet.res.in:8443/*',
+      setting: 'allow'
+    };
+    chrome.contentSettings.cookies.set(details);
+    chrome.contentSettings.images.set(details);
+    chrome.contentSettings.javascript.set(details);
+
+    browserExtension.install();
+    notocolUtil.install();
+  }
+
+  function onUpdateAvailable() {
+    chrome.runtime.reload();
+  }
+
   
 
   chrome.runtime.onMessageExternal.addListener(
@@ -59,16 +62,16 @@
         if (request.reloadExtension)
             chrome.runtime.reload();
   });
+
   //Notocol Specifici Action Handlers
   chrome.extension.onMessage.addListener(function (request, sender, sendResponse) {
       if (request.greeting === "PageDetails") {
-          //if (!notocolUtil.userLoggedIn) {
-          //    //Redirect to login
-          //    chrome.tabs.create({ url: "https://localhost:44301/User/Login" });
-          //}
+          if (!notocolUtil.userLoggedIn) {
+              chrome.tabs.create({ url: "https://notocol.tenet.res.in:8443/User/Login" });
+          }
           chrome.tabs.query({ active: true }, function (tabs) {
               if (!(tabs.length === 0)) {
-                  var tabInfo = notocolUtil.gettabsData(tabs[0]);
+                  var tabInfo = notocolUtil.gettabsData(tabs[0]) || {};
                   tabInfo.favIconUrl = tabs[0].faviconUrl;
                   tabInfo.title = tabs[0].title;
                   var userFolderTreeJson = notocolUtil.getUserFolderTreeJson();

@@ -1,0 +1,7 @@
+.search-wrap { width:50%; background:#ccc; position:absolute; top:2px; left:7%; z-index:99999;}
+
+#multiple-datasets .league-name {
+  margin: 0 20px 5px 20px;
+  padding: 3px 0;
+  border-bottom: 1px solid #ccc;
+}

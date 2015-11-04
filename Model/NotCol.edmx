@@ -43,6 +43,58 @@
           <Property Name="updated" Type="datetime" Nullable="false" />
           <Property Name="userID" Type="bigint" />
         </EntityType>
+        <EntityType Name="Follow">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="follower" Type="bigint" Nullable="false" />
+          <Property Name="followee" Type="bigint" Nullable="false" />
+          <Property Name="lastUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Notification">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ReadStatus" Type="bit" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Receiver" Type="bigint" Nullable="false" />
+          <Property Name="SecondaryUser" Type="bigint" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="SourceUserID" Type="bigint" />
+          <Property Name="ReasonCode" Type="int" Nullable="false" />
+          <Property Name="SourceID" Type="bigint" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="NotificationTemp">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="ReadStatus" />
+            <PropertyRef Name="Type" />
+            <PropertyRef Name="Receiver" />
+            <PropertyRef Name="Created" />
+            <PropertyRef Name="ReasonCode" />
+            <PropertyRef Name="SourceID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ReadStatus" Type="bit" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Receiver" Type="bigint" Nullable="false" />
+          <Property Name="SecondaryUser" Type="bigint" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="SourceUserID" Type="bigint" />
+          <Property Name="ReasonCode" Type="int" Nullable="false" />
+          <Property Name="SourceID" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SolarGroupUsers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="userID" Type="bigint" Nullable="false" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
         <EntityType Name="Source">
           <Key>
             <PropertyRef Name="ID" />
@@ -97,6 +149,19 @@
           <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="updated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UploadedFileMapping">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="bigint" Nullable="false" />
+          <Property Name="FileNameForLink" Type="varchar(max)" Nullable="false" />
+          <Property Name="LocalFileName" Type="varchar(max)" Nullable="false" />
+          <Property Name="UploadedDate" Type="datetime" Nullable="false" />
+          <Property Name="Title" Type="varchar(max)" />
+          <Property Name="Uri" Type="varchar(max)" />
+          <Property Name="Version" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -184,18 +249,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__SourceUse__tagID__08D548FA">
-          <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
-          <End Role="SourceUserTag" Type="Self.SourceUserTag" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tag">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="SourceUserTag">
-              <PropertyRef Name="TagID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__UserTagUs__tagID__39788055">
           <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
           <End Role="UserTagUsage" Type="Self.UserTagUsage" Multiplicity="*" />
@@ -232,6 +285,66 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Follower_Followee">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Follow" Type="Self.Follow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Follow">
+              <PropertyRef Name="followee" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Follower_Follower">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Follow" Type="Self.Follow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Follow">
+              <PropertyRef Name="follower" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notification_SecUser">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="SecondaryUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notification_Source">
+          <End Role="Source" Type="Self.Source" Multiplicity="1" />
+          <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notification_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="Receiver" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Source_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
           <End Role="SourceUser" Type="Self.SourceUser" Multiplicity="*" />
@@ -241,6 +354,18 @@
             </Principal>
             <Dependent Role="SourceUser">
               <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceUserTag_Tag">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
+          <End Role="SourceUserTag" Type="Self.SourceUserTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SourceUserTag">
+              <PropertyRef Name="TagID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -325,13 +450,30 @@
           <EntitySet Name="Annotation" EntityType="Self.Annotation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AnnotationTag" EntityType="Self.AnnotationTag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Follow" EntityType="Self.Follow" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notification" EntityType="Self.Notification" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SolarGroupUsers" EntityType="Self.SolarGroupUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Source" EntityType="Self.Source" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SourceUser" EntityType="Self.SourceUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SourceUserTag" EntityType="Self.SourceUserTag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UploadedFileMapping" EntityType="Self.UploadedFileMapping" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserTagUsage" EntityType="Self.UserTagUsage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NotificationTemp" EntityType="Self.NotificationTemp" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [NotificationTemp].[ID] AS [ID], 
+    [NotificationTemp].[ReadStatus] AS [ReadStatus], 
+    [NotificationTemp].[Type] AS [Type], 
+    [NotificationTemp].[Receiver] AS [Receiver], 
+    [NotificationTemp].[SecondaryUser] AS [SecondaryUser], 
+    [NotificationTemp].[Created] AS [Created], 
+    [NotificationTemp].[SourceUserID] AS [SourceUserID], 
+    [NotificationTemp].[ReasonCode] AS [ReasonCode], 
+    [NotificationTemp].[SourceID] AS [SourceID]
+    FROM [dbo].[NotificationTemp] AS [NotificationTemp]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK__Annotatio__annot__0E8E2250" Association="Self.FK__Annotatio__annot__0E8E2250">
             <End Role="Annotation" EntitySet="Annotation" />
             <End Role="AnnotationTag" EntitySet="AnnotationTag" />
@@ -352,10 +494,6 @@
             <End Role="Source" EntitySet="Source" />
             <End Role="SourceUser" EntitySet="SourceUser" />
           </AssociationSet>
-          <AssociationSet Name="FK__SourceUse__tagID__08D548FA" Association="Self.FK__SourceUse__tagID__08D548FA">
-            <End Role="Tag" EntitySet="Tag" />
-            <End Role="SourceUserTag" EntitySet="SourceUserTag" />
-          </AssociationSet>
           <AssociationSet Name="FK__UserTagUs__tagID__39788055" Association="Self.FK__UserTagUs__tagID__39788055">
             <End Role="Tag" EntitySet="Tag" />
             <End Role="UserTagUsage" EntitySet="UserTagUsage" />
@@ -368,9 +506,33 @@
             <End Role="Folder" EntitySet="Folder" />
             <End Role="SourceUser" EntitySet="SourceUser" />
           </AssociationSet>
+          <AssociationSet Name="FK_Follower_Followee" Association="Self.FK_Follower_Followee">
+            <End Role="User" EntitySet="User" />
+            <End Role="Follow" EntitySet="Follow" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Follower_Follower" Association="Self.FK_Follower_Follower">
+            <End Role="User" EntitySet="User" />
+            <End Role="Follow" EntitySet="Follow" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notification_SecUser" Association="Self.FK_Notification_SecUser">
+            <End Role="User" EntitySet="User" />
+            <End Role="Notification" EntitySet="Notification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notification_Source" Association="Self.FK_Notification_Source">
+            <End Role="Source" EntitySet="Source" />
+            <End Role="Notification" EntitySet="Notification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notification_User" Association="Self.FK_Notification_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Notification" EntitySet="Notification" />
+          </AssociationSet>
           <AssociationSet Name="FK_Source_User" Association="Self.FK_Source_User">
             <End Role="User" EntitySet="User" />
             <End Role="SourceUser" EntitySet="SourceUser" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SourceUserTag_Tag" Association="Self.FK_SourceUserTag_Tag">
+            <End Role="Tag" EntitySet="Tag" />
+            <End Role="SourceUserTag" EntitySet="SourceUserTag" />
           </AssociationSet>
           <AssociationSet Name="fk_user" Association="Self.fk_user">
             <End Role="User" EntitySet="User" />
@@ -443,8 +605,6 @@
           <EntitySet Name="Folders" EntityType="NotColModel.Folder" />
           <EntitySet Name="Sources" EntityType="NotColModel.Source" />
           <EntitySet Name="SourceUsers" EntityType="NotColModel.SourceUser" />
-          <EntitySet Name="SourceUserTags" EntityType="NotColModel.SourceUserTag" />
-          <EntitySet Name="sysdiagrams" EntityType="NotColModel.sysdiagram" />
           <EntitySet Name="Tags" EntityType="NotColModel.Tag" />
           <EntitySet Name="Users" EntityType="NotColModel.User" />
           <EntitySet Name="UserTagUsages" EntityType="NotColModel.UserTagUsage" />
@@ -480,10 +640,6 @@
             <End Role="User" EntitySet="Users" />
             <End Role="SourceUser" EntitySet="SourceUsers" />
           </AssociationSet>
-          <AssociationSet Name="FK__SourceUse__tagID__08D548FA" Association="NotColModel.FK__SourceUse__tagID__08D548FA">
-            <End Role="Tag" EntitySet="Tags" />
-            <End Role="SourceUserTag" EntitySet="SourceUserTags" />
-          </AssociationSet>
           <AssociationSet Name="FK__UserTagUs__tagID__39788055" Association="NotColModel.FK__UserTagUs__tagID__39788055">
             <End Role="Tag" EntitySet="Tags" />
             <End Role="UserTagUsage" EntitySet="UserTagUsages" />
@@ -500,6 +656,37 @@
             <Parameter Name="SourceID" Mode="In" Type="Int64" />
             <Parameter Name="DeleteSource" Mode="InOut" Type="Boolean" />
           </FunctionImport>
+          <EntitySet Name="SolarGroupUsers" EntityType="NotColModel.SolarGroupUser" />
+          <EntitySet Name="Follows" EntityType="NotColModel.Follow" />
+          <AssociationSet Name="FK_Follower_Followee" Association="NotColModel.FK_Follower_Followee">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Follow" EntitySet="Follows" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Follower_Follower" Association="NotColModel.FK_Follower_Follower">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Follow" EntitySet="Follows" />
+          </AssociationSet>
+          <EntitySet Name="UploadedFileMappings" EntityType="NotColModel.UploadedFileMapping" />
+          <EntitySet Name="sysdiagrams" EntityType="NotColModel.sysdiagram" />
+          <EntitySet Name="SourceUserTags" EntityType="NotColModel.SourceUserTag" />
+          <AssociationSet Name="FK_SourceUserTag_Tag" Association="NotColModel.FK_SourceUserTag_Tag">
+            <End Role="Tag" EntitySet="Tags" />
+            <End Role="SourceUserTag" EntitySet="SourceUserTags" />
+          </AssociationSet>
+          <EntitySet Name="Notifications" EntityType="NotColModel.Notification" />
+          <EntitySet Name="NotificationTemps" EntityType="NotColModel.NotificationTemp" />
+          <AssociationSet Name="FK_Notification_SecUser" Association="NotColModel.FK_Notification_SecUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Notification" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notification_Source" Association="NotColModel.FK_Notification_Source">
+            <End Role="Source" EntitySet="Sources" />
+            <End Role="Notification" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notification_User" Association="NotColModel.FK_Notification_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Notification" EntitySet="Notifications" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="GetTags_Result">
           <Property Type="Int64" Name="ChildId" Nullable="true" />
@@ -600,6 +787,7 @@
           <Property Name="created" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Annotations" Relationship="NotColModel.FK__Annotatio__Sourc__1249A49B" FromRole="Source" ToRole="Annotation" />
           <NavigationProperty Name="SourceUsers" Relationship="NotColModel.FK__SourceUse__Sourc__758D6A5C" FromRole="Source" ToRole="SourceUser" />
+          <NavigationProperty Name="Notifications" Relationship="NotColModel.FK_Notification_Source" FromRole="Source" ToRole="Notification" />
         </EntityType>
         <EntityType Name="SourceUser">
           <Key>
@@ -622,25 +810,6 @@
           <NavigationProperty Name="Source" Relationship="NotColModel.FK__SourceUse__Sourc__758D6A5C" FromRole="SourceUser" ToRole="Source" />
           <NavigationProperty Name="User" Relationship="NotColModel.FK_Source_User" FromRole="SourceUser" ToRole="User" />
         </EntityType>
-        <EntityType Name="SourceUserTag">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SourceUserID" Type="Int64" Nullable="false" />
-          <Property Name="TagID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Tag" Relationship="NotColModel.FK__SourceUse__tagID__08D548FA" FromRole="SourceUserTag" ToRole="Tag" />
-        </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         <EntityType Name="Tag">
           <Key>
             <PropertyRef Name="ID" />
@@ -649,8 +818,8 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="updated" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="AnnotationTags" Relationship="NotColModel.FK__Annotatio__tagID__0F824689" FromRole="Tag" ToRole="AnnotationTag" />
-          <NavigationProperty Name="SourceUserTags" Relationship="NotColModel.FK__SourceUse__tagID__08D548FA" FromRole="Tag" ToRole="SourceUserTag" />
           <NavigationProperty Name="UserTagUsages" Relationship="NotColModel.FK__UserTagUs__tagID__39788055" FromRole="Tag" ToRole="UserTagUsage" />
+          <NavigationProperty Name="SourceUserTags" Relationship="NotColModel.FK_SourceUserTag_Tag" FromRole="Tag" ToRole="SourceUserTag" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -672,7 +841,11 @@
           <NavigationProperty Name="Folders" Relationship="NotColModel.fk_user" FromRole="User" ToRole="Folder" />
           <NavigationProperty Name="SourceUsers" Relationship="NotColModel.FK_Source_User" FromRole="User" ToRole="SourceUser" />
           <NavigationProperty Name="UserTagUsages" Relationship="NotColModel.FK__UserTagUs__userI__38845C1C" FromRole="User" ToRole="UserTagUsage" />
-        </EntityType>
+          <NavigationProperty Name="Follows" Relationship="NotColModel.FK_Follower_Followee" FromRole="User" ToRole="Follow" />
+          <NavigationProperty Name="Follows1" Relationship="NotColModel.FK_Follower_Follower" FromRole="User" ToRole="Follow" />
+          <NavigationProperty Name="Notifications" Relationship="NotColModel.FK_Notification_SecUser" FromRole="User" ToRole="Notification" />
+          <NavigationProperty Name="Notifications1" Relationship="NotColModel.FK_Notification_User" FromRole="User" ToRole="Notification" />
+          </EntityType>
         <EntityType Name="UserTagUsage">
           <Key>
             <PropertyRef Name="ID" />
@@ -780,18 +953,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__SourceUse__tagID__08D548FA">
-          <End Type="NotColModel.Tag" Role="Tag" Multiplicity="1" />
-          <End Type="NotColModel.SourceUserTag" Role="SourceUserTag" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tag">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="SourceUserTag">
-              <PropertyRef Name="TagID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__UserTagUs__tagID__39788055">
           <End Type="NotColModel.Tag" Role="Tag" Multiplicity="1" />
           <End Type="NotColModel.UserTagUsage" Role="UserTagUsage" Multiplicity="*" />
@@ -831,6 +992,165 @@
           <Property Type="Boolean" Name="PrivacyOverride" Nullable="true" />
           <Property Type="Int32" Name="PrivateNoteCount" Nullable="true" />
         </ComplexType>
+        <EntityType Name="SolarGroupUser">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="userID" Type="Int64" Nullable="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Follow">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="follower" Type="Int64" Nullable="false" />
+          <Property Name="followee" Type="Int64" Nullable="false" />
+          <Property Name="lastUpdated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="User" Relationship="NotColModel.FK_Follower_Followee" FromRole="Follow" ToRole="User" />
+          <NavigationProperty Name="User1" Relationship="NotColModel.FK_Follower_Follower" FromRole="Follow" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Follower_Followee">
+          <End Type="NotColModel.User" Role="User" Multiplicity="1" />
+          <End Type="NotColModel.Follow" Role="Follow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Follow">
+              <PropertyRef Name="followee" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Follower_Follower">
+          <End Type="NotColModel.User" Role="User" Multiplicity="1" />
+          <End Type="NotColModel.Follow" Role="Follow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Follow">
+              <PropertyRef Name="follower" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="UploadedFileMapping">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int64" Nullable="false" />
+          <Property Name="FileNameForLink" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LocalFileName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="UploadedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="SourceUserTag">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SourceUserID" Type="Int64" Nullable="false" />
+          <Property Name="TagID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Tag" Relationship="NotColModel.FK_SourceUserTag_Tag" FromRole="SourceUserTag" ToRole="Tag" />
+        </EntityType>
+        <Association Name="FK_SourceUserTag_Tag">
+          <End Type="NotColModel.Tag" Role="Tag" Multiplicity="1" />
+          <End Type="NotColModel.SourceUserTag" Role="SourceUserTag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SourceUserTag">
+              <PropertyRef Name="TagID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Notification">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReadStatus" Type="Boolean" Nullable="false" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Receiver" Type="Int64" Nullable="false" />
+          <Property Name="SecondaryUser" Type="Int64" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SourceUserID" Type="Int64" />
+          <Property Name="ReasonCode" Type="Int32" Nullable="false" />
+          <Property Name="SourceID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="NotColModel.FK_Notification_SecUser" FromRole="Notification" ToRole="User" />
+          <NavigationProperty Name="Source" Relationship="NotColModel.FK_Notification_Source" FromRole="Notification" ToRole="Source" />
+          <NavigationProperty Name="User1" Relationship="NotColModel.FK_Notification_User" FromRole="Notification" ToRole="User" />
+        </EntityType>
+        <EntityType Name="NotificationTemp">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="ReadStatus" />
+            <PropertyRef Name="Type" />
+            <PropertyRef Name="Receiver" />
+            <PropertyRef Name="Created" />
+            <PropertyRef Name="ReasonCode" />
+            <PropertyRef Name="SourceID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReadStatus" Type="Boolean" Nullable="false" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Receiver" Type="Int64" Nullable="false" />
+          <Property Name="SecondaryUser" Type="Int64" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SourceUserID" Type="Int64" />
+          <Property Name="ReasonCode" Type="Int32" Nullable="false" />
+          <Property Name="SourceID" Type="Int64" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Notification_SecUser">
+          <End Type="NotColModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="NotColModel.Notification" Role="Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="SecondaryUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notification_Source">
+          <End Type="NotColModel.Source" Role="Source" Multiplicity="1" />
+          <End Type="NotColModel.Notification" Role="Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="SourceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notification_User">
+          <End Type="NotColModel.User" Role="User" Multiplicity="1" />
+          <End Type="NotColModel.Notification" Role="Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="Receiver" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -976,26 +1296,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="SourceUserTags">
-            <EntityTypeMapping TypeName="NotColModel.SourceUserTag">
-              <MappingFragment StoreEntitySet="SourceUserTag">
-                <ScalarProperty Name="TagID" ColumnName="TagID" />
-                <ScalarProperty Name="SourceUserID" ColumnName="SourceUserID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="NotColModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="definition" ColumnName="definition" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Tags">
             <EntityTypeMapping TypeName="NotColModel.Tag">
               <MappingFragment StoreEntitySet="Tag">
@@ -1036,6 +1336,88 @@
           <FunctionImportMapping FunctionImportName="DeleteAnnotation" FunctionName="NotColModel.Store.DeleteAnnotation" />
           <FunctionImportMapping FunctionImportName="DeleteSourceUser" FunctionName="NotColModel.Store.DeleteSourceUser">
           </FunctionImportMapping>
+          <EntitySetMapping Name="SolarGroupUsers">
+            <EntityTypeMapping TypeName="NotColModel.SolarGroupUser">
+              <MappingFragment StoreEntitySet="SolarGroupUsers">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Follows">
+            <EntityTypeMapping TypeName="NotColModel.Follow">
+              <MappingFragment StoreEntitySet="Follow">
+                <ScalarProperty Name="lastUpdated" ColumnName="lastUpdated" />
+                <ScalarProperty Name="followee" ColumnName="followee" />
+                <ScalarProperty Name="follower" ColumnName="follower" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UploadedFileMappings">
+            <EntityTypeMapping TypeName="NotColModel.UploadedFileMapping">
+              <MappingFragment StoreEntitySet="UploadedFileMapping">
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Uri" ColumnName="Uri" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="UploadedDate" ColumnName="UploadedDate" />
+                <ScalarProperty Name="LocalFileName" ColumnName="LocalFileName" />
+                <ScalarProperty Name="FileNameForLink" ColumnName="FileNameForLink" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="NotColModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SourceUserTags">
+            <EntityTypeMapping TypeName="NotColModel.SourceUserTag">
+              <MappingFragment StoreEntitySet="SourceUserTag">
+                <ScalarProperty Name="TagID" ColumnName="TagID" />
+                <ScalarProperty Name="SourceUserID" ColumnName="SourceUserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notifications">
+            <EntityTypeMapping TypeName="NotColModel.Notification">
+              <MappingFragment StoreEntitySet="Notification">
+                <ScalarProperty Name="SourceID" ColumnName="SourceID" />
+                <ScalarProperty Name="ReasonCode" ColumnName="ReasonCode" />
+                <ScalarProperty Name="SourceUserID" ColumnName="SourceUserID" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="SecondaryUser" ColumnName="SecondaryUser" />
+                <ScalarProperty Name="Receiver" ColumnName="Receiver" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ReadStatus" ColumnName="ReadStatus" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NotificationTemps">
+            <EntityTypeMapping TypeName="NotColModel.NotificationTemp">
+              <MappingFragment StoreEntitySet="NotificationTemp">
+                <ScalarProperty Name="SourceID" ColumnName="SourceID" />
+                <ScalarProperty Name="ReasonCode" ColumnName="ReasonCode" />
+                <ScalarProperty Name="SourceUserID" ColumnName="SourceUserID" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="SecondaryUser" ColumnName="SecondaryUser" />
+                <ScalarProperty Name="Receiver" ColumnName="Receiver" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ReadStatus" ColumnName="ReadStatus" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

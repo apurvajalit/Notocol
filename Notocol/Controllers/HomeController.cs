@@ -52,12 +52,12 @@ namespace Notocol.Controllers
                 return RedirectToAction("Home");
             }
 
-            if (refresh)
+            if (TempData["UserLogin"] != null || refresh)
             {
-                ViewBag.RefreshExtension = 1;
+                ViewBag.UserLogout = 1;
             }
             else
-                ViewBag.RefreshExtension = 0;
+                ViewBag.UserLogout = 0;
 
             return View();
             
@@ -102,12 +102,15 @@ namespace Notocol.Controllers
             
             
             long userID = Convert.ToInt64(Session["userID"]);
-            if (TempData["RefreshExtension"] != null)
+            if (TempData["UserLogin"] != null)
             {
-                ViewBag.RefreshExtension = 1;
-                
-            }else
-                ViewBag.RefreshExtension = 0;
+                ViewBag.UserLogin = 1;
+
+            }
+            else
+            {
+                ViewBag.UserLogin = 0;
+            }
 
 
             ViewBag.QueryFilter = queryFilter;
@@ -115,6 +118,30 @@ namespace Notocol.Controllers
             return View();
         }
 
+        public ActionResult HomeNew(string queryFilter = "", string tagFilter = "")
+        {
+            if (!checkSession())
+            {
+                RedirectToAction("Index");
+            }
+
+
+            long userID = Convert.ToInt64(Session["userID"]);
+            if (TempData["UserLogin"] != null)
+            {
+                ViewBag.UserLogin = 1;
+
+            }
+            else
+            {
+                ViewBag.UserLogin = 0;
+            }
+
+
+            ViewBag.QueryFilter = queryFilter;
+            ViewBag.TagFilter = tagFilter;
+            return View("HomeNew");
+        }
         public ActionResult HomeAngular(string queryFilter = "", string tagFilter = "")
         {
             if (!checkSession())
@@ -124,13 +151,7 @@ namespace Notocol.Controllers
 
 
             long userID = Convert.ToInt64(Session["userID"]);
-            if (TempData["RefreshExtension"] != null)
-            {
-                ViewBag.RefreshExtension = 1;
-
-            }
-            else
-                ViewBag.RefreshExtension = 0;
+            
 
 
             ViewBag.QueryFilter = queryFilter;

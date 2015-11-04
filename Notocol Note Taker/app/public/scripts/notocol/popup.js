@@ -151,7 +151,7 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                                     //$scope.currentParentFolder = $scope.folderTree;
                                 }
 
-                                console.log("Received page details as " + response.tabInfo);
+                                console.log("Received page details as " + JSON.stringify(response.tabInfo));
                                 $scope.pageDetails = response.tabInfo;
 
                                 if ($scope.pageDetails.sourceUserID <= 0) $scope.SavePage();
@@ -248,7 +248,7 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                 }
 
                 $scope.SavePage = function () {
-                    
+                    var firstTimeSave = ($scope.pageDetails.sourceUserID > 0) ? false : true;
                     var data = { sourceData: $scope.pageDetails };
                     if (addedFolders.length > 0) {
                         data.addedFolders = addedFolders;
@@ -291,10 +291,11 @@ function ($window, $rootScope, $timeout, $compile, $http, toastr, TagStore) {
                                 greeting: "PageDetailsUpdated",
                                 pageInfo: $scope.pageDetails
                             });
+                            
 
                             if ($scope.pageDetails.url.indexOf(".pdf") < 0)
                                 GetPageImages($scope.pageDetails.url, data.saveSourceData.sourceData.sourceUserID);
-                    
+                         
                         })
                         .error(function (data, status, headers, config) {
                             toastr.error('Failed to save the page', 'Save Failed');

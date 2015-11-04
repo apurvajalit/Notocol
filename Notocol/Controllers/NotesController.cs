@@ -17,13 +17,19 @@ namespace Notocol.Controllers
     public class NotesController : Controller
     {
                
-        public ActionResult NoteList(long sourceID, bool ownAtTop = false)
+        public ActionResult NoteList(long sourceID, long userIDAtTop = 0, bool ownAtTop = false)
         {
             AnnotationHelper notesHelper = new AnnotationHelper();
-            
+            List<NoteData> response = new List<NoteData>();
+            long userID = (userIDAtTop != 0) ? userIDAtTop : (ownAtTop)?Utility.GetCurrentUserID():0;
+
             AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-            
-            return PartialView("NoteList", notesHelper.GetNoteList(sourceID, ownAtTop, Utility.GetCurrentUserID()));
+
+            SourceHelper sourceHelper = new SourceHelper();
+            response = sourceHelper.GetSourceUserSummaries(sourceID, userID);
+            response.AddRange(notesHelper.GetNoteList(sourceID, userID));
+
+            return PartialView("NoteList", response);
 
         }
 

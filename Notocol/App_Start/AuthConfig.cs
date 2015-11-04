@@ -9,8 +9,8 @@ namespace Notocol
             OAuthWebSecurity.RegisterFacebookClient(
               appId: "875706079161883",
               appSecret: "32aef224208419b3144cf4c5bc3baf90");
-         
-            OAuthWebSecurity.RegisterClient(new GooglePlusClient("984532038251-4eia5k9oelbkcados4lq6k6cg20a7irh.apps.googleusercontent.com", "78ew4q_z4uR9_aC1eKImrTaO"), "Google+", null);
+
+            OAuthWebSecurity.RegisterClient(new GooglePlusClient("1001955814097-v1du4enggl2jl5o7n9v0qrjsvtspfn2c.apps.googleusercontent.com", "e2JUiPa9Qv0FFCji47aGOXYW"), "Google+", null);
         }
     }
 }

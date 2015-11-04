@@ -77,7 +77,7 @@ namespace Business
             return res;
         }
 
-        private bool IsAnnotationPrivate(Annotation annotation)
+        public bool IsAnnotationPrivate(Annotation annotation)
         {
             
             return (Array.IndexOf(
@@ -152,8 +152,8 @@ namespace Business
                     sourceUser.thumbnailText = documentFacebookData["description"].First().Value<String>();
                 
             }
-            
-            sourceUser = sourceHelper.AddSourceUser(sourceUser, annotation.Consumer);
+
+            sourceUser = sourceHelper.AddSourceUser(sourceUser, annotation.Consumer, !(bool)sourceUser.Privacy);
             return sourceUser;
         }
 
@@ -182,8 +182,13 @@ namespace Business
             extAnnotation.id = annotation.ID;
 
             if (extAnnotation.tags != null && extAnnotation.tags.Length > 0)
-                new TagHelper().UpdateAnnotationTags(annotation, extAnnotation.tags, (long)sourceUser.SourceID);
-            
+                new TagHelper().UpdateAnnotationTags(annotation, extAnnotation.tags,sourceUser);
+
+            SendAnnotationCreatedEvent(annotation, userName);
+            if (!IsAnnotationPrivate(annotation) && annotation.Text != null && annotation.Text.Length > 0)
+            {
+                new NotificationHelper().UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_ANNOTATION);
+            }           
             return extAnnotation;
         }
 
@@ -206,19 +211,23 @@ namespace Business
             if (annotation == null || annotation.UserID != userID)
                 return null;
 
+            SourceHelper sourceHelper = new SourceHelper();
+            SourceUser su = sourceHelper.GetSourceUser(annotation.SourceUserID);
+            
             annotation.Updated = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
             annotation.Text = updatedannotation.Text;
             if (annotation.Permissions != updatedannotation.Permissions)
             {
-                SourceHelper sourceHelper = new SourceHelper();
+                
                 annotation.Permissions = updatedannotation.Permissions;
+                
                 if (IsAnnotationPrivate(annotation))
                 {
-                    sourceHelper.IncPrivateNoteCount(annotation.SourceUserID);
+                    sourceHelper.IncPrivateNoteCount(su);
                 }
                 else
                 {
-                    sourceHelper.DecPrivateNoteCount(annotation.SourceUserID, annotation.Consumer);
+                    sourceHelper.DecPrivateNoteCount(su, annotation.Consumer);
                 }
             }
             
@@ -230,8 +239,11 @@ namespace Business
 
             if (!objAnnotationRepository.UpdateAnnotation(annotation)) return null;
             
-            new TagHelper().UpdateAnnotationTags(annotation, extAnnotation.tags);
-            
+            new TagHelper().UpdateAnnotationTags(annotation, extAnnotation.tags, su);
+            if (!IsAnnotationPrivate(annotation) && annotation.Text != null && annotation.Text.Length > 0)
+            {
+                new NotificationHelper().UpdateNotifications(su, NotificationHelper.NOTIFICATION_REASON_ANNOTATION);
+            }
             return extAnnotation;
 
             
@@ -243,7 +255,8 @@ namespace Business
             if (annotation == null || annotation.UserID != userID) return false;
             
             if(objAnnotationRepository.DeleteAnnotation(annotationID)){
-                new SourceHelper().DecNoteCount(annotation.SourceUserID, IsAnnotationPrivate(annotation), annotation.Consumer);
+                SourceHelper sh = new SourceHelper();
+                sh.DecNoteCount(sh.GetSourceUser(annotation.SourceUserID), IsAnnotationPrivate(annotation), annotation.Consumer);
                 return true;
             }
             return false;
@@ -281,13 +294,13 @@ namespace Business
 
         }
 
-        public List<NoteData> GetNoteList(long sourceID, bool ownAtTop, long userID)
+        public List<NoteData> GetNoteList(long sourceID, long userID = 0)
         {
             List<NoteData> notes = new List<NoteData>();
             IList<Annotation> annotations = null;
-            if (ownAtTop)
+            if (userID != 0)
             {
-                annotations = objAnnotationRepository.GetAnnotationsForPageWithOwnAtTop(sourceID, userID);
+                annotations = objAnnotationRepository.GetAnnotationsForPageUserAtTop(sourceID, userID);
             }
             else
             {
@@ -308,6 +321,13 @@ namespace Business
                 }
             }
             return notes;
+        }
+
+        private void SendAnnotationCreatedEvent(Annotation annotation, string userName)
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            properties.Add("onlyHighlight", annotation.Text != null && annotation.Text.Length > 0);
+            new ActivityTracker().TrackEvent("Note", userName, properties);
         }
     }
 }

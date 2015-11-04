@@ -15,17 +15,17 @@ namespace Business
         FolderRepository folderRepository = new FolderRepository();
         public const string USER_ROOT_FOLDER_ID = "0";
         
-        private void FillChildrenForNode(FolderTree node, IList<Folder> folders)
+        private void FillChildrenForNode(FolderTreeRecursive node, IList<Folder> folders)
         {
             IList<Folder> childFolders = (from folder in folders 
                                           where folder.parentID == Convert.ToInt64(node.ID) 
                                           select folder).ToList();
          
-            node.Children = new List<FolderTree>();
+            node.Children = new List<FolderTreeRecursive>();
 
             foreach (var folder in childFolders)
             {
-                FolderTree childTree = new FolderTree();
+                FolderTreeRecursive childTree = new FolderTreeRecursive();
                 childTree.ID = folder.ID.ToString();
                 childTree.Name = folder.name;
                 //childTree.ParentID = node.ID;
@@ -38,10 +38,30 @@ namespace Business
 
         }
 
-        public FolderTree GetUserFolderTree(long userID)
+        private void FillChildrenForNode(FolderTree node, IList<Folder> folders)
+        {
+            IList<Folder> childFolders = (from folder in folders
+                                          where folder.parentID == Convert.ToInt64(node.ID)
+                                          select folder).ToList();
+
+            node.children = new List<FolderTree>();
+
+            foreach (var folder in childFolders)
+            {
+                FolderTree childTree = new FolderTree();
+                
+                childTree.name = folder.name;
+                
+                folders.Remove(folder);
+                FillChildrenForNode(childTree, folders);
+                node.children.Add(childTree);
+            }
+
+        }
+        public FolderTreeRecursive GetUserFolderTreeRecursive(long userID)
         {
             
-            FolderTree userFolderTree = new FolderTree();
+            FolderTreeRecursive userFolderTree = new FolderTreeRecursive();
 
             IList<Folder> folders = folderRepository.GetFoldersForUser(userID);
             Folder folder = new Folder();
@@ -53,7 +73,21 @@ namespace Business
 
         }
 
-        private long GetOrAddFolderTreeNode(FolderTree folderTree, long userID)
+        public FolderTree GetUserFolderTree(long userID)
+        {
+
+            FolderTree userFolderTree = new FolderTree();
+
+            IList<Folder> folders = folderRepository.GetFoldersForUser(userID);
+            Folder folder = new Folder();
+            userFolderTree.ID = USER_ROOT_FOLDER_ID;
+            FillChildrenForNode(userFolderTree, folders);
+
+
+            return userFolderTree;
+
+        }
+        private long GetOrAddFolderTreeNode(FolderTreeRecursive folderTree, long userID)
         {
             Folder folder = new Folder();
             folder.name = folderTree.Name;
@@ -64,7 +98,7 @@ namespace Business
             if (GetOrAddFolder(ref folder)) return folder.ID;
             else return 0;
         }
-        public FolderTree AddFolderTree(FolderTree newFolderTree, long userID)
+        public FolderTreeRecursive AddFolderTree(FolderTreeRecursive newFolderTree, long userID)
         {
             long folderID = 0;
             if ((folderID = GetOrAddFolderTreeNode(newFolderTree, userID)) > 0)
@@ -76,7 +110,7 @@ namespace Business
                     
                     for (; i < newFolderTree.Children.Count; i++)
                     {
-                        FolderTree temp = null;
+                        FolderTreeRecursive temp = null;
                         //newFolderTree.Children[i].ParentID = folderID;
                         newFolderTree.Children[i].Parent = newFolderTree;
                         if ((temp = AddFolderTree(newFolderTree.Children[i], userID)) == null) return null;
@@ -99,10 +133,10 @@ namespace Business
             return folder;
         }
 
-        public long GetFolderID(string folderName, FolderTree folderTree)
+        public long GetFolderID(string folderName, FolderTreeRecursive folderTree)
         {
-            FolderTree currenFolderTree = null;
-            Stack<FolderTree> folderTreesToCheck = new Stack<FolderTree>();
+            FolderTreeRecursive currenFolderTree = null;
+            Stack<FolderTreeRecursive> folderTreesToCheck = new Stack<FolderTreeRecursive>();
             folderTreesToCheck.Push(folderTree);
             do
             {
@@ -167,7 +201,7 @@ namespace Business
             return folderRepository.GetFoldersForUser(userID);
         }
 
-        public FolderTree CheckAndHandleFolderTreeAddition(FolderTree folderTree, long userID, ref string requiredFolderID){
+        public FolderTreeRecursive CheckAndHandleFolderTreeAddition(FolderTreeRecursive folderTree, long userID, ref string requiredFolderID){
             
             if(folderTree.ID.Contains("a")){
                 Folder folder = new Folder();
@@ -197,7 +231,7 @@ namespace Business
             
         }
 
-        public string HandleNewUserFolders(long userID, FolderTree folderTree, string requiredFolderID){
+        public string HandleNewUserFolders(long userID, FolderTreeRecursive folderTree, string requiredFolderID){
             string reqFolderId = null;
             CheckAndHandleFolderTreeAddition(folderTree, userID, ref reqFolderId);
 
@@ -205,7 +239,7 @@ namespace Business
         }
 
 
-        public Dictionary<string, long> HandleNewAddedFolders(List<FolderTree> newFolderslist, long userID)
+        public Dictionary<string, long> HandleNewAddedFolders(List<FolderTreeRecursive> newFolderslist, long userID)
         {
             Dictionary<string, long> addedFolderIDs = new Dictionary<string, long>();
             int i = 0;

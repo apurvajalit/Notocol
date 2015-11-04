@@ -21,7 +21,7 @@ namespace Notocol.Controllers.Api
         }
 
         [HttpPost]
-        public FolderTree AddNewUserFolder(FolderTree newFolder)
+        public FolderTreeRecursive AddNewUserFolder(FolderTreeRecursive newFolder)
         {
             return new FolderHelper().AddFolderTree(newFolder, Utility.GetCurrentUserID());
             

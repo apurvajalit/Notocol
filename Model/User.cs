@@ -20,6 +20,10 @@ namespace Model
             this.Folders = new HashSet<Folder>();
             this.SourceUsers = new HashSet<SourceUser>();
             this.UserTagUsages = new HashSet<UserTagUsage>();
+            this.Follows = new HashSet<Follow>();
+            this.Follows1 = new HashSet<Follow>();
+            this.Notifications = new HashSet<Notification>();
+            this.Notifications1 = new HashSet<Notification>();
         }
     
         public long ID { get; set; }
@@ -39,5 +43,9 @@ namespace Model
         public virtual ICollection<Folder> Folders { get; set; }
         public virtual ICollection<SourceUser> SourceUsers { get; set; }
         public virtual ICollection<UserTagUsage> UserTagUsages { get; set; }
+        public virtual ICollection<Follow> Follows { get; set; }
+        public virtual ICollection<Follow> Follows1 { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Notification> Notifications1 { get; set; }
     }
 }

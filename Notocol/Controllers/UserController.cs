@@ -26,14 +26,14 @@ namespace Notocol.Controllers
             Utility.AddCookie("TOKEN-INFO", Utility.GenerateUserInfoCookieData(user.ID, user.Username));
 
             Utility.SetUserSession(user.ID, user.Username);
-            TempData["RefreshExtension"] = true;
+            TempData["UserLogin"] = true;
         }
 
         private void SetupForLogout()
         {
             Utility.RemoveCookie("TOKEN-INFO");
             Utility.ResetUserSession();
-            TempData["RefreshExtension"] = true;
+            TempData["UserLogout"] = true;
         }
 
         private void SetUserSession(long userID, string userName)
@@ -81,7 +81,7 @@ namespace Notocol.Controllers
         {
 
             SetupForLogout();
-            ViewBag.RefreshExtension = true;
+            //ViewBag.RefreshExtension = true;
             return RedirectToAction("Index", "Home", new { refresh = true });
         }
         public ActionResult ExternalLoginsList(string returnUrl)
@@ -242,6 +242,20 @@ namespace Notocol.Controllers
         }
 
         [HttpPost]
+        public ActionResult FollowGroup(string groupName)
+        {
+            if (groupName != "None")
+            {
+                if (groupName == "IITM Solar")
+                {
+                    long userID = Utility.GetCurrentUserID();
+                    userHelper.SubscribeUserToGroup(userID, groupName);
+                }
+            }
+            return RedirectToAction("Home", "Home");
+        }
+
+        [HttpPost]
         public ActionResult SignInUser(string userName, string password)
         {
             User user = null;
@@ -249,7 +263,6 @@ namespace Notocol.Controllers
             if ((authRet = userHelper.AuthenticateOwnUser(userName, password, out user)) == UserRepository.AUTH_USER_AUTHENTICATED)
             {
                 SetupForLogin(user);
-                ViewBag.RefreshExtension = true;
                 return RedirectToAction("Home", "Home");
             }
             else
@@ -271,15 +284,29 @@ namespace Notocol.Controllers
             }
         }
 
+        public ActionResult SelectGroup()
+        {
+            if (TempData["UserLogin"] != null)
+            {
+                ViewBag.UserLogin = 1;
+
+            }
+            return View();
+        }
+
         [HttpPost]
         public ActionResult SignUpUser(UserRegistration userRegistration)
         {
             User user = null;
+            ActivityTracker tracker = new ActivityTracker();
+
             long addStatus = userHelper.AddOwnNewUser(userRegistration, out user);
+            tracker.TrackEvent("User Signup", "systemAdministrator", new Dictionary<string, object>());
             if (addStatus > 0)
             {
                 SetupForLogin(user);
-                return RedirectToAction("Home", "Home");
+                //return RedirectToAction("Home", "Home");
+                return RedirectToAction("SelectGroup", "User");
             }
 
             TempData["SignUpFailed"] = true;

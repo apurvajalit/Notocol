@@ -17,15 +17,24 @@
                          
             foreach (var note in Model)
             {
-                string noteText = "";
-                var annotatedText = "\"" + @note.QuotedText + "\"";
-                if(@note.NoteText != null)
+                string noteText = null;
+                string annotatedText = null;
+                if (@note.QuotedText != null && @note.QuotedText.Length > 0)
+                {
+                    annotatedText = "\"" + @note.QuotedText + "\"";
+                }
+
+
+                if (@note.NoteText != null)
+                {
                     noteText = System.Text.RegularExpressions.Regex.Replace(@note.NoteText, pattern, replacement);
                 
+                }
+                    
                     
                 
                 <div class="single-note-box">
-                    <p class="text-primary"><em>@annotatedText</em></p>
+                    <p class="text-primary"><em>@Html.Raw(annotatedText)</em></p>
                     <p class="text-info"><small>@noteText</small></p>
                     <div id="pageTags">
                         <ul class="list-inline">

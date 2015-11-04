@@ -1,0 +1,86 @@
+.tile-image {display:block; width:100%; height:150px;  background-size: cover !important; background-repeat:no-repeat; -webkit-border-top-left-radius: 8px; -webkit-border-top-right-radius: 8px;}
+
+
+/**
+ * Grid container
+ */
+#tiles {
+list-style-type: none;
+position: relative; /** Needed to ensure items are laid out relative to this container **/
+margin: 0;
+}
+
+/**
+ * Grid items
+ */
+#tiles li {
+width: 180px;
+background-color: #ffffff;
+/*border: 1px solid #dedede;*/
+-moz-border-radius: 8px;
+-webkit-border-radius: 8px;
+-webkit-box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.05);
+display: none; /** Hide items initially to avoid a flicker effect **/
+cursor: default;
+padding: 0px;
+}
+
+#tiles li img {
+display: block;
+}
+
+/**
+ * Grid item text
+ */
+#tiles li H1 {
+color: #000;
+font-size: 16px;
+padding:0 10px; font-weight:normal; line-height:18px;  font-family: 'roboto_condensedregular';
+margin: 13px 0 0 7px;
+}
+.card-text {
+color: #666;
+font-size: 12px;
+margin: 7px 0 10px 7px;
+padding:0 10px;
+}
+
+.card-users {
+color: #666;
+font-size: 12px;
+margin: 7px 0 5px 7px;
+padding:0 10px;
+}
+.card-users a { color:#fc1c1c; padding:0; margin:5px 5px 0 0; }
+
+.card-tags {
+color: #666;
+font-size: 12px;
+margin: 4px 0 15px 7px;
+padding:0 10px; position:relative; display:block; float:left;
+}
+
+.card-tags a {display:block; float:left; background:#eee; color:#666; padding:1px 6px; margin:4px 5px 0 0; text-decoration:none; -webkit-border-radius: 20px; border:solid 1px #999;}
+ 
+#tiles li p {
+color: #666;
+font-size: 12px;
+margin: 7px 0 0 7px;
+}
+
+/**
+ * Some extra styles to randomize heights of grid items.
+ */
+#tiles ali:nth-child(3n) {
+height: 175px;
+}
+
+#tiles ali:nth-child(4n-3) {
+padding-bottom: 30px;
+}
+
+#tiles ali:nth-child(5n) {
+height: 250px;
+}
+
+ 

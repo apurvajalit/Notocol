@@ -1,8 +1,8 @@
 {
   "name": "Notocol Note Collector",
   "short_name": "Notocol",
-  "version": "0.322",
-  "version_name": "0.322",
+  "version": "0.324",
+  "version_name": "0.324",
   "manifest_version": 2,
 
   "description": "Take notes by saving webpages, pdfs and annotating them",
@@ -60,8 +60,7 @@
     ],
     "externally_connectable": {
         "matches": [ "chrome-extension://bcdabflpgoedlefkdiaedmeokndnfafa/content/web/viewer.html", "https://notocol.tenet.res.in:8443/*" ]
-    },
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm+D1zzev/XS4FkYOBJAU1jfSKX+0YjozhRL/g1cPGcfjRryOOPpboZQr+nwbUlsRgYccoEWMf9nctljWuQGZiiyHiBFq1NpeWV9ObGkEFYGfehsyzjFPkGbPyiTcV4vqVq7ZMVvBXzCxfkwtk0PBFvioZmp7ob9/CF74ROi3ccHfYyiTcIe0bTKDH1CCtU6X+qeDmQDVGZkFUcNVsGn54zN6NXP6rZXWYxMyMmh8rnhxZr0/HGRhZUiDU/1B8czp6yVSa/IQdu6dxLeJDSJ3EsYKlCbWsDq8ofFOf/56SBzVCtlQ9uEKfVcOybowB94Favo62Sp10sY2MnpmMc4E5wIDAQAB"
-
+    }
+    ,"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm+D1zzev/XS4FkYOBJAU1jfSKX+0YjozhRL/g1cPGcfjRryOOPpboZQr+nwbUlsRgYccoEWMf9nctljWuQGZiiyHiBFq1NpeWV9ObGkEFYGfehsyzjFPkGbPyiTcV4vqVq7ZMVvBXzCxfkwtk0PBFvioZmp7ob9/CF74ROi3ccHfYyiTcIe0bTKDH1CCtU6X+qeDmQDVGZkFUcNVsGn54zN6NXP6rZXWYxMyMmh8rnhxZr0/HGRhZUiDU/1B8czp6yVSa/IQdu6dxLeJDSJ3EsYKlCbWsDq8ofFOf/56SBzVCtlQ9uEKfVcOybowB94Favo62Sp10sY2MnpmMc4E5wIDAQAB"
 
 }

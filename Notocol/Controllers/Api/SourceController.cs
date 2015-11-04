@@ -13,12 +13,25 @@ using Notocol.Models;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Web;
+using System.Text;
 
 namespace Notocol.Controllers.Api
 {
     public class SourceController : ApiController
     {
         SourceHelper sourceHelper = new SourceHelper();
+
+        private string GetMixpanelIDFromCookie()
+        {
+            CookieHeaderValue idCookie = null;
+            idCookie = Request.Headers.GetCookies
+                                ("distinctId").SingleOrDefault();
+
+            string data = (idCookie != null) ? idCookie["distinctId"].Value : null;
+
+            return data;
+        }
+
         private bool CheckUser()
         {
             if (Utility.GetCurrentUserID() <= 0)
@@ -46,11 +59,16 @@ namespace Notocol.Controllers.Api
             return true;
         }
 
+        
         [HttpPost]
         public JObject SaveSource([FromBody]SaveSourceData saveSourceData)
         {
+            bool firstSave = saveSourceData.sourceData.sourceUserID > 0 ? false : true;
+
             saveSourceData.sourceData.uri = HttpUtility.UrlDecode(saveSourceData.sourceData.uri);
             saveSourceData.sourceData.url = HttpUtility.UrlDecode(saveSourceData.sourceData.url);
+
+            Uri url = new Uri(saveSourceData.sourceData.url);
 
             if (!CheckUser())
                 return JObject.FromObject(new
@@ -92,6 +110,9 @@ namespace Notocol.Controllers.Api
 
             }
             saveSourceData.sourceData = sourceHelper.SaveSource(saveSourceData.sourceData, Utility.GetCurrentUserID(), Utility.GetCurrentUserName());
+
+
+            sourceHelper.SendEventNewPageAdded(saveSourceData, Utility.GetCurrentUserName(), firstSave);
             if (saveSourceData.sourceData != null && saveSourceData.sourceData.sourceUserID != 0)
             {
                 return JObject.FromObject(new{
@@ -121,9 +142,11 @@ namespace Notocol.Controllers.Api
         [HttpGet]
         public JObject GetSourceData(string URI, string Link)
         {
+
             URI = HttpUtility.UrlDecode(URI);
             Link = HttpUtility.UrlDecode(Link);
-            
+            //var e = Encoding.GetEncoding(URI);
+            Uri url = new Uri(Link);
             if (!CheckUser())
             {
                 return JObject.FromObject(new

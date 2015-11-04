@@ -20,6 +20,8 @@ namespace Repository
 {
     public class SourceRepository : BaseRepository
     {
+        static string lastAddedURI;
+
         public SourceRepository()
         {
             CreateDataContext();
@@ -347,7 +349,7 @@ namespace Repository
             SHA1 sha = new SHA1CryptoServiceProvider();
             source.uriHash = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(URI));
             source.created = DateTime.Now;
-           
+
             
             using (GetDataContext())
             {
@@ -369,6 +371,7 @@ namespace Repository
 
             if (source.ID > 0)
             {
+                lastAddedURI = URI;
                 ElasticSearchTest es = new ElasticSearchTest();
                 es.AddSourceSearchIndex(source, null, null);
             }
@@ -382,34 +385,39 @@ namespace Repository
             using (var con = new SqlConnection(GetDataContext().Database.Connection.ConnectionString))
             {
                 con.Open();
-
-                using (SqlCommand cmd = new SqlCommand("DeleteSourceUser", con))
+                try
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@SourceUserID", sourceuser.ID);
-                    cmd.Parameters.AddWithValue("@SourceID", sourceuser.SourceID);
-                    
-                    SqlParameter outPutParameter = new SqlParameter();
-                    outPutParameter.ParameterName = "@DeleteSource";
-                    outPutParameter.SqlDbType = System.Data.SqlDbType.Bit;
-                    outPutParameter.Direction = System.Data.ParameterDirection.Output;
-                    cmd.Parameters.Add(outPutParameter);
-                    cmd.ExecuteNonQuery();
-                    deleteSource = Convert.ToBoolean(outPutParameter.Value.ToString());
+                    using (SqlCommand cmd = new SqlCommand("DeleteSourceUser", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@SourceUserID", sourceuser.ID);
+                        cmd.Parameters.AddWithValue("@SourceID", sourceuser.SourceID);
+
+                        SqlParameter outPutParameter = new SqlParameter();
+                        outPutParameter.ParameterName = "@DeleteSource";
+                        outPutParameter.SqlDbType = System.Data.SqlDbType.Bit;
+                        outPutParameter.Direction = System.Data.ParameterDirection.Output;
+                        cmd.Parameters.Add(outPutParameter);
+                        cmd.ExecuteNonQuery();
+                        deleteSource = Convert.ToBoolean(outPutParameter.Value.ToString());
+                    }
+                }
+                catch
+                {
+                    throw;
+                }
+                ElasticSearchTest es = new ElasticSearchTest();
+                es.DeleteUserForSource(sourceuser);
+
+                if (deleteSource) es.DeleteSource((long)sourceuser.SourceID);
+                else
+                {
+                    if (sourceuser.Privacy != null && ((bool)sourceuser.Privacy))
+                    {
+                        es.DeletePublicUser((long)sourceuser.SourceID, username);
+                    }
                 }
             }
-            ElasticSearchTest es = new ElasticSearchTest();
-            es.DeleteUserForSource(sourceuser);
-
-            if (deleteSource) es.DeleteSource((long)sourceuser.SourceID);
-            else
-            {
-                if (sourceuser.Privacy != null && ((bool)sourceuser.Privacy))
-                {
-                    es.DeletePublicUser((long)sourceuser.SourceID, username);
-                }
-            }
-            
             return true;
         }
 
@@ -439,6 +447,106 @@ namespace Repository
             return sourceID;
         }
 
-        
+
+
+        public List<NoteData> GetSourceSummarysWithUserAtTop(long sourceID, long userID)
+        {
+            List<SourceUser> list = null;
+            List<NoteData> ret = new List<NoteData>();
+            try
+            {
+                using (GetDataContext())
+                {
+                    list = (from su in context.SourceUsers
+                            .Include("User")
+                            orderby su.UserID == userID ? 1 : 0 descending
+                            where su.SourceID == sourceID
+                            select su).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            foreach (var su in list)
+            {
+                if (su.Summary != null && su.Summary.Length > 0)
+                {
+                    NoteData n = new NoteData
+                    {
+                        NoteText = su.Summary,
+                        username = su.User.Name,
+                        updated = su.ModifiedAt != null ? (DateTime)su.ModifiedAt : DateTime.Now,
+
+                    };
+                    ret.Add(n);
+                }
+            }
+            return ret;
+            
+        }
+
+        public List<NoteData> GetSourceSummaries(long sourceID)
+        {
+            List<SourceUser> list = null;
+            List<NoteData> ret = new List<NoteData>();
+            try
+            {
+                using (GetDataContext())
+                {
+                    list = (from su in context.SourceUsers
+                            .Include("User")
+                            where su.SourceID == sourceID
+                            select su).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            foreach (var su in list)
+            {
+                if (su.Summary != null && su.Summary.Length > 0)
+                {
+                    NoteData n = new NoteData
+                    {
+                        NoteText = su.Summary,
+                        username = su.User.Username,
+                        updated = su.ModifiedAt != null ? (DateTime)su.ModifiedAt : DateTime.Now,
+
+                    };
+                    ret.Add(n);
+                }
+            }
+            return ret;
+        }
+
+
+        public List<long> GetSourceUsers(long sourceID)
+        {
+            List<long> userList = null;
+            try
+            {
+                using (GetDataContext())
+                {
+                    userList = (from su in context.SourceUsers
+                                where sourceID == su.SourceID
+                                select su.UserID).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return userList;
+        }
     }
 }

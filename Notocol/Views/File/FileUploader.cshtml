@@ -1,0 +1,156 @@
+﻿
+@{
+    ViewBag.Title = "FileUploader";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section beforeAngular{
+    <script src="https://angular-file-upload.appspot.com/js/ng-file-upload-shim.js"></script>
+}
+@section afterAngular{
+    <script src="https://angular-file-upload.appspot.com/js/ng-file-upload.js"></script>
+    <script src="~/Scripts/notocol/fileUploadController.js"></script>
+}
+
+<style>
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+</style>
+<div class="container" ng-controller="fileUploadController">
+    
+    <form role="form" name="fileUploadForm">
+        @*<fieldset>
+            <legend>Upload on form submit</legend>*@
+        <div class="form-group border row">
+            <div class="col-sm-3"></div>
+            <div class="input-group col-sm-6">
+                <span class="btn btn-default btn-file" style="width:75%">
+                    Browse for file to upload
+                    <input type="file"
+                           ng-model="pdfFile"
+                           name="file"
+                           accept="application/pdf"
+                           ngf-max-size="1GB"
+                           ngf-select="onFileSelect($file)"
+                           required>
+                </span>
+
+                <div ng-if="pdfFile.progress >= 0 && pdfFile.progress < 100" class="progress">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{pdfFile.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{pdfFile.progress}}%;">
+                        {{pdfFile.progress}}%
+                    </div>
+                </div>
+
+                <span>
+                    
+                    <i ng-show="fileUploadForm.file.$error.required">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                        *required
+                    </i>
+                    <i ng-show="fileUploadForm.file.$error.maxSize">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                        File too large {{pdfFile.size / 1000000000|number:1}}GB: max 1GB
+                    </i>
+                </span>
+                <span>
+                    <button class="btn btn-default" ng-click="pdfFile = null; selectedFileName=null" ng-show="pdfFile">Remove</button>
+                </span>
+            </div>
+            
+            
+
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-9">
+                <p>{{selectedFileName}}</p>
+            </div>
+        </div> 
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div style="border: 1px solid lightblue;" class="col-sm-7 form-group">
+                <div class="input-group">
+                    <h5 class=""><em> Some <b>optional</b> information for the PDF </em> </h5>
+                </div>
+
+                <div class="input-group">
+                    <span >Password</span>
+                    <input class="form-control" id="passwordTextBox" type="password" ng-model="password" placeholder="Enter Password if any" />
+                </div>
+                <br />
+                <div class="input-group" style="margin-bottom: 20px">
+                    <span>Description</span>
+                    <textarea class="form-control" id="descriptionTextBox" ng-model="description" placeholder="Enter additional note or description for the page"> </textarea>
+                </div>
+
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+
+        <div class="form-group row" >
+            <div class="col-sm-2"></div>
+            <button class="col-sm-2 btn-primary" ng-disabled="!submitEnable"
+                    ng-click="onSubmit()">
+                Submit
+            </button>
+            <div class="col-sm-6">
+                <div ng-if="submitInit">
+                    <em>Processing <span><img src="http://www.bba-reman.com/images/fbloader.gif" />'</span></em>
+                </div>
+
+                <div ng-show="submitSuccess">
+                    <em>Upload Successful!!!</em>
+                    <button class="btn-default">
+                        <a ng-if="viewLink != null" href="{{viewLink}}" target="_blank"> View file now</a>
+                    </button>
+                </div>
+
+                <div ng-show="errorMsg">
+                    <em>{{errorMsg}}</em>
+                </div>
+
+            <div class="col-sm-2"></div>
+        </div>
+        @*<div class="form-group">
+            <div class="col-sm-4"></div>
+            <span class="progress" ng-show="pdfFile.progress >= 0">
+                <div ng-if="pdfFile.progress < 100">
+                    <div style="width:{{pdfFile.progress}}%"
+                         ng-bind="pdfFile.progress + '%'"></div>
+                </div>
+
+                <div ng-if="pdfFile.progress >= 100 && !(pdfFile.result || errorMsg)">
+                    <div style="width:100%">Processing...</div>
+                </div>
+            </span>
+            <div class="col-sm-4"></div>
+        </div>*@
+        
+        <div class="form-group">
+        </div>
+        
+    </form>
+    
+    <iframe ng-if="tempFilePath" ng-show="0" ng-src='{{tempFilePath}}'
+            name="pdf-container"></iframe>
+</div>
+
+
+
