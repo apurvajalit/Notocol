@@ -254,5 +254,28 @@ namespace Model
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("DeleteSourceUser", sourceUserIDParameter, sourceIDParameter, deleteSource);
         }
+    
+        public virtual int MarkNotificationAsRead(Nullable<long> notificationID)
+        {
+            var notificationIDParameter = notificationID.HasValue ?
+                new ObjectParameter("notificationID", notificationID) :
+                new ObjectParameter("notificationID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("MarkNotificationAsRead", notificationIDParameter);
+        }
+    
+        public virtual int MarkNotificationAsUnread(Nullable<long> notificationID)
+        {
+            var notificationIDParameter = notificationID.HasValue ?
+                new ObjectParameter("notificationID", notificationID) :
+                new ObjectParameter("notificationID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("MarkNotificationAsUnread", notificationIDParameter);
+        }
+    
+        public virtual int GetUsersForTags()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetUsersForTags");
+        }
     }
 }

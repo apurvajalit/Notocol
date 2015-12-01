@@ -1,0 +1,74 @@
+﻿<script type="text/ng-template" id="userNote">
+    <div class="note-box">
+        <span>{{usernote.QuotedText}}
+        </span>
+        <div>
+            {{usernote.NoteText}}
+        </div>
+    </div>
+    <div class="note-box-bottom">
+        <div class="last-modified">
+            {{usernote.updated}}
+        </div>
+        <a href="#"><img src="~/Content/images/icon-edit.png" width="16" height="16"></a>
+    </div>
+</script>
+
+<div id="inline1" class="fb-box" style="display: none;">
+    <div ng-if="!sourceDetails" style="color:white">
+        Loading!!!
+    </div>
+    <div ng-if="sourceDetails">
+        <h3><span class="circle-blue"><img ng-src="{{sourceDetails.source.faviconURL}}" /></span>{{sourceDetails.source.url|domain}}</h3>
+        <a href="#" class="btn-trash"></a>
+        <a href="#" class="btn-fav"></a>
+
+        <div class="full-width">
+            <h4>
+                <a ng-href="{{sourceDetails.source.url}}" href="#" target="_blank">{{sourceDetails.source.title}}</a>
+            </h4>
+        </div>
+        <div class="full-width-right">
+
+            <div class="sort-fb">
+                Sort by |
+                <select name="sort" size="1">
+                    <option selected value="volvo">Time</option>
+                    @*<option value="saab">Date</option>
+                    <option value="mercedes">Relevance</option>*@
+                </select>
+            </div>
+
+            <div class="search-fb">
+                <input name="" type="text" placeholder="Search phrase">
+                <input name="" type="button" class="btn-search">
+            </div>
+
+        </div>
+        <div class="left-col-fb">
+            <textarea name="" cols="" rows="" placeholder="Something to note for this page">{{sourceDetails.sourceUser.Summary}}</textarea>
+            <select multiple="multiple" placeholder="Add to Collection" class="SlectBox" sumo-select-box>
+                @*<option selected value="volvo">Volvo</option>*@
+                @*<option selected value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+                <option value="bmw">BMW</option>*@
+            </select>
+            <input name="" type="text" placeholder="Tags">
+            <input name="submit" type="submit" value="Add Note">
+        </div>
+        
+        <div class="right-col-fb">
+            <div ng-repeat="usernote in sourceDetails.userNotes" ng-include="userNote"></div>
+            
+        </div>
+
+    </div>
+</div>
+
+<script src="~/Scripts/jquery.sumoselect.js"></script>
+<link href="~/Content/sumoselect/sumoselect.css" rel="stylesheet" />
+<script type="text/javascript">
+       
+</script>

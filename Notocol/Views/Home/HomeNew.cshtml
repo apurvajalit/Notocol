@@ -18,13 +18,32 @@
     <link href="~/Content/Home/example.css" rel="stylesheet">
     <link href="~/Content/Home/chrometheme/chromestyle.css" rel="stylesheet" type="text/css" />
     
-    <script src="~/Scripts/Home/simpletreemenu.js" type="text/javascript"></script>
-    <script src="~/Scripts/Home/jquery-1.11.3.min.js" type="text/javascript"></script>
-    <script src="~/Scripts/Home/angular.min.js" type="text/javascript"></script>
-    <script src="~/Scripts/Home/typeahead.js" type="text/javascript"></script>
-    <script src="~/Scripts/Home/angular-typeahead.min.js" type="text/javascript"></script>
-    <script src="~/Scripts/Home/app.js" type="text/javascript"></script>
-    <script src="~/Scripts/Home/chrome.js" type="text/javascript"></script>
+    <script src="~/Scripts/Common/simpletreemenu.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/angular.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/typeahead.js" type="text/javascript"></script>
+    <script src="~/Scripts/angular-typeahead.min.js" type="text/javascript"></script>
+    
+    <script src="~/Scripts/imagesloaded.pkgd.min.js"></script>
+    <script src="~/Scripts/angular-images-loaded.js"></script>
+
+    
+    <script src="~/Scripts/Common/chrome.js" type="text/javascript"></script>
+    <script src="~/Scripts/Common/app.js" type="text/javascript"></script>
+    <script src="~/Scripts/Common/filter.js" type="text/javascript"></script>
+    <script src="~/Scripts/Common/searchController.js" type="text/javascript"></script>
+    <script src="~/Scripts/Home/pageController.js" type="text/javascript"></script>
+
+
+    <!-- Add fancyBox main JS and CSS files -->
+    <script type="text/javascript" src="~/Scripts/jquery.fancybox.js?v=2.1.5"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/fancybox/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+    <!-- Add Button helper (this is optional) -->
+    <link rel="stylesheet" type="text/css" href="~/Content/fancybox/jquery.fancybox-buttons.css?v=1.0.5" />
+    <script type="text/javascript" src="~/Scripts/jquery.fancybox-buttons.js?v=1.0.5"></script>
+
+    <link rel="stylesheet" type="text/css" href="~/Content/fancybox/fancybox.css" />
 
     <script>
         app.run(function($rootScope) {
@@ -57,7 +76,7 @@
             </li>
         </ul>
     </script>
-    <div class="body-wrap" ng-controller="HomeController">
+    <div class="body-wrap" ng-controller="PageController">
         <div class="left-col">
             <div class="logo"><div><div><img src="~/Content/images/logo.png" /></div></div></div>
             <h3 class="tags"><span>Recent Tags</span></h3>
@@ -78,7 +97,7 @@
 
                     </li>
 
-                    
+
                 </ul>
                 <script type="text/javascript">
                     //ddtreemenu.createTree(treeid, enablepersist, opt_persist_in_days (default is 1))
@@ -92,15 +111,11 @@
         </div>
 
         <div class="right-col">
-
-
-
             <div class="right-col1">
-                <div ng-controller="SearchBoxController" class="search-wrap">
-                    <!--<p>Model: {{selectedQuery|json}}</p>-->
-                    <!-- <input clas
-                    s='typeahead' type="text" sf-typeahead options="exampleOptions" datasets="numbersDataset" ng-model="selectedNumber"> -->
-                    <div id="multipl
+                <div ng-controller="SearchController" class="search-wrap">
+                    @*<p>Model: {{selectedQuery|json}}</p>-->*@
+                    <!--<input class='typeahead' type="text" sf-typeahead options="exampleOptions" datasets="numbersDataset" ng-model="selectedNumber"> -->
+
                     <div id=" multiple-datasets" style="width:100%">
                         <input class="typeahead" type="text" placeholder="Search" ng-model="selectedQuery">
                     </div>
@@ -129,7 +144,6 @@
 
 
             </div>
-
             <div class="right-col2">
                 <div class="tab-nav">
                     <a href="#"
@@ -140,7 +154,7 @@
                        ng-class='{"selected-tab":IsActiveTab("others")}'
                        ng-click="OnClickTab('others')">Notes from Others</a>
                 </div>
-                
+
                 <div class="dropdown">
                     Sort by
                     <label>
@@ -152,12 +166,14 @@
                 </div>
             </div>
             <div class="right-col3" id="style-3">
+
+                @*<div fancybox ng-click="openFancybox('/Templates/Source/SourceDetails')">See more</div>*@
                 <div id="container">
                     <div id="main" role="main">
                         <ul id="tiles">
                             <!-- These are our grid blocks -->
-                            <li ng-repeat="page in pageList" ng-init="$last && updateLayout()">
-                                <page-tile page="page"></page-tile>
+                            <li ng-repeat="page in pageList" ng-init="$last && updateLayout()" images-loaded-events="imgLoadedEvents" class="images-loaded">
+                                <page-tile page="page" open-page-details="openPageDetails(page)"></page-tile>
                             </li>
 
                             <!-- End of grid blocks -->
@@ -168,10 +184,12 @@
 
 
             </div>
-
         </div>
     </div>
-    <script src="~/Scripts/Home/jquery.wookmark.js"></script>
+    
+
+    <script src="~/Scripts/jquery.wookmark.js"></script>
+
 </body>
 </html>
 

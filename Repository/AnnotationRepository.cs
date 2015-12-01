@@ -211,5 +211,28 @@ namespace Repository
             }
             return annotation;
         }
+
+        public List<Annotation> GetAnnotationWithUserForSource(long sourceID)
+        {
+            List<Annotation> ann = new List<Annotation>();
+
+            try
+            {
+                using(GetDataContext())
+                {
+                    ann = (from notes in context.Annotations
+                           .Include("User1")
+                           .Include("AnnotationTags.Tag")
+                           where notes.SourceID == sourceID && notes.SourceUserID != 0
+                           orderby notes.UserID
+                           select notes).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return ann;
+        }
     }
 }

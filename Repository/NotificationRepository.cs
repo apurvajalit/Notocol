@@ -32,7 +32,6 @@ namespace Repository
 
             }
         }
-
         public Notification GetNotification(long receiverUserID, long sourceUserID)
         {
             Notification n = null;
@@ -52,7 +51,6 @@ namespace Repository
 
             return n;
         }
-
         public void UpdateNotification(Notification notification)
         {
             try
@@ -69,9 +67,7 @@ namespace Repository
 
             }
         }
-
-
-        public void AddOrUpdateNotifications(List<NotificationTemp> notifications)
+        public void AddOrUpdateNotifications(List<NotificationTemp> notifications, bool updateText)
         {
 
             try{
@@ -90,20 +86,23 @@ namespace Repository
                         sqlBulkCopy.ColumnMappings.Add("SourceUserID", "SourceUserID");
                         sqlBulkCopy.ColumnMappings.Add("ReasonCode", "ReasonCode");
                         sqlBulkCopy.ColumnMappings.Add("SourceID", "SourceID");
+                        sqlBulkCopy.ColumnMappings.Add("AdditionalText", "AdditionalText");
+                        sqlBulkCopy.ColumnMappings.Add("tags", "tags");
+                        sqlBulkCopy.ColumnMappings.Add("note", "note");
                         sqlBulkCopy.DestinationTableName = "NotificationTemp";
                         sqlBulkCopy.WriteToServer(dt);
                     }
-
+                    
                     string mergeSql = "merge into Notification as Target " +
                                  "using NotificationTemp as Source " +
                                  "on " +
                                  "Target.Receiver=Source.Receiver " +
                                  "and Target.SourceUserID = Source.SourceUserID " +
                                  "when matched then " +
-                                 "update set Target.ReasonCode= Target.ReasonCode | Source.ReasonCode " +
+                                 "update set Target.ReasonCode= Target.ReasonCode | Source.ReasonCode, ReadStatus = 0, Target.Created = GETDATE(), Target.note = ISNULL(Source.note, Target.note), Target.tags = CONCAT(ISNULL(Source.tags, ''),ISNULL(Target.tags, '')) " +
                                  "when not matched then " +
-                                 "insert (ReadStatus,Type,Receiver, SecondaryUser,Created, SourceUserID, ReasonCode, SourceID) values (Source.ReadStatus, Source.Type,Source.Receiver, Source.SecondaryUser,Source.Created, Source.SourceUserID, Source.ReasonCode, Source.SourceID);";
-
+                                 "insert (ReadStatus,Type,Receiver, SecondaryUser,Created, SourceUserID, ReasonCode, SourceID, tags, note) values (Source.ReadStatus, Source.Type,Source.Receiver, Source.SecondaryUser,Source.Created, Source.SourceUserID, Source.ReasonCode, Source.SourceID, Source.tags, Source.note);";
+                    
                     SqlCommand cmd = new SqlCommand(mergeSql, connection);
                     cmd.ExecuteNonQuery();
 
@@ -121,7 +120,6 @@ namespace Repository
             
             
         }
-
         public void DeleteNotificationsForSourceUser(long sourceUserID)
         {
             try
@@ -132,6 +130,58 @@ namespace Repository
                     SqlCommand cmd = new SqlCommand(delStatement, connection);
                     connection.Open();
                     cmd.ExecuteNonQuery();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public List<Notification> GetUserNotifications(long userID)
+        {
+            List<Notification> notifications = null;
+
+            try
+            {
+                using (GetDataContext())
+                {
+                    notifications = (from n in context.Notifications
+                                    .Include("User")
+                                    .Include("Source")
+                                     where n.Receiver == userID
+                                     orderby n.Created descending
+                                     select n).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return notifications;
+        }
+        public void MarkAsRead(long id)
+        {
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.MarkNotificationAsRead(id);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void MarkAsUnread(long id)
+        {
+            try
+            {
+                using (GetDataContext())
+                {
+                    context.MarkNotificationAsUnread(id);
                 }
             }
             catch

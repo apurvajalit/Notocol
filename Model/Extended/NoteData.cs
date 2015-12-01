@@ -14,7 +14,7 @@ namespace Model.Extended
         public string username { get; set; }
         public DateTime updated { get; set; }
         public string[] tags { get; set; }
-        public string  pageURL { get; set; }
-        public string pageTitle { get; set; }
+        //public string  pageURL { get; set; }
+        //public string pageTitle { get; set; }
     }
 }

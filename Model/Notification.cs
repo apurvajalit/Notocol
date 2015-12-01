@@ -23,6 +23,9 @@ namespace Model
         public Nullable<long> SourceUserID { get; set; }
         public int ReasonCode { get; set; }
         public long SourceID { get; set; }
+        public string AdditionalText { get; set; }
+        public string tags { get; set; }
+        public string note { get; set; }
     
         public virtual User User { get; set; }
         public virtual Source Source { get; set; }

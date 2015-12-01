@@ -65,6 +65,9 @@
           <Property Name="SourceUserID" Type="bigint" />
           <Property Name="ReasonCode" Type="int" Nullable="false" />
           <Property Name="SourceID" Type="bigint" Nullable="false" />
+          <Property Name="AdditionalText" Type="varchar(max)" />
+          <Property Name="tags" Type="varchar(max)" />
+          <Property Name="note" Type="varchar(max)" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -87,6 +90,9 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <Property Name="SourceUserID" Type="bigint" />
           <Property Name="ReasonCode" Type="int" Nullable="false" />
           <Property Name="SourceID" Type="bigint" Nullable="false" />
+          <Property Name="AdditionalText" Type="varchar(max)" />
+          <Property Name="tags" Type="varchar(max)" />
+          <Property Name="note" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="SolarGroupUsers">
           <Key>
@@ -399,6 +405,13 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <Parameter Name="userID" Type="bigint" Mode="In" />
           <Parameter Name="strToSearch" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="GetUsersForTags" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="MarkNotificationAsRead" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="notificationID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="MarkNotificationAsUnread" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="notificationID" Type="bigint" Mode="In" />
+        </Function>
         <Function Name="SaveSource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tags" Type="varchar(max)" Mode="In" />
           <Parameter Name="UserID" Type="bigint" Mode="In" />
@@ -471,7 +484,10 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
     [NotificationTemp].[Created] AS [Created], 
     [NotificationTemp].[SourceUserID] AS [SourceUserID], 
     [NotificationTemp].[ReasonCode] AS [ReasonCode], 
-    [NotificationTemp].[SourceID] AS [SourceID]
+    [NotificationTemp].[SourceID] AS [SourceID], 
+    [NotificationTemp].[AdditionalText] AS [AdditionalText], 
+    [NotificationTemp].[tags] AS [tags], 
+    [NotificationTemp].[note] AS [note]
     FROM [dbo].[NotificationTemp] AS [NotificationTemp]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK__Annotatio__annot__0E8E2250" Association="Self.FK__Annotatio__annot__0E8E2250">
@@ -687,6 +703,13 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
             <End Role="User" EntitySet="Users" />
             <End Role="Notification" EntitySet="Notifications" />
           </AssociationSet>
+          <FunctionImport Name="MarkNotificationAsRead">
+          <Parameter Name="notificationID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="MarkNotificationAsUnread">
+          <Parameter Name="notificationID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetUsersForTags" />
           </EntityContainer>
         <ComplexType Name="GetTags_Result">
           <Property Type="Int64" Name="ChildId" Nullable="true" />
@@ -1091,6 +1114,9 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <Property Name="SourceUserID" Type="Int64" />
           <Property Name="ReasonCode" Type="Int32" Nullable="false" />
           <Property Name="SourceID" Type="Int64" Nullable="false" />
+          <Property Name="AdditionalText" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="tags" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="User" Relationship="NotColModel.FK_Notification_SecUser" FromRole="Notification" ToRole="User" />
           <NavigationProperty Name="Source" Relationship="NotColModel.FK_Notification_Source" FromRole="Notification" ToRole="Source" />
           <NavigationProperty Name="User1" Relationship="NotColModel.FK_Notification_User" FromRole="Notification" ToRole="User" />
@@ -1114,6 +1140,9 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <Property Name="SourceUserID" Type="Int64" />
           <Property Name="ReasonCode" Type="Int32" Nullable="false" />
           <Property Name="SourceID" Type="Int64" Nullable="false" />
+          <Property Name="AdditionalText" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="tags" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_Notification_SecUser">
           <End Type="NotColModel.User" Role="User" Multiplicity="0..1" />
@@ -1391,6 +1420,9 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <EntitySetMapping Name="Notifications">
             <EntityTypeMapping TypeName="NotColModel.Notification">
               <MappingFragment StoreEntitySet="Notification">
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="tags" ColumnName="tags" />
+                <ScalarProperty Name="AdditionalText" ColumnName="AdditionalText" />
                 <ScalarProperty Name="SourceID" ColumnName="SourceID" />
                 <ScalarProperty Name="ReasonCode" ColumnName="ReasonCode" />
                 <ScalarProperty Name="SourceUserID" ColumnName="SourceUserID" />
@@ -1406,6 +1438,9 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <EntitySetMapping Name="NotificationTemps">
             <EntityTypeMapping TypeName="NotColModel.NotificationTemp">
               <MappingFragment StoreEntitySet="NotificationTemp">
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="tags" ColumnName="tags" />
+                <ScalarProperty Name="AdditionalText" ColumnName="AdditionalText" />
                 <ScalarProperty Name="SourceID" ColumnName="SourceID" />
                 <ScalarProperty Name="ReasonCode" ColumnName="ReasonCode" />
                 <ScalarProperty Name="SourceUserID" ColumnName="SourceUserID" />
@@ -1418,6 +1453,9 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="MarkNotificationAsRead" FunctionName="NotColModel.Store.MarkNotificationAsRead" />
+          <FunctionImportMapping FunctionImportName="MarkNotificationAsUnread" FunctionName="NotColModel.Store.MarkNotificationAsUnread" />
+          <FunctionImportMapping FunctionImportName="GetUsersForTags" FunctionName="NotColModel.Store.GetUsersForTags" />
           </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

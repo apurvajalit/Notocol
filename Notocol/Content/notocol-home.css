@@ -143,6 +143,66 @@
     border: 8px solid #ffffff;
     border-radius:20px;
 }
+
+.user-notification:hover{
+    color:black;
+    font-weight:bold;
+}
+
+.user-notification{
+    cursor:pointer;
+    border: 1px solid lightgray;
+    border-left:none;
+    border-right:none;
+    margin-left: 10px;
+    margin-right: 20px;
+    margin-bottom: 2px;
+    padding: 5px;
+    border-radius: 4px;
+    width: 450px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 97%;
+    
+}
+
+.user-notification-unread{
+    background: rgb(249, 249, 249);
+}
+
+.user-notification-read{
+    background: white;
+}
+
+.user-notification-title{
+    font-weight:bold;
+    font-style:italic;
+    
+}
+
+.user-notification-username{
+    font-weight:bold;
+    font-stretch:expanded;
+}
+
+.user-notification-tag{
+    background: lightgray;
+    margin: 1px;
+    padding: 1px;
+    border-radius: 2px;
+    color: black;
+    padding-right: 6px;
+    padding-left: 6px;
+}
+
+.user-notification-note{
+    font-style:italic;
+}
+
+.user-notification-date{
+    font-style:italic;
+    font-size:smaller;
+    color: darkgrey;
+}
     /*#tagButton{
         border: none;
         background-color: #F9F9F9;

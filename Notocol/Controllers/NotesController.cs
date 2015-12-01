@@ -19,18 +19,8 @@ namespace Notocol.Controllers
                
         public ActionResult NoteList(long sourceID, long userIDAtTop = 0, bool ownAtTop = false)
         {
-            AnnotationHelper notesHelper = new AnnotationHelper();
-            List<NoteData> response = new List<NoteData>();
-            long userID = (userIDAtTop != 0) ? userIDAtTop : (ownAtTop)?Utility.GetCurrentUserID():0;
-
-            AnnotationRepository objAnnotationRepository = new AnnotationRepository();
-
             SourceHelper sourceHelper = new SourceHelper();
-            response = sourceHelper.GetSourceUserSummaries(sourceID, userID);
-            response.AddRange(notesHelper.GetNoteList(sourceID, userID));
-
-            return PartialView("NoteList", response);
-
+            return PartialView("NoteList", sourceHelper.GetSourceWithNotes(sourceID, Utility.GetCurrentUserID()));
         }
 
         public ActionResult Note(long ID = 0)
@@ -40,5 +30,7 @@ namespace Notocol.Controllers
                 return View(annotation);   //passing null
             return View(new AnnotationHelper().GetNoteData(annotation));
         }
+
+
     }
 }

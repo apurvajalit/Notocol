@@ -477,12 +477,14 @@ namespace Repository.Search
             return searchResponse.Documents.ToList();
 
         }
+
         
         
         public List<ESSource> GetOwnSource(SourceListFilter filter, long userID, int offset, int size)
         {
             bool applyTagFilter = (filter.tags != null) ? ((filter.tags.Length > 0) ? true : false) : false;
-            
+
+            if (!applyTagFilter) return new SourceRepository().GetSortedOwnSource(userID, offset, size);
             QueryContainer tagsQuery = new TermsQuery
             {
                 Field = "tags",
@@ -490,31 +492,6 @@ namespace Repository.Search
                 MinimumShouldMatch = "1"
             };
 
-            //if (applyTagFilter)
-            //{
-            //    queryDescriptor.Query = new TermsQuery
-            //                                {
-            //                                    Field = "tags",
-            //                                    Terms = filter.tags,
-            //                                    MinimumShouldMatch = "1"
-            //                                }.ToContainer();
-            //}
-            //else
-            //{
-            //    IList<KeyValuePair<PropertyPathMarker, ISort>> sortDescriptor = new List<KeyValuePair<PropertyPathMarker, ISort>>();
-
-            //    sortDescriptor.Add(new KeyValuePair<PropertyPathMarker, ISort>(
-            //        "lastUsed", new Sort{
-            //            Order=SortOrder.Descending, 
-            //            Field="lastUsed"}));
-
-            //    queryDescriptor.InnerHits = new InnerHits
-            //    {
-                                      
-            //        Sort = sortDescriptor
-            //    };
-            //}
-            
             FilterContainer ownSourceFilter = new HasChildFilter
             {
                 Type = "sourceuser",
@@ -540,12 +517,14 @@ namespace Repository.Search
                                 
                             });
 
-            ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(s => s
-                               .From(offset)
-                               .Size(size)
-                               .Query(query)
-                            
-                                );
+            SearchDescriptor<ESSource> searchDescriptor = new SearchDescriptor<ESSource>();
+            searchDescriptor.From(offset);
+            searchDescriptor.Size(size);
+            searchDescriptor.Query(query);
+            searchDescriptor.SortDescending("_score");
+            searchDescriptor.SortDescending("lastUsed");
+            
+            ISearchResponse<ESSource> searchResponse = Client.Search<ESSource>(searchDescriptor);
 
             foreach(var hit in searchResponse.Hits){
                 ESSourceUser su = hit.InnerHits.First().Value.Hits.Hits.First().Source.As<ESSourceUser>();

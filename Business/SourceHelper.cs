@@ -184,6 +184,7 @@ namespace Business
             SourceUser sourceUser = null;
             TagHelper tagHelper = new TagHelper();
             FolderHelper folderHelper = new FolderHelper();
+            string note = null;
 
             if (sourceData.sourceUserID > 0)
             {
@@ -205,6 +206,7 @@ namespace Business
                     {
                         notificationRequired = true;
                         notifReason |= NotificationHelper.NOTIFICATION_REASON_NOTE;
+                        note = sourceData.summary;
                     }
                     sourceUser.Summary = sourceData.summary;
                 }
@@ -254,6 +256,7 @@ namespace Business
                     if (sourceUser.Summary != null && sourceUser.Summary.Length > 0)
                     {
                         notifReason |= NotificationHelper.NOTIFICATION_REASON_NOTE;
+                        note = sourceUser.Summary;
                     }
 
                     sourceUser.Privacy = sourceData.privacy;
@@ -283,7 +286,7 @@ namespace Business
             }
             if (notificationRequired)
             {
-                new NotificationHelper().UpdateNotifications(sourceUser, notifReason);
+                new NotificationHelper().UpdateNotifications(sourceUser, notifReason, null, note);
             }
             return sourceData;
         }
@@ -392,15 +395,108 @@ namespace Business
 
         }
 
-        public List<NoteData> GetSourceUserSummaries(long sourceID, long userID)
+        public List<NoteData> GetSourceSummaries(long sourceID, long userID)
         {
-            return (userID == 0)? obSourceRepository.GetSourceSummaries(sourceID) : obSourceRepository.GetSourceSummarysWithUserAtTop(userID, userID);
-
+            List<NoteData> ret = null;
+            if (userID != 0){
+                ret = obSourceRepository.GetSourceSummarysWithUserAtTop(sourceID, userID);
+            }else{
+                return new List<NoteData>();
+                
+            }
+            return null;
+            //return new List<NoteData>();
         }
 
         internal List<long> GetSourceUsers(long sourceID)
         {
             return obSourceRepository.GetSourceUsers(sourceID);
+        }
+
+        private Dictionary<UserKey, List<NoteData>> GetSourceNotes(long sourceID, long currentUserID) {
+
+            Dictionary<UserKey, List<NoteData>> ret = new Dictionary<UserKey,List<NoteData>>();
+
+            Dictionary<UserKey, NoteData> summaries = obSourceRepository.GetSourceSummaries(sourceID, currentUserID);
+            
+            List<Annotation> annotations = new AnnotationHelper().GetFullAnnotationWithUserForSource(sourceID, currentUserID);
+
+
+            foreach (var summary in summaries)
+            {
+                ret.Add(summary.Key, new List<NoteData>{summary.Value});
+            }
+
+            if (annotations.Count > 0)
+            {
+                int iterator = 0;
+                AnnotationHelper annotationHelper = new AnnotationHelper();
+                do
+                {
+                    UserKey currentUserKey = new UserKey
+                    (
+                        annotations[iterator].UserID,
+                        annotations[iterator].User1.Name
+                    );
+
+                    List<NoteData> currentValue;
+                    if (!ret.TryGetValue(currentUserKey, out currentValue))
+                    {
+                        currentValue = new List<NoteData>();
+                    }
+                    do
+                    {
+                        currentValue.Add(annotationHelper.GetNoteData(annotations[iterator]));
+
+                        iterator++;
+                    } while (iterator < annotations.Count && currentUserKey.UserID == annotations[iterator].UserID);
+
+                    ret.Add(currentUserKey, currentValue);
+                } while (iterator < annotations.Count);
+            }
+
+            return ret;
+        }
+
+        public SourceInfoWithUserNotes GetSourceUserWithNotesWithOthers(long sourceUserID, bool userOnly, long ownUserID)
+        {
+            SourceInfoWithUserNotes sourceWithNotes = new SourceInfoWithUserNotes();
+            
+            sourceWithNotes.sourceUser = obSourceRepository.GetSourceUserWithSource(sourceUserID);
+            if (sourceWithNotes.sourceUser == null) return sourceWithNotes;
+            sourceWithNotes.source = sourceWithNotes.sourceUser.Source;
+            sourceWithNotes.sourceUser.Source = null;
+
+            if (((bool)sourceWithNotes.sourceUser.Privacy) && (sourceWithNotes.sourceUser.UserID != ownUserID)) return sourceWithNotes;
+
+            sourceWithNotes.userNotes = GetSourceNotes(sourceWithNotes.source.ID, ownUserID);
+
+            UserKey userKey = new UserKey ( 
+               sourceWithNotes.sourceUser.User.ID, 
+               sourceWithNotes.sourceUser.User.Username 
+            );
+
+            
+            TagHelper tagHelper = new TagHelper();
+            
+            sourceWithNotes.tags = tagHelper.GetSourceUserTags(sourceUserID);
+            
+            return sourceWithNotes;
+
+        }
+
+        public object GetSourceWithNotes(long sourceID, long ownUserID)
+        {
+            SourceInfoWithUserNotes sourceWithNotes = new SourceInfoWithUserNotes();
+
+            sourceWithNotes.source = obSourceRepository.GetSource(sourceID);
+            if (sourceWithNotes.source == null) return sourceWithNotes;
+            TagHelper tagHelper = new TagHelper();
+            sourceWithNotes.tags = tagHelper.GetSourceTags(sourceID);
+            sourceWithNotes.userNotes = GetSourceNotes(sourceWithNotes.source.ID, ownUserID);
+
+
+            return sourceWithNotes;
         }
     }
 }

@@ -10,6 +10,7 @@ using Business;
 using Model.Extended;
 using Repository.Search;
 using Model.Extended.Extension;
+using Newtonsoft.Json;
 
 namespace Notocol.Controllers
 {
@@ -68,6 +69,8 @@ namespace Notocol.Controllers
                     return PartialView("~/Views/Source/Partials/PageTile.cshtml");
                 case "pagetilegrid":
                     return PartialView("~/Views/Source/Partials/PageTileGrid.cshtml");
+                case "sourcedetails":
+                    return PartialView("~/Views/Source/Partials/SourceDetails.cshtml");
                 default:
                     throw new Exception("template not known");
             }
@@ -89,6 +92,44 @@ namespace Notocol.Controllers
             
             return Json(results, JsonRequestBehavior.AllowGet);
          
+        }
+
+        [HttpGet]
+        public ContentResult GetSourceUserWithNotes(long sourceUserID, bool userOnly = false)
+        {
+            var list = JsonConvert.SerializeObject(
+                new SourceHelper().GetSourceUserWithNotesWithOthers(sourceUserID, userOnly, Utility.GetCurrentUserID()),
+                Formatting.None,
+                new JsonSerializerSettings() {
+                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            });
+
+            return Content(list, "application/json");
+            
+        }
+
+        public ContentResult GetSourceWithNotes(long sourceID)
+        {
+            var list = JsonConvert.SerializeObject(
+                new SourceHelper().GetSourceWithNotes(sourceID, Utility.GetCurrentUserID()),
+                Formatting.None,
+                new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                });
+
+            return Content(list, "application/json");
+
+        }
+
+        public ActionResult SourceUserNotes(long sourceUserID)
+        {
+            return View("SourceNotes", new SourceHelper().GetSourceUserWithNotesWithOthers(sourceUserID, false, Utility.GetCurrentUserID()));
+        }
+
+        public ActionResult SourceNotes(long sourceID)
+        {
+            return View("SourceNotes", new SourceHelper().GetSourceWithNotes(sourceID, Utility.GetCurrentUserID()));
         }
     }
 }

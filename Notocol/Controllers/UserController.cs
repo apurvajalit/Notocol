@@ -328,6 +328,35 @@ namespace Notocol.Controllers
             User user = new UserHelper().GetUser(username);
             return View(user);
         }
+
+        [HttpGet]
+        public JsonResult GetUserNotifications()
+        {
+            NotificationHelper helper = new NotificationHelper();
+            return Json(helper.GetNotificationsForUser(Utility.GetCurrentUserID()), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public void MarkUserNotificationAsRead(long id)
+        {
+            NotificationHelper helper = new NotificationHelper();
+            helper.MarkNotificationAsRead(id);
+        }
+
+        [HttpPost]
+        public void MarkUserNotificationAsUnread(long id)
+        {
+            NotificationHelper helper = new NotificationHelper();
+            helper.MarkNotificationAsUnread(id);
+        }
+
+        [HttpPost]
+        public void MarkAllUserNotificationsAsRead()
+        {
+            NotificationHelper helper = new NotificationHelper();
+            helper.MarkAllUserNotificationsAsRead(Utility.GetCurrentUserID());
+        }
+
         //[HttpPost]
         //public ActionResult DeleteUser(long userID)
         //{

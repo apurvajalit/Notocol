@@ -101,6 +101,7 @@
     <Compile Include="Extended\NoteData.cs" />
     <Compile Include="Extended\SourceData.cs" />
     <Compile Include="Extended\SourceItem.cs" />
+    <Compile Include="Extended\SourceInfoWithUserNotes.cs" />
     <Compile Include="Extended\UserRegistration.cs" />
     <Compile Include="Folder.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
@@ -126,6 +127,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NotCol.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Extended\NotificationDisplay.cs" />
     <Compile Include="Notification.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>

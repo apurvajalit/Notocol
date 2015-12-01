@@ -490,17 +490,19 @@ namespace Repository
             
         }
 
-        public List<NoteData> GetSourceSummaries(long sourceID)
+
+
+        public Dictionary<UserKey, NoteData> GetSourceSummaries(long sourceID, long currentUserID)
         {
             List<SourceUser> list = null;
-            List<NoteData> ret = new List<NoteData>();
+            Dictionary<UserKey, NoteData> userSummaries = new Dictionary<UserKey, NoteData>();
             try
             {
                 using (GetDataContext())
                 {
                     list = (from su in context.SourceUsers
                             .Include("User")
-                            where su.SourceID == sourceID
+                            where su.SourceID == sourceID && (!(bool)su.Privacy || su.UserID == currentUserID)
                             select su).ToList();
                 }
             }
@@ -515,18 +517,16 @@ namespace Repository
             foreach (var su in list)
             {
                 if (su.Summary != null && su.Summary.Length > 0)
-                {
-                    NoteData n = new NoteData
-                    {
+                {   
+                    userSummaries.Add(new UserKey(su.UserID, su.User.Username), new NoteData
+                      {
+                        id = 0,
                         NoteText = su.Summary,
-                        username = su.User.Username,
-                        updated = su.ModifiedAt != null ? (DateTime)su.ModifiedAt : DateTime.Now,
-
-                    };
-                    ret.Add(n);
+                        updated = (DateTime)su.ModifiedAt
+                });
                 }
             }
-            return ret;
+            return userSummaries;
         }
 
 
@@ -547,6 +547,75 @@ namespace Repository
                 throw;
             }
             return userList;
+        }
+
+        public SourceUser GetSourceUserWithSource(long sourceUserID)
+        {
+            SourceUser su = null;
+            try
+            {
+                using (GetDataContext())
+                {
+                    su = (from src in context.SourceUsers
+                          .Include("Source")
+                          .Include("User")
+                          .Include("Folder")
+                          where sourceUserID == src.ID
+                          select src).FirstOrDefault();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return su;
+        }
+
+        internal List<ESSource> GetSortedOwnSource(long userID, int offset, int size)
+        {
+            List<ESSource> ret = new List<ESSource>();
+            List<SourceUser> inputList = new List<SourceUser>();
+
+            try
+            {
+                using (GetDataContext())
+                {
+                    inputList = (from su in context.SourceUsers
+                                 .Include("Source")
+                                 .Include("Folder")
+                                 where su.UserID == userID
+                                 orderby su.ModifiedAt descending
+                                 select su).Skip(offset).Take(size).ToList();
+                }
+            }
+            catch
+            {
+
+            }
+            string[] emptyStringArray = new List<string>().ToArray();
+            TagRepository tagRepository = new TagRepository();
+            
+             foreach (var su in inputList)
+            {
+                ESSource res = new ESSource
+                {
+                    faviconURL = su.Source.faviconURL,
+                    Id = (long)su.SourceID,
+                    lastUsed = (DateTime)su.ModifiedAt,
+                    link = su.Source.url,
+                    popularity = 0,
+                    publicUserNames = emptyStringArray,
+                    sourceUserID = su.ID,
+                    title = su.Source.title,
+                    tnImage = su.thumbnailImageUrl,
+                    tnText = (su.Summary != null)? su.Summary:su.thumbnailText
+                    
+                };
+
+                res.tags = (from tags in tagRepository.GetTagsForSourceUser((long)su.SourceID).ToArray() select tags.Name).ToArray();
+                ret.Add(res);
+            }
+            return ret;
         }
     }
 }

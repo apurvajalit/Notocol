@@ -234,7 +234,7 @@ namespace Repository
             return tagNamesToAdd;
         }
                 
-        /* Gets all the tags associated with a source */
+        /* Gets all the tags associated with a sourceuser */
         public IList<Tag> GetTagsForSourceUser(long sourceUserID)
         {
             IList<Tag> tagList = null;
@@ -245,6 +245,34 @@ namespace Repository
                                                     on tags.ID equals sourceTags.TagID
                                                     where sourceTags.SourceUserID == sourceUserID
                                                     select tags).ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                DisposeContext();
+            }
+            return tagList;
+        }
+
+        public IList<Tag> GetTagsForSource(long sourceID)
+        {
+            IList<Tag> tagList = null;
+            try
+            {
+                using (GetDataContext())
+                {
+                    List<long> sourceUsers = (from su in context.SourceUsers
+                                              where su.SourceID == sourceID && !(bool)su.Privacy
+                                              select su.ID).ToList();
+                    tagList = (from tags in context.Tags
+                               join sourceTags in context.SourceUserTags
+                                   on tags.ID equals sourceTags.TagID
+                               where sourceUsers.Contains(sourceTags.SourceUserID)
+                               select tags).ToList();
                 }
             }
             catch
@@ -290,6 +318,7 @@ namespace Repository
                 {
                     tags = (from userTags in context.UserTagUsages.Include("Tag")
                                 where userTags.userID == userID
+                                orderby userTags.lastUsed descending
                                 select userTags.Tag).ToList();
                 }catch{
                     throw; 
@@ -309,7 +338,7 @@ namespace Repository
                 {
                     tags = (from userTags in context.UserTagUsages
                                 where userTags.userID == userID
-                            select userTags).OrderBy(x=>x.lastUsed).ToList();
+                                select userTags).OrderBy(x => x.lastUsed).ToList();
                 }
                 catch
                 {
@@ -532,24 +561,50 @@ namespace Repository
 
         public List<long> GetUsersForTags(List<string> tags)
         {
-            List<long> users = null;
+            List<long> users = new List<long>();
             try
             {
-                //TODO Need to select userID from sourceUSER
-                //users  = (from userTags in context.SourceUserTags
-                //              .Include("Tag")
-                //              .Include("SourceUser")
-                //              where tags.Contains(userTags.Tag.Name)
-                //              select userTags.SourceUserID 
-                //              ).ToList();
 
-            }
+                SqlConnection con = new SqlConnection(GetDataContext().Database.Connection.ConnectionString);
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand("exec GetUsersForTags @list", con))
+                    {
+                        var table = new DataTable();
+                        table.Columns.Add("Item", typeof(string));
+
+                        foreach (var tag in tags)
+                        {
+                            table.Rows.Add(tag);
+                        }
+                        
+                        var pList = new SqlParameter("@list", SqlDbType.Structured);
+                        pList.TypeName = "dbo.StringList";
+                        pList.Value = table;
+
+                        cmd.Parameters.Add(pList);
+                        
+
+                        using (var dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                //Console.WriteLine(dr["Item"].ToString());
+                                users.Add(Convert.ToInt64(dr["Item"]));
+
+                            }
+                                
+                        }
+                    }
+                }
+
+            
             catch
             {
                 throw;
             }
-            //TODO Need to fix navigation property in EF
-            return new List<long>();
+            
+            return users;
         }
     }
 }   

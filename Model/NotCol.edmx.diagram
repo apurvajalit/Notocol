@@ -31,8 +31,8 @@
         <EntityTypeShape EntityType="NotColModel.sysdiagram" Width="1.5" PointX="7.375" PointY="0.75" />
         <EntityTypeShape EntityType="NotColModel.SourceUserTag" Width="1.5" PointX="4.875" PointY="0.75" />
         <AssociationConnector Association="NotColModel.FK_SourceUserTag_Tag" />
-        <EntityTypeShape EntityType="NotColModel.Notification" Width="1.5" PointX="8" PointY="10.25" />
-        <EntityTypeShape EntityType="NotColModel.NotificationTemp" Width="1.5" PointX="9.375" PointY="0.75" />
+        <EntityTypeShape EntityType="NotColModel.Notification" Width="1.5" PointX="10" PointY="2" />
+        <EntityTypeShape EntityType="NotColModel.NotificationTemp" Width="1.5" PointX="10.375" PointY="6.75" />
         <AssociationConnector Association="NotColModel.FK_Notification_SecUser" />
         <AssociationConnector Association="NotColModel.FK_Notification_Source" />
         <AssociationConnector Association="NotColModel.FK_Notification_User" />

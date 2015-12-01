@@ -24,10 +24,10 @@ namespace Business
         }
 
 
-        public List<SourceTagData> GetSourceTags(long sourceID)
+        public List<SourceTagData> GetSourceUserTags(long sourceUserID)
         {
             TagRepository tagRepository = new TagRepository();
-            IList<Tag> tags = tagRepository.GetTagsForSourceUser(sourceID);
+            IList<Tag> tags = tagRepository.GetTagsForSourceUser(sourceUserID);
             List<SourceTagData> retList = new List<SourceTagData>();
             foreach(var sourcetag in tags){
                 SourceTagData n = new SourceTagData{text = sourcetag.Name, id = sourcetag.ID};
@@ -36,6 +36,18 @@ namespace Business
             return retList;
         }
 
+        public List<SourceTagData> GetSourceTags(long sourceID)
+        {
+            TagRepository tagRepository = new TagRepository();
+            IList<Tag> tags = tagRepository.GetTagsForSource(sourceID);
+            List<SourceTagData> retList = new List<SourceTagData>();
+            foreach (var sourcetag in tags)
+            {
+                SourceTagData n = new SourceTagData { text = sourcetag.Name, id = sourcetag.ID };
+                retList.Add(n);
+            }
+            return retList;
+        }
         public bool UpdateSourceTags(SourceUser sourceUser, List<SourceTagData> tags)
         {
             TagRepository tagRepository = new TagRepository();
@@ -59,7 +71,7 @@ namespace Business
             if (!new AnnotationHelper().IsAnnotationPrivate(annotation) &&
                 addedtags != null && addedtags.Count > 0  )
             {
-                new NotificationHelper().UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_TAG);
+                new NotificationHelper().UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_TAG, addedtags);
             }
         }
 
@@ -83,9 +95,10 @@ namespace Business
             return tags;
         }
 
-        internal List<long> GetUsersForTags(List<string> tags)
+        public List<long> GetUsersForTags(List<string> tags)
         {
             return new TagRepository().GetUsersForTags(tags);
         }
+
     }
 }

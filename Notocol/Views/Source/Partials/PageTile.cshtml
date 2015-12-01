@@ -1,17 +1,17 @@
-﻿
-<a ng-if="page.tnImage"
-   target="_blank"
-   style="background:url('{{page.tnImage}}')"
-   class="tile-image"
-   ng-href="{{page.link}}" imageonload></a>
+﻿<div ng-click="openPageDetails({page:page})" style="cursor:pointer">
+    <a ng-if="page.tnImage"
+       target="_blank"
+       style="background:url('{{page.tnImage}}')"
+       class="tile-image"
+       @*ng-href="{{page.link}}"*@></a>
 
-<h1>{{page.title|truncateStringWithEllipsis: 60}}</h1>
+    <h1>{{page.title|truncateStringWithEllipsis: 60}}</h1>
 
-<div ng-if="page.tnText"
-     class="card-text">
-    {{page.tnText|truncateStringWithEllipsis: 150}}
+    <div ng-if="page.tnText"
+         class="card-text">
+        {{page.tnText|truncateStringWithEllipsis: 150}}
+    </div>
 </div>
-
 <div class="card-users">
     <a href="#" ng-repeat="user in page.publicUserNames">{{user|capitalizeFirst}}</a>
 </div>

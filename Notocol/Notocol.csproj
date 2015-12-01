@@ -254,6 +254,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-tagsinput.css" />
+    <Content Include="Content\fancybox\fancybox.css" />
+    <Content Include="Content\fancybox\jquery.fancybox-buttons.css" />
+    <Content Include="Content\fancybox\jquery.fancybox.css" />
     <Content Include="Content\Home\chrometheme\chromebg-over.gif" />
     <Content Include="Content\Home\chrometheme\chromebg.gif" />
     <Content Include="Content\Home\chrometheme\chromebg2-over.gif" />
@@ -271,6 +274,13 @@
     <Content Include="Content\Home\simpletree.css" />
     <Content Include="Content\Home\style.css" />
     <Content Include="Content\Home\stylesheet.css" />
+    <Content Include="Content\images\fancybox\fancybox_loading%402x.gif" />
+    <Content Include="Content\images\fancybox\fancybox_loading.gif" />
+    <Content Include="Content\images\fancybox\fancybox_overlay.png" />
+    <Content Include="Content\images\fancybox\fancybox_sprite%402x.png" />
+    <Content Include="Content\images\fancybox\fancybox_sprite.png" />
+    <Content Include="Content\images\icon-close.png" />
+    <Content Include="Content\images\icon-edit.png" />
     <Content Include="Content\images\bg-nav.png" />
     <Content Include="Content\images\closed.gif" />
     <Content Include="Content\images\down.gif" />
@@ -280,7 +290,10 @@
     <Content Include="Content\images\icon-folders.png" />
     <Content Include="Content\images\icon-home-h.png" />
     <Content Include="Content\images\icon-home.png" />
+    <Content Include="Content\images\icon-like.png" />
+    <Content Include="Content\images\icon-search.png" />
     <Content Include="Content\images\icon-tags.png" />
+    <Content Include="Content\images\icon-trash.png" />
     <Content Include="Content\images\image_1.jpg" />
     <Content Include="Content\images\image_10.jpg" />
     <Content Include="Content\images\image_2.jpg" />
@@ -302,6 +315,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\notocol-home.css" />
+    <Content Include="Content\sumoselect\sumoselect.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -353,7 +367,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\angular-images-loaded.js" />
+    <Content Include="Scripts\angular-relative-date.min.js" />
+    <Content Include="Scripts\angular-sanitize.min.js" />
+    <Content Include="Scripts\angular-truncate.js" />
     <Content Include="Scripts\boostrap3-typeahead.min.js" />
     <Content Include="Scripts\bootstrap-tagsinput.js" />
     <Content Include="fonts\Arimo-Bold-webfont.eot" />
@@ -374,13 +391,21 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\Home\angular-typeahead.min.js" />
-    <Content Include="Scripts\Home\angular.min.js" />
-    <Content Include="Scripts\Home\app.js" />
-    <Content Include="Scripts\Home\chrome.js" />
-    <Content Include="Scripts\Home\jquery-1.11.3.min.js" />
-    <Content Include="Scripts\Home\simpletreemenu.js" />
-    <Content Include="Scripts\Home\typeahead.js" />
+    <Content Include="Scripts\angular-typeahead.min.js" />
+    <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\Common\app.js" />
+    <Content Include="Scripts\Common\chrome.js" />
+    <Content Include="Scripts\Common\fancybox.js" />
+    <Content Include="Scripts\Common\filter.js" />
+    <Content Include="Scripts\Common\searchController.js" />
+    <Content Include="Scripts\Home\pageController.js" />
+    <Content Include="Scripts\jquery-1.11.3.min.js" />
+    <Content Include="Scripts\Common\simpletreemenu.js" />
+    <Content Include="Scripts\jquery.fancybox-buttons.js" />
+    <Content Include="Scripts\jquery.fancybox.js" />
+    <Content Include="Scripts\jquery.sumoselect.js" />
+    <Content Include="Scripts\typeahead.js" />
+    <Content Include="Scripts\imagesloaded.pkgd.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -397,11 +422,12 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\Home\jquery.wookmark.js" />
+    <Content Include="Scripts\jquery.wookmark.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Content\ng-tags-input.bootstrap.css" />
     <Content Include="Scripts\notocol\fileUploadController.js" />
     <Content Include="Scripts\notocol\HomeController.js" />
+    <Content Include="Scripts\notocol\NotificationController.js" />
     <Content Include="Scripts\notocol\notocolApp.js" />
     <Content Include="Scripts\notocol\SearchBarController.js" />
     <Content Include="Scripts\notocol\UserController.js" />
@@ -446,6 +472,9 @@
     <Content Include="Views\File\FileUploader.cshtml" />
     <Content Include="Views\Test\Test.cshtml" />
     <Content Include="Views\Home\HomeNew.cshtml" />
+    <Content Include="Views\Source\SourceNotesbkp.cshtml" />
+    <Content Include="Views\Source\SourceNotes.cshtml" />
+    <Content Include="Views\Source\Partials\SourceDetails.cshtml" />
     <None Include="Views\User\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Notes\Note.cshtml" />
     <Content Include="Views\Home\Welcome.cshtml" />

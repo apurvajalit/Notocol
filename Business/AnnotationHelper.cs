@@ -187,7 +187,7 @@ namespace Business
             SendAnnotationCreatedEvent(annotation, userName);
             if (!IsAnnotationPrivate(annotation) && annotation.Text != null && annotation.Text.Length > 0)
             {
-                new NotificationHelper().UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_ANNOTATION);
+                new NotificationHelper().UpdateNotifications(sourceUser, NotificationHelper.NOTIFICATION_REASON_ANNOTATION, null, annotation.Text);
             }           
             return extAnnotation;
         }
@@ -242,7 +242,7 @@ namespace Business
             new TagHelper().UpdateAnnotationTags(annotation, extAnnotation.tags, su);
             if (!IsAnnotationPrivate(annotation) && annotation.Text != null && annotation.Text.Length > 0)
             {
-                new NotificationHelper().UpdateNotifications(su, NotificationHelper.NOTIFICATION_REASON_ANNOTATION);
+                new NotificationHelper().UpdateNotifications(su, NotificationHelper.NOTIFICATION_REASON_ANNOTATION, null, annotation.Text);
             }
             return extAnnotation;
 
@@ -279,14 +279,23 @@ namespace Business
                     }
                 }
             }
-            note.pageURL = annotation.Uri;
+            //note.pageURL = annotation.Uri;
             dynamic data = JObject.Parse(annotation.Document);
-            note.pageTitle = data.title;
+            //note.pageTitle = data.title;
 
             note.username = annotation.Consumer;
             note.id = annotation.ID;
-            note.tags = (from tags in annotation.AnnotationTags
-                            select tags.Tag.Name).ToArray();
+            if (annotation.AnnotationTags != null)
+            {
+                note.tags = (from tags in annotation.AnnotationTags
+                             select tags.Tag.Name).ToArray();
+            }
+            else
+            {
+                note.tags = (from tags in annotation.AnnotationTags
+                             select tags.Tag.Name).ToArray();
+            }
+            
 
             note.updated = Convert.ToDateTime(annotation.Updated);
             
@@ -328,6 +337,14 @@ namespace Business
             Dictionary<string, object> properties = new Dictionary<string, object>();
             properties.Add("onlyHighlight", annotation.Text != null && annotation.Text.Length > 0);
             new ActivityTracker().TrackEvent("Note", userName, properties);
+        }
+
+        public List<Annotation> GetFullAnnotationWithUserForSource(long sourceID, long ownUserID)
+        {
+            List<Annotation> ann = objAnnotationRepository.GetAnnotationWithUserForSource(sourceID);
+
+
+            return (from n in ann where n.UserID == ownUserID || !IsAnnotationPrivate(n) select n).ToList();
         }
     }
 }

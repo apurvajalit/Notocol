@@ -1,0 +1,1 @@
+var app = angular.module('notocolApp', ['siyfion.sfTypeahead', 'angular-images-loaded']);

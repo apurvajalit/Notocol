@@ -15,12 +15,17 @@
     @RenderSection("beforeAngular", required: false)
 
     <script src="~/Scripts/angular.min.js" ></script>
-   
+    <script src="~/Scripts/angular-sanitize.min.js"></script>
+    <script src="~/Scripts/angular-truncate.js"></script>
+    <script src="~/Scripts/angular-relative-date.min.js"></script>
+    <script src="~/Scripts/notocol/notocolApp.js"></script>
     @RenderSection("afterAngular", required: false)
-    
+    <script src="~/Scripts/notocol/NotificationController.js"></script>
     
     
     @RenderSection("header", required: false);
+    <link href="~/Content/notocol-home.css" rel="stylesheet" type="text/css" />
+    <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
     @RenderSection("css", required: false)   
     
     
@@ -38,7 +43,11 @@
                 'id': userID,
                 'name' : userName
         }
+        
+    
     });
+
+        
 
 </script>
 
@@ -75,21 +84,33 @@
                     }
                     else
                     {
-                        <li class="dropdown" id="notification-list">
+                        <li class="dropdown" id="notification-list" ng-controller="NotificationController">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                 Notification
-                                <span class="caret"></span>
+                                Notification
+                                <span ng-if="numberOfUnreadNotifications > 0" class="label label-pill label-danger">{{numberOfUnreadNotifications}}</span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a ="#">No notifications for you</a></li>
-                                <li><a href="#">nileshgarg just saved " how do you like this to be happening for you....."</a></li>
-                                <li><a href="#">Nisha also saved your page " world loves you and not one other person"</a></li>
-                                <li><a href="#">Vicky saved and commented on "asdfsssssssss sdfssssssssss sdf"</a></li>
-                                <button>Clear all notifications</button>
+                            <ul class="dropdown-menu scrollable-menu" style="max-height:400px">
+                                
+                                <li ng-if="notifications.length <= 0">No notifications for you</li>
+                                
+                                <li ng-if="notifications.length > 0">
+                                    <a class="pull-right" style="color:black" href="#" ng-click="MarkAllRead(); ; $event.stopPropagation();">
+                                        Mark All as Read
+                                    </a>
+                                </li>
+                                <div ng-if="notifications.length > 0" style="margin-bottom: 30px;"></div>
+                                
+                                <li ng-repeat="n in notifications">
+                                    <div class="user-notification" ng-class="{'user-notification-read': n.readStatus, 'user-notification-unread': !n.readStatus}" ng-click="NotificationClickHandler($index);">
+                                        <div ng-bind-html="n.text"></div>
+                                        <p class="user-notification-date">{{n.date|relativeDate }}</p>
+                                    </div>
+                                    
+                                </li>
+
                             </ul>
-                            
                         </li>
-                        
+
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                 <span class="glyphicon glyphicon-user"></span>
@@ -121,7 +142,8 @@
         sendTrackEvent = function(name, values){
             mixpanel.track(name, values);
         };
-
+        
+        
 
     </script>
     
