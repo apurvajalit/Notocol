@@ -277,5 +277,31 @@ namespace Model
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetUsersForTags");
         }
+    
+        public virtual int GetUserProfileData(string username, ObjectParameter userID, ObjectParameter name, ObjectParameter followers, ObjectParameter follows, ObjectParameter sourceUser, ObjectParameter noteCount)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetUserProfileData", usernameParameter, userID, name, followers, follows, sourceUser, noteCount);
+        }
+    
+        public virtual ObjectResult<GetUserProfileSourcePages_Result1> GetUserProfileSourcePages(Nullable<long> userID, Nullable<int> offset, Nullable<int> size)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("userID", userID) :
+                new ObjectParameter("userID", typeof(long));
+    
+            var offsetParameter = offset.HasValue ?
+                new ObjectParameter("offset", offset) :
+                new ObjectParameter("offset", typeof(int));
+    
+            var sizeParameter = size.HasValue ?
+                new ObjectParameter("size", size) :
+                new ObjectParameter("size", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUserProfileSourcePages_Result1>("GetUserProfileSourcePages", userIDParameter, offsetParameter, sizeParameter);
+        }
     }
 }

@@ -498,5 +498,66 @@ namespace Business
 
             return sourceWithNotes;
         }
+
+        public List<ProfileSource> GetProfileSourceData(long userID, int offset, int size)
+        {
+            var data = obSourceRepository.GetProfileSourceData(userID, offset, size);
+            List<ProfileSource> sourceData = new List<ProfileSource>();
+            AnnotationHelper annHelper = new AnnotationHelper();
+            
+            if (data != null)
+            {
+                ProfileSource psource = null;
+                int i = 0;
+                while(i < data.Count)
+                {
+                    if (psource != null) sourceData.Add(psource);
+                    var row = data[i];
+                    long currentSourceUserID = row.sourceUserID;
+
+                    psource = new ProfileSource
+                    {
+                        title = row.title,
+                        faviconURL = row.faviconURL,
+                        thumbnailImageUrl = row.thumbnailImageUrl,
+                        thumbnailText = row.thumbnailText,
+                        sourceID = (long)row.sourceID,
+                        sourceUserID = row.sourceUserID,
+                        url = row.url,
+                        tags = new List<string>(),
+                        notes = new List<NoteDataShort>()
+                    };
+
+                    
+                    do
+                    {
+                        row = data[i];
+                        if (row.tag != null) psource.tags.Add(row.tag);
+                        if (row.Summary != null)
+                        {
+                            psource.notes.Add(new NoteDataShort
+                            {
+                                text = row.Summary
+                            });
+                        }
+                        
+                        if ((row.Text != null || row.Target != null) && 
+                            !annHelper.IsAnnotationPrivate(row.Permissions))
+                        {
+                            psource.notes.Add(new NoteDataShort
+                            {
+                                text = row.Text,
+                                quote = (row.Target == null)?null:annHelper.GetNoteQuote(row.Target)
+                            });
+                        }
+                        i++;
+                    } while (( i < data.Count) && currentSourceUserID == data[i].sourceUserID);
+                }
+
+                if (psource != null) sourceData.Add(psource);
+            }
+            return sourceData;
+        }
     }
+
 }

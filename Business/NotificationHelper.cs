@@ -6,6 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RazorEngine.Templating;
+using System.IO;
+using ExtensionMethods;
+using System.Text.RegularExpressions;
 
 namespace Business
 {
@@ -149,11 +153,12 @@ namespace Business
             new NotificationRepository().DeleteNotificationsForSourceUser(sourceUserID));
         }
 
-        public List<NotificationDisplay> GetNotificationsForUser(long userID)
+
+        public List<NotificationDisplay> GetNotificationsForUser(long userID, bool onlyUnread = false)
         {
             List<NotificationDisplay> notifications = new List<NotificationDisplay>();
 
-            List<Notification> notificationsFromDB = new NotificationRepository().GetUserNotifications(userID);
+            List<Notification> notificationsFromDB = new NotificationRepository().GetUserNotifications(userID, onlyUnread);
 
             if(notificationsFromDB == null || notificationsFromDB.Count <= 0) return notifications;
 
@@ -175,7 +180,7 @@ namespace Business
 
                 //string title = (n.sourceTitle.Length > 50) ? n.sourceTitle.Substring(0, 47) + "..." : n.sourceTitle;
                 string userMarker = "$$u";
-                string titleMarker = "$$t";
+                string titleMarker = "$$ti";
                 string tagMarker = "$$tg";
                 string noteMarker = "$$n";
 
@@ -238,6 +243,29 @@ namespace Business
 
         }
 
+        public string GetNotificationString(NotificationDisplay notification)
+        {
+            var title = (notification.sourceTitle.Length > 100)?notification.sourceTitle.Substring(0, 99)+"...":notification.sourceTitle;
+            var note = (notification.note == null)?"":(notification.note.Length > 200) ? notification.note.Substring(0, 199) + "..." : notification.note;
+
+            var output = notification.notificationDetailText;
+            output = output.Replace("$$u", "<span class='user-notification-username'>" + notification.secondaryUserName + "</span>");
+
+            output = output.Replace("$$ti", "<span class='user-notification-title'>\"" + title + "\"</span>");
+            
+            var tagString = "";
+            if (notification.tags != null && notification.tags.Length > 0) {
+                var tags = notification.tags.Split(','); 
+                for (var i = 0; i < tags.Length; i++) {
+                    if (tags[i].Length > 0) tagString += "<span class='user-notification-tag'>" + tags[i] + "</span>";
+                }
+            }
+
+            output = output.Replace("$$tg", tagString);
+            output = output.Replace("$$n", "<span class='user-notification-note'>\"" + note + "\"</span>");
+            return output;
+        }
+
         public void MarkNotificationAsRead(long id)
         {
             NotificationRepository repository = new NotificationRepository();
@@ -264,8 +292,33 @@ namespace Business
 
         public void MarkAllUserNotificationsAsRead(long userID)
         {
-            List<Notification> notifications = new NotificationRepository().GetUserNotifications(userID);
+            List<Notification> notifications = new NotificationRepository().GetUserNotifications(userID, false);
             MarkNotificationsAsRead((from n in notifications select n.ID).ToList());
+        }
+
+        public string GetUserNotificationHTML(long userID, string userName)
+        {
+            var notes = GetNotificationsForUser(userID, true);
+            if (notes.Count == 0) return null;
+            
+            var model = new NotificationEmail
+                () { userName = userName, notes = new List<string>() };
+
+            foreach (var note in notes)
+            {
+                model.notes.Add(GetNotificationString(note));
+            }
+
+            // Generate the email body from the template file.
+            // 'templateFilePath' should contain the absolute path of your template file.
+            
+            var templateFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EmailTemplates/NotificationTemplate.cshtml");
+
+            var templateService = new TemplateService();
+            var emailHtmlBody = templateService.Parse(File.ReadAllText(templateFilePath), model, null, "NotificationEmail");
+
+
+            return emailHtmlBody;
         }
     }
 }

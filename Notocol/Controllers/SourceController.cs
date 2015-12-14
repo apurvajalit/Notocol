@@ -82,13 +82,23 @@ namespace Notocol.Controllers
             long userID = Utility.GetCurrentUserID();
             List<ESSource> results = null;
             ElasticSearchTest es = new ElasticSearchTest();
-            
-            if (sourceType == ElasticSearchTest.SOURCE_TYPE_OWN)
+
+            if (filter.query == null || filter.query.Length == 0)
             {
-                results = es.GetOwnSource(filter, userID, 0, 50);
-            }else{
-                results = es.GetSourceFromOthers(filter, userID, 0, 50);
+                if (sourceType == ElasticSearchTest.SOURCE_TYPE_OWN)
+                {
+                    results = es.GetOwnSource(filter, userID, 0, 50);
+                }
+                else
+                {
+                    results = es.GetSourceFromOthers(filter, userID, 0, 50);
+                }
             }
+            else
+            {
+                results = es.SearchUsingQuery(filter, userID, sourceType, 0, 50);
+            }
+            
             
             return Json(results, JsonRequestBehavior.AllowGet);
          
@@ -130,6 +140,15 @@ namespace Notocol.Controllers
         public ActionResult SourceNotes(long sourceID)
         {
             return View("SourceNotes", new SourceHelper().GetSourceWithNotes(sourceID, Utility.GetCurrentUserID()));
+        }
+
+        public JsonResult GetSourceForProfile(long userID)
+        {
+            SourceHelper sh = new SourceHelper();
+            var data = sh.GetProfileSourceData(userID, 0, 20);
+            
+            return Json(data, JsonRequestBehavior.AllowGet);
+
         }
     }
 }

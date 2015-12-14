@@ -1,4 +1,6 @@
 ﻿using Business;
+using Model.Extended;
+using Model.Extended.Extension;
 using Notocol.Models;
 using System;
 using System.Collections.Generic;
@@ -57,6 +59,12 @@ namespace Notocol.Controllers.Api
         public bool DeleteFollower(long follower, long followee)
         {
             return new UserHelper().DeleteFollower(follower, followee);
+        }
+
+        [HttpGet]
+        public IList<SuggestData> GetUserNames(string query)
+        {
+            return new UserHelper().GetUserNameSuggestions(query);
         }
     }
 }

@@ -68,7 +68,7 @@ app.filter('constructNotification', function (charactersFilter) {
 
         var output = notification.notificationDetailText;
         output = output.replace("$$u", "<span class='user-notification-username'>" + notification.secondaryUserName + "</span>");
-        output = output.replace("$$t", "<span class='user-notification-title'>\"" + charactersFilter(notification.sourceTitle, 40) + "\"</span>");
+        output = output.replace("$$ti", "<span class='user-notification-title'>\"" + charactersFilter(notification.sourceTitle, 40) + "\"</span>");
         var tagString = "";
         if (notification.tags != null && notification.tags.length > 0) {
             var tags = notification.tags.split(",");

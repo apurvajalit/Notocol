@@ -49,22 +49,38 @@ app.directive('sumoSelectBox', function () {
     };
 })
 
+var tabController = app.controller("TabController", function ($scope) {
+    $scope.tabSelected = 'own';
+    //console.log($scope.$parent.searchData);
+    $scope.IsActiveTab = function (tab) {
+        if ($scope.tabSelected == tab) return true;
+        else return false;
+    }
+    $scope.OnClickTab = function (tab) {
+        if ($scope.tabSelected != tab) {
+            $scope.tabSelected = tab;
+            $scope.$parent.searchData.tabSelected = $scope.tabSelected;
+            console.log("Tab selected is " + $scope.$parent.searchData.tabSelected);
+
+        }
+
+    }
+});
+
 var pageController = app.controller("PageController", function ($scope, $http, $compile) {
     $scope.filter = {};
     $scope.loadCompletePending = 0;
     $scope.pageList = [];
-    $scope.loading = true;
+    
     $scope.loadingError = false;
-    $scope.tabSelected = 'own';
-    $scope.initCollectionTree = function () {
-        ddtreemenu.createTree("treemenu1", true)
-    }
+
+    
     var sourceDetailTemplateURL = '/Templates/Source/SourceDetails';
     var sourceDetailDataURL = '/Source/GetSourceUserWithNotes?sourceUserID='
     $scope.tilefunc = function (messsage) {
         
     }
-
+    
     $scope.openPageDetails = function (page) {
         console.log("received page as " + page.title);
         //$scope.selectedPage = $scope.pageList[0];
@@ -88,37 +104,31 @@ var pageController = app.controller("PageController", function ($scope, $http, $
 
     };
 
-    $scope.IsActiveTab = function (tab) {
-        if ($scope.tabSelected == tab) return true;
-        else return false;
-    }
-    $scope.OnClickTab = function (tab) {
-        if ($scope.tabSelected != tab) {
-            $scope.tabSelected = tab;
-            $scope.GetPageList();
-
-        }
-
-    }
-    $scope.GetPageList = function () {
+    
+    var GetPageList = function () {
+        $scope.loading = true;
         $http({
             method: 'POST',
             url: '/Source/GetSourceList',
             data: {
                 'filter': $scope.filter,
-                "sourceType": $scope.tabSelected == 'own' ? 1 : 3
+                "sourceType": $scope.$parent.searchData.tabSelected == 'own' ? 1 : 3
             }
 
         }).then(function successCallback(response) {
-            $scope.pageList = response.data;
-            $scope.loadCompletePending = response.data.length;
-            $scope.loading = false;
-            $scope.loadingError = false;
-            $scope.updateLayout();
+
+                $scope.pageList = response.data;
+                console.log("Page list lenght is  " + $scope.pageList.length);
+                $scope.loadCompletePending = response.data.length;
+                $scope.loading = false;
+                $scope.loadingError = false;
+                $scope.updateLayout();
+            
+            
         }, function errorCallback(response) {
             $scope.loadingError = true;
             console.log("something seems wrong with status " + status + " " + xhr);
-            setTimeout($scope.GetPageList, 5000);
+            setTimeout(GetPageList, 5000);
 
         });
 
@@ -149,29 +159,9 @@ var pageController = app.controller("PageController", function ($scope, $http, $
         });
 
     };
-    var GetRecentTags = function () {
-        $http({
-            method: 'GET',
-            url: '/Tag/GetRecentlyUsedTags',
-        }).then(function successCallback(response) {
-            $scope.recentTags = response.data;
-        }, function errorCallback(response) {
-        });
-    };
 
-    var GetUserCollections = function () {
-        $http({
-            method: 'GET',
-            url: '/Folder/GetUserFolderTree',
-        }).then(function successCallback(response) {
-            $scope.collections = response.data;
-        }, function errorCallback(response) {
-        });
-    };
-
-    GetRecentTags();
-    GetUserCollections();
-    $scope.GetPageList();
+    
+    
 
     $scope.imgLoadedEvents = {
         always: function (instance) {
@@ -185,11 +175,12 @@ var pageController = app.controller("PageController", function ($scope, $http, $
         done: function (instance) {
             angular.element(instance.elements[0]).addClass('loaded');
             $scope.updateLayout();
+            $scope.loading = false;
         },
         fail: function (instance) { }
     };
 
-    $scope.RefreshPageList = $scope.GetPageList;
+    $scope.RefreshPageList = GetPageList;
     $scope.DeleteSource = function (sourceUserID) {
         var url = 'Source/DeleteSourceUser/sourceUserID=' + sourceUserID;
         var r = confirm("Deleting a page will delete all the notes with it too. Press OK to continue");
@@ -210,5 +201,9 @@ var pageController = app.controller("PageController", function ($scope, $http, $
 
         }
     };
+    $scope.$watch('searchData', function () {
+        GetPageList();
+    }, true);
+    
 
 });

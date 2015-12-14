@@ -1,48 +1,42 @@
-﻿@using Model
-@model User
+﻿@using Model.Extended
+@model UserProfileInfo
 @{
-    ViewBag.Title = "Profile";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = Model.userName;
+    Layout = "~/Views/Shared/NewLayout.cshtml";
+
 }
 
-@section css{
-    <link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/notocol-home.css" rel="stylesheet" type="text/css" />
-    <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
+@section controllerScripts{
+    <script>
+        angular.module("notocolApp").value("userFromService", '@Html.Raw(Json.Encode(Model))');
+    </script>
+
+    <script src="~/Scripts/User/ProfileController.js" type="text/javascript"></script>
 }
 
-<h2>@Model.Name <small>@Model.Username</small></h2>
-<h6>@Model.Email</h6>
-<p>Last seen: @Model.ModifiedAt</p>
-<div class="user-content">
-    <div class="row top-buffer" style="min-height: 100vh">
-        <div class="col-sm-12 min-content-height ">
-            <div id="pages" class="container table-container"></div>
+<div class="right-col3" ng-controller="ProfileController">
+    
+    <div class="right-col-profile">
+        <div class="profile-wrap">
+            @{
+               // var imageUrl = ;
+                //<div class="profile-left" style="background-image:url(@imageUrl);"></div>
+            }
+            <div class="profile-left" style="background-image:url({{ProfileImageUrl(user.ID)}});"></div>
+            <h1>{{user.userName|capitalizeFirst}}<span>@@{{user.userName}}</span></h1>
+            <p>Followers {{user.follows}}&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;Follows {{user.followers}} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; {{user.numberOfNotes}} notes created on {{user.numberOfPages}} pages </p>
+
+            <button ng-click="foo()">Follow</button>
+
         </div>
     </div>
+
+
+
+    <div class="wrapper-single-column">
+        
+        <profile-page-tile ng-repeat="page in pages" page="page" open-page-details="openPageDetails(page)" tag-click-handler="addTagFilter(tag)">
+
+        </profile-page-tile>
+    </div>
 </div>
-
-@section scripts{
-    <script src="~/Scripts/boostrap3-typeahead.min.js" type="text/javascript"></script>
-    <script src="~/Scripts/bootstrap-tagsinput.js" type="text/javascript"></script>
-
-    <script>
-    function GetUserPages() {
-        var userID = @Model.ID;
-        $.ajax({
-
-            url: '/Source/SourceItems?u='+userID,
-            type: 'Get',
-            dataType:"html"
-        })
-        .success(function (data) {
-            $("#pages").html(data);
-        })
-        .error(function(xhr, status){
-            console.log("something seems wrong with status " + status + " " + xhr);
-            setTimeout(GetPages, 5000);
-        });
-    }
-        GetUserPages();
-
-    </script>

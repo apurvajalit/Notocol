@@ -38,6 +38,7 @@ namespace Model
         public string Address { get; set; }
         public string Name { get; set; }
         public string Photo { get; set; }
+        public bool UnsubscribeNotification { get; set; }
     
         public virtual ICollection<Annotation> Annotations { get; set; }
         public virtual ICollection<Folder> Folders { get; set; }

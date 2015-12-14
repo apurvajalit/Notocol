@@ -92,6 +92,8 @@
     <Compile Include="Extended\Extension\SourceDataForExtension.cs" />
     <Compile Include="Extended\FileUploadData.cs" />
     <Compile Include="Extended\FolderTree.cs" />
+    <Compile Include="Extended\NotificationEmail.cs" />
+    <Compile Include="Extended\ProfileSource.cs" />
     <Compile Include="Extended\SourceListFilter.cs" />
     <Compile Include="Extended\Extension\TagDataForBookmark.cs" />
     <Compile Include="Extended\Extension\ThumbnailDataForSourceUser.cs" />
@@ -102,6 +104,8 @@
     <Compile Include="Extended\SourceData.cs" />
     <Compile Include="Extended\SourceItem.cs" />
     <Compile Include="Extended\SourceInfoWithUserNotes.cs" />
+    <Compile Include="Extended\SuggestData.cs" />
+    <Compile Include="Extended\UserProfileInfo.cs" />
     <Compile Include="Extended\UserRegistration.cs" />
     <Compile Include="Folder.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
@@ -110,6 +114,12 @@
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="GetTags_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetUserProfileSourcePages_Result.cs">
+      <DependentUpon>NotCol.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetUserProfileSourcePages_Result1.cs">
       <DependentUpon>NotCol.tt</DependentUpon>
     </Compile>
     <Compile Include="NotCol.Context.cs">
