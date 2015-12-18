@@ -394,9 +394,9 @@ namespace Repository
 
                 cmd.ExecuteNonQuery();
 
-                info.ID = outputIdParam.Value != null ? Convert.ToInt64(outputIdParam.Value) : 0;
-                if (info.ID != 0)
-                {
+                
+                if (!(outputIdParam.Value is DBNull)){
+                    info.ID = outputIdParam.Value != null ? Convert.ToInt64(outputIdParam.Value) : 0;
                     info.name = outputNameParam.Value != null ? outputNameParam.Value.ToString() : default(string);
                     info.followers = followerParam.Value != null ? Convert.ToInt32(followerParam.Value) : 0;
                     info.follows = followsParam.Value != null ? Convert.ToInt32(followsParam.Value) : 0;

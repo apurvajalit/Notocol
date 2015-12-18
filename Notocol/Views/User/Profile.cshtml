@@ -26,13 +26,13 @@
             <h1>{{user.userName|capitalizeFirst}}<span>@@{{user.userName}}</span></h1>
             <p>Followers {{user.follows}}&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;Follows {{user.followers}} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; {{user.numberOfNotes}} notes created on {{user.numberOfPages}} pages </p>
 
-            <button ng-click="foo()">Follow</button>
+            <a href="#">Follow</a>
 
         </div>
     </div>
 
 
-
+    
     <div class="wrapper-single-column">
         
         <profile-page-tile ng-repeat="page in pages" page="page" open-page-details="openPageDetails(page)" tag-click-handler="addTagFilter(tag)">

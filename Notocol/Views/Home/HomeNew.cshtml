@@ -2,6 +2,7 @@
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/NewLayout.cshtml";
 }
+
 @section controllerScripts{
 <script src="~/Scripts/Home/pageController.js" type="text/javascript"></script>
 }
@@ -18,11 +19,11 @@
 
         <a href="#"
            ng-class='{"selected-tab":IsActiveTab("own")}'
-           @*ng-click="event.preventDefault() ;OnClickTab('own')"*@>My Notes</a>
+           ng-click="event.preventDefault() ;OnClickTab('own')">My Notes</a>
 
         <a href="#"
            ng-class='{"selected-tab":IsActiveTab("others")}'
-           @*ng-click="event.preventDefault() ;OnClickTab('others')"*@>Notes from Others</a>
+           ng-click="event.preventDefault() ;OnClickTab('others')">Notes from Others</a>
 
 
         
@@ -44,14 +45,17 @@
 <div class="right-col3" id="style-3" ng-controller="PageController as pageController">
     
     <i ng-show="loading">Loading...</i>
+    <div class="wrapper-single-column" ng-if="searchData.searchString" >
+        <long-page-tile ng-repeat="page in pageList" page="page" open-page-details="openPageDetails(page)" tag-click-handler="addTagFilter(tag)" user-click-handler="userClickHandler(user)"></long-page-tile>
+    </div>
     
-    
-    <div id="container">
+    <div id="container" ng-if="!searchData.searchString">
         <div id="main" role="main">
             <ul id="tiles">
                 <!-- These are our grid blocks -->
                 <li ng-repeat="page in pageList" ng-init="$last && updateLayout()" images-loaded-events="imgLoadedEvents" class="images-loaded">
-                    <page-tile page="page" open-page-details="openPageDetails(page)" tag-click-handler="addTagFilter(tag)"></page-tile>
+                    <page-tile  page="page" open-page-details="openPageDetails(page)" tag-click-handler="addTagFilter(tag)" user-click-handler="userClickHandler(user)"></page-tile>
+                    
                 </li>
 
                 <!-- End of grid blocks -->

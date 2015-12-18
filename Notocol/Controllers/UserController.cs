@@ -419,12 +419,12 @@ namespace Notocol.Controllers
 
             var user = uh.GetUserProfileInfo(u);
             
-
-            user.userName = u;
-            if (user == null)
+            if (user.ID <= 0)
             {
+
                 return View("InvalidUser");
             }
+            user.userName = u;
             return View(user);
         }
 

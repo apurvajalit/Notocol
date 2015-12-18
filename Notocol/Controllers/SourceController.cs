@@ -11,6 +11,7 @@ using Model.Extended;
 using Repository.Search;
 using Model.Extended.Extension;
 using Newtonsoft.Json;
+using Model.Extended.View;
 
 namespace Notocol.Controllers
 {
@@ -67,6 +68,8 @@ namespace Notocol.Controllers
             {
                 case "pagetile":
                     return PartialView("~/Views/Source/Partials/PageTile.cshtml");
+                case "longpagetile":
+                    return PartialView("~/Views/Source/Partials/LongPageTile.cshtml");
                 case "pagetilegrid":
                     return PartialView("~/Views/Source/Partials/PageTileGrid.cshtml");
                 case "sourcedetails":
@@ -80,35 +83,21 @@ namespace Notocol.Controllers
         public JsonResult GetSourceList(SourceListFilter filter, int sourceType = ElasticSearchTest.SOURCE_TYPE_ALL)
         {
             long userID = Utility.GetCurrentUserID();
-            List<ESSource> results = null;
+            
             ElasticSearchTest es = new ElasticSearchTest();
-
-            if (filter.query == null || filter.query.Length == 0)
-            {
-                if (sourceType == ElasticSearchTest.SOURCE_TYPE_OWN)
-                {
-                    results = es.GetOwnSource(filter, userID, 0, 50);
-                }
-                else
-                {
-                    results = es.GetSourceFromOthers(filter, userID, 0, 50);
-                }
-            }
-            else
-            {
-                results = es.SearchUsingQuery(filter, userID, sourceType, 0, 50);
-            }
-            
-            
+            List<PageDetails> results = null;
+            SourceHelper sourceHelper = new SourceHelper();
+            results = sourceHelper.GetSource(filter, sourceType, userID, 0, 50);
             return Json(results, JsonRequestBehavior.AllowGet);
-         
+            
+            
         }
 
         [HttpGet]
         public ContentResult GetSourceUserWithNotes(long sourceUserID, bool userOnly = false)
         {
             var list = JsonConvert.SerializeObject(
-                new SourceHelper().GetSourceUserWithNotesWithOthers(sourceUserID, userOnly, Utility.GetCurrentUserID()),
+                new SourceHelper().GetSourceUserWithNotes(sourceUserID, userOnly, Utility.GetCurrentUserID()),
                 Formatting.None,
                 new JsonSerializerSettings() {
                     ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -134,7 +123,7 @@ namespace Notocol.Controllers
 
         public ActionResult SourceUserNotes(long sourceUserID)
         {
-            return View("SourceNotes", new SourceHelper().GetSourceUserWithNotesWithOthers(sourceUserID, false, Utility.GetCurrentUserID()));
+            return View("SourceNotes", new SourceHelper().GetSourceUserWithNotes(sourceUserID, false, Utility.GetCurrentUserID()));
         }
 
         public ActionResult SourceNotes(long sourceID)

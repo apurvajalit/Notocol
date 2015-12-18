@@ -1,19 +1,19 @@
 ﻿<div ng-click="openPageDetails({page:page})" style="cursor:pointer">
-    <a ng-if="page.tnImage"
+    <a ng-if="page.thumbnailImageUrl"
        target="_blank"
-       style="background:url('{{page.tnImage}}')"
+       style="background:url('{{page.thumbnailImageUrl}}')"
        class="tile-image"
        @*ng-href="{{page.link}}"*@></a>
 
     <h1>{{page.title|truncateStringWithEllipsis: 60}}</h1>
 
-    <div ng-if="page.tnText"
+    <div ng-if="page.thumbnailText"
          class="card-text">
-        {{page.tnText|truncateStringWithEllipsis: 150}}
+        {{page.thumbnailText|truncateStringWithEllipsis: 150}}
     </div>
 </div>
 <div class="card-users">
-    <a ng-repeat="user in page.publicUserNames" ng-click="GotoUser(user)">{{user|capitalizeFirst}}</a>
+    <a ng-repeat="user in page.publicUserNames" ng-click="userClickHandler({user:user})">{{user|capitalizeFirst}}</a>
 </div>
 
 <div class="card-tags">

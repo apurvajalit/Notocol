@@ -16,6 +16,10 @@ a, a:hover { text-decoration:none;}
 .profile-left { width:150px; height:150px; display:block; margin:0px auto; float:none; background-size:100% auto; background-position: center top; background-repeat:no-repeat; -webkit-border-radius: 75px; }
 
 .profile-wrap P { width:100%; display:block; text-align:center; font-size:15px; color:#666;} 
+.profile-wrap a { width:100px; display:block; margin:10px auto 0 auto; float:none; text-align:center; font-size:15px; color:#fff; background:#fc1c1c; padding:12px 0; -webkit-border-radius: 8px;} 
+.profile-wrap a:hover { background:#333;}
+.profile-wrap a { width:100px; display:block; margin:10px auto 0 auto; float:none; text-align:center; font-size:15px; color:#fff; background:#fc1c1c; padding:12px 0; -webkit-border-radius: 8px;} 
+.profile-wrap a:hover { background:#333;}
 
 .logo {  height:16vh; width:100%; background:#fc1c1c; text-align:center;vertical-align:middle;}
 .logo div {display:table; width:100%; height:100%;}

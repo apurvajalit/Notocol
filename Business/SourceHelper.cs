@@ -10,6 +10,9 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using log4net;
+using Model.Extended.View;
+using Repository.Search;
+
 namespace Business
 {
     public class SourceHelper
@@ -95,6 +98,45 @@ namespace Business
             
             return null;
         }
+
+        public List<PageDetails> GetSource(SourceListFilter filter, int sourceType, long userID, int offset, int size)
+        {
+            List<PageDetails> ret = new List<PageDetails>();
+            ElasticSearchTest es = new ElasticSearchTest();
+            if (filter.query == null || filter.query.Length == 0)
+            {
+                List<ESSource> results = null;
+                if (sourceType == ElasticSearchTest.SOURCE_TYPE_OWN){
+                    results = es.GetOwnSource(filter, userID, 0, 50);
+                }
+                else
+                {
+                    results = es.GetSourceFromOthers(filter, userID, 0, 50);
+                }
+                foreach(var res in results)
+                {
+                    ret.Add(new PageDetails
+                    {
+                        faviconURL = res.faviconURL,
+                        Id = res.Id,
+                        sourceUserID = res.sourceUserID,
+                        tags = res.tags != null ? res.tags.ToList() : null,
+                        thumbnailImageUrl = res.tnImage,
+                        thumbnailText = res.tnText,
+                        title = res.title,
+                        url = res.link,
+                        users = res.publicUserNames != null ? res.publicUserNames.ToList() : null
+                    });
+                }
+            }
+            else
+            {
+                ret = es.GetLongSource(filter, userID, sourceType, 0, 50);
+           }
+
+            return ret;
+        }
+
         private string GetThumbNailText(string[] pageText, int maxThumbnailTextLength)
         {
             string pageThumbnailText = "";
@@ -413,11 +455,11 @@ namespace Business
             return obSourceRepository.GetSourceUsers(sourceID);
         }
 
-        private Dictionary<UserKey, List<NoteData>> GetSourceNotes(long sourceID, long currentUserID) {
+        private Dictionary<long, List<NoteData>> GetSourceNotes(long sourceID, long currentUserID) {
 
-            Dictionary<UserKey, List<NoteData>> ret = new Dictionary<UserKey,List<NoteData>>();
+            Dictionary<long, List<NoteData>> ret = new Dictionary<long,List<NoteData>>();
 
-            Dictionary<UserKey, NoteData> summaries = obSourceRepository.GetSourceSummaries(sourceID, currentUserID);
+            Dictionary<long, NoteData> summaries = obSourceRepository.GetSourceSummaries(sourceID, currentUserID);
             
             List<Annotation> annotations = new AnnotationHelper().GetFullAnnotationWithUserForSource(sourceID, currentUserID);
 
@@ -433,59 +475,49 @@ namespace Business
                 AnnotationHelper annotationHelper = new AnnotationHelper();
                 do
                 {
-                    UserKey currentUserKey = new UserKey
-                    (
-                        annotations[iterator].UserID,
-                        annotations[iterator].User1.Name
-                    );
-
                     List<NoteData> currentValue;
-                    if (!ret.TryGetValue(currentUserKey, out currentValue))
+                    if (!ret.TryGetValue(annotations[iterator].UserID, out currentValue))
                     {
                         currentValue = new List<NoteData>();
                     }
                     do
                     {
                         currentValue.Add(annotationHelper.GetNoteData(annotations[iterator]));
-
                         iterator++;
-                    } while (iterator < annotations.Count && currentUserKey.UserID == annotations[iterator].UserID);
+                    } while (iterator < annotations.Count && annotations[iterator].UserID == annotations[iterator].UserID);
 
-                    ret.Add(currentUserKey, currentValue);
+                    ret.Add(annotations[iterator].UserID, currentValue);
                 } while (iterator < annotations.Count);
             }
 
             return ret;
         }
 
-        public SourceInfoWithUserNotes GetSourceUserWithNotesWithOthers(long sourceUserID, bool userOnly, long ownUserID)
+        public SourceInfoWithUserNotes GetSourceUserWithNotes(long sourceUserID, bool userOnly, long ownUserID)
         {
             SourceInfoWithUserNotes sourceWithNotes = new SourceInfoWithUserNotes();
             
             sourceWithNotes.sourceUser = obSourceRepository.GetSourceUserWithSource(sourceUserID);
             if (sourceWithNotes.sourceUser == null) return sourceWithNotes;
             sourceWithNotes.source = sourceWithNotes.sourceUser.Source;
+
             sourceWithNotes.sourceUser.Source = null;
+            sourceWithNotes.sourceUser.User = null;
+            sourceWithNotes.source.SourceUsers = null;
 
             if (((bool)sourceWithNotes.sourceUser.Privacy) && (sourceWithNotes.sourceUser.UserID != ownUserID)) return sourceWithNotes;
 
             sourceWithNotes.userNotes = GetSourceNotes(sourceWithNotes.source.ID, ownUserID);
-
-            UserKey userKey = new UserKey ( 
-               sourceWithNotes.sourceUser.User.ID, 
-               sourceWithNotes.sourceUser.User.Username 
-            );
-
-            
             TagHelper tagHelper = new TagHelper();
             
             sourceWithNotes.tags = tagHelper.GetSourceUserTags(sourceUserID);
+            
             
             return sourceWithNotes;
 
         }
 
-        public object GetSourceWithNotes(long sourceID, long ownUserID)
+        public SourceInfoWithUserNotes GetSourceWithNotes(long sourceID, long ownUserID)
         {
             SourceInfoWithUserNotes sourceWithNotes = new SourceInfoWithUserNotes();
 
@@ -495,19 +527,18 @@ namespace Business
             sourceWithNotes.tags = tagHelper.GetSourceTags(sourceID);
             sourceWithNotes.userNotes = GetSourceNotes(sourceWithNotes.source.ID, ownUserID);
 
-
             return sourceWithNotes;
         }
 
-        public List<ProfileSource> GetProfileSourceData(long userID, int offset, int size)
+        public List<PageDetails> GetProfileSourceData(long userID, int offset, int size)
         {
             var data = obSourceRepository.GetProfileSourceData(userID, offset, size);
-            List<ProfileSource> sourceData = new List<ProfileSource>();
+            List<PageDetails> sourceData = new List<PageDetails>();
             AnnotationHelper annHelper = new AnnotationHelper();
             
             if (data != null)
             {
-                ProfileSource psource = null;
+                PageDetails psource = null;
                 int i = 0;
                 while(i < data.Count)
                 {
@@ -515,36 +546,35 @@ namespace Business
                     var row = data[i];
                     long currentSourceUserID = row.sourceUserID;
 
-                    psource = new ProfileSource
+                    psource = new PageDetails
                     {
                         title = row.title,
                         faviconURL = row.faviconURL,
                         thumbnailImageUrl = row.thumbnailImageUrl,
                         thumbnailText = row.thumbnailText,
-                        sourceID = (long)row.sourceID,
+                        Id = (long)row.sourceID,
                         sourceUserID = row.sourceUserID,
                         url = row.url,
                         tags = new List<string>(),
-                        notes = new List<NoteDataShort>()
+                        notes = new List<NoteDisplay>()
                     };
 
-                    
+                    if(row.Summary != null && row.Summary.Length > 0)
+                    {
+                        psource.notes.Add(new NoteDisplay
+                        {
+                            text = row.Summary
+                        });
+                    }
                     do
                     {
                         row = data[i];
                         if (row.tag != null) psource.tags.Add(row.tag);
-                        if (row.Summary != null)
-                        {
-                            psource.notes.Add(new NoteDataShort
-                            {
-                                text = row.Summary
-                            });
-                        }
                         
                         if ((row.Text != null || row.Target != null) && 
                             !annHelper.IsAnnotationPrivate(row.Permissions))
                         {
-                            psource.notes.Add(new NoteDataShort
+                            psource.notes.Add(new NoteDisplay
                             {
                                 text = row.Text,
                                 quote = (row.Target == null)?null:annHelper.GetNoteQuote(row.Target)

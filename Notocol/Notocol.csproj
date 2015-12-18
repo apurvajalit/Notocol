@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -484,6 +485,7 @@
     <Content Include="Views\Shared\NewLayout.cshtml" />
     <Content Include="Views\User\InvalidUser.cshtml" />
     <Content Include="Views\User\Partials\ProfilePageTile.cshtml" />
+    <Content Include="Views\Source\Partials\LongPageTile.cshtml" />
     <None Include="Views\User\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Notes\Note.cshtml" />
     <Content Include="Views\Home\Welcome.cshtml" />

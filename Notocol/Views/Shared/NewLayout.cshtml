@@ -83,10 +83,14 @@
             </li>
         </ul>
     </script>
-    <div class="body-wrap" ng-controller="LayoutController as layout">
+    <div class="body-wrap" ng-controller="LayoutController">
 
         <div class="left-col">
-            <div class="logo"><div><div><img src="~/Content/images/logo.png" /></div></div></div>
+            <div class="logo" ng-click="GotoHome()" style="cursor:pointer">
+                <div>
+                    <div><img src="~/Content/images/logo.png" /></div>
+                </div>
+            </div>
             <h3 class="tags"><span>Recent Tags</span></h3>
             <div class="tags-section" id="style-3">
                 <div class="tags-wrapper">
@@ -127,27 +131,26 @@
                     </div>
                 </div>
 
-                <a href="#" class="btn-home"></a>
+                <a href="#" class="btn-home" ng-click="GotoHome()"></a>
                 <a href="#" class="btn-notification"></a>
 
-                
                 <div class="profile-box">
                     <div class="chromestyle" id="chromemenu">
                         <ul>
                             @{
                                 var num = Convert.ToInt64(Session["userID"]);
                                 num = num % 10;
-                                var imageURl = "http://lorempixel.com/372/372/abstract/" +  num;
+                                var imageURl = "http://lorempixel.com/372/372/abstract/" + num;
                                 <li><a href="#" rel="dropmenu2"><span style="background:url(@imageURl)"></span></a></li>
                             }
-                            
+
                         </ul>
                     </div>
                 </div>
                 <!-- drop down -->
                 <div id="dropmenu2" class="dropmenudiv" style="width: 150px;">
-                    <a href="http://www.cnn.com/">Logout</a>
-                    
+                    <a href="#" ng-click="Logout()">Logout</a>
+
                 </div>
 
                 <script type="text/javascript">
@@ -156,7 +159,7 @@
 
 
             </div>
-            
+
             @RenderBody()
         </div>
     </div>
@@ -165,5 +168,6 @@
 
 
 </body>
+
 </html>
 

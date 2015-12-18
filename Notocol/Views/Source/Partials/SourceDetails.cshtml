@@ -1,25 +1,14 @@
-﻿<script type="text/ng-template" id="userNote">
-    <div class="note-box">
-        <span>{{usernote.QuotedText}}
-        </span>
-        <div>
-            {{usernote.NoteText}}
-        </div>
-    </div>
-    <div class="note-box-bottom">
-        <div class="last-modified">
-            {{usernote.updated}}
-        </div>
-        <a href="#"><img src="~/Content/images/icon-edit.png" width="16" height="16"></a>
-    </div>
-</script>
-
-<div id="inline1" class="fb-box" style="display: none;">
+﻿<div id="inline1" class="fb-box" style="display: none;">
     <div ng-if="!sourceDetails" style="color:white">
         Loading!!!
     </div>
     <div ng-if="sourceDetails">
-        <h3><span class="circle-blue"><img ng-src="{{sourceDetails.source.faviconURL}}" /></span>{{sourceDetails.source.url|domain}}</h3>
+        <h3>
+            <span class="circle-blue">
+            <img ng-src="{{sourceDetails.source.faviconURL}}" />
+            </span>
+            {{sourceDetails.source.url|domain}}
+        </h3>
         <a href="#" class="btn-trash"></a>
         <a href="#" class="btn-fav"></a>
 
@@ -30,14 +19,12 @@
         </div>
         <div class="full-width-right">
 
-            <div class="sort-fb">
+            @*<div class="sort-fb">
                 Sort by |
                 <select name="sort" size="1">
                     <option selected value="volvo">Time</option>
-                    @*<option value="saab">Date</option>
-                    <option value="mercedes">Relevance</option>*@
                 </select>
-            </div>
+            </div>*@
 
             <div class="search-fb">
                 <input name="" type="text" placeholder="Search phrase">
@@ -55,7 +42,25 @@
         </div>
         
         <div class="right-col-fb">
-            <div ng-repeat="usernote in sourceDetails.userNotes" ng-include="userNote"></div>
+            <div ng-repeat="(userID, notes) in sourceDetails.userNotes">
+                <div ng-repeat="note in notes">
+                    <div class="note-box">
+                        <span>
+                            {{note.QuotedText}}
+                        </span>
+                        <div>
+                            {{note.NoteText}}
+                        </div>
+                    </div>
+                    <div class="note-box-bottom">
+                        <div class="last-modified">
+                            {{note.updated}}
+                        </div>
+                        <a href="#"><img src="~/Content/images/icon-edit.png" width="16" height="16"></a>
+                    </div>
+
+                </div>
+             </div>
             
         </div>
 
