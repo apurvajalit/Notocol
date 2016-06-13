@@ -21,6 +21,17 @@ namespace Notocol.Controllers
     {
         UserHelper userHelper = new UserHelper();
 
+        public ActionResult Template(string template)
+        {
+            switch (template.ToLower())
+            {
+                case "profilepagetile":
+                    return PartialView("~/Views/User/Partials/ProfilePageTile.cshtml");
+                default:
+                    throw new Exception("template not known");
+            }
+        }
+
         private void SetupForLogin(User user)
         {
             Utility.AddCookie("TOKEN-INFO", Utility.GenerateUserInfoCookieData(user.ID, user.Username));
@@ -322,12 +333,12 @@ namespace Notocol.Controllers
             return RedirectToAction("Login", "User");
         }
 
-        [HttpGet]
-        public ActionResult Profile(string username)
-        {
-            User user = new UserHelper().GetUser(username);
-            return View(user);
-        }
+        //[HttpGet]
+        //public ActionResult Profile(string username)
+        //{
+        //    User user = new UserHelper().GetUser(username);
+        //    return View(user);
+        //}
 
         [HttpGet]
         public JsonResult GetUserNotifications()
@@ -373,5 +384,50 @@ namespace Notocol.Controllers
         //    throw NotImplementedException;
         //    return View("Error");
         //}
+
+        public JsonResult SendPeriodicNotificationToUser()
+        {
+            NotificationHelper n = new NotificationHelper();
+        
+            return Json(
+                n.GetUserNotificationHTML(Utility.GetCurrentUserID(), Utility.GetCurrentUserName()),
+                JsonRequestBehavior.AllowGet
+                );
+        }
+
+        public ActionResult Test()
+        {
+            NotificationHelper n = new NotificationHelper();
+            var notes = n.GetNotificationsForUser(Utility.GetCurrentUserID(), true);
+            if (notes.Count == 0) return null;
+
+            var model = new NotificationEmail
+                () { userName = Utility.GetCurrentUserName(), notes = new List<string>() };
+
+            foreach (var note in notes)
+            {
+                model.notes.Add(n.GetNotificationString(note));
+            }
+
+            return View(model);
+        }
+
+        public ActionResult Profile(string u)
+        {
+            UserHelper uh = new UserHelper();
+            
+
+            var user = uh.GetUserProfileInfo(u);
+            
+
+            user.userName = u;
+            if (user == null)
+            {
+                return View("InvalidUser");
+            }
+            return View(user);
+        }
+
+
     }
 }

@@ -11,7 +11,7 @@ namespace Business
     public class ActivityTracker
     {
         MixpanelTracker tracker;
-        private string token = "0a91945b241bcaefa7ebbbb8277e9fe1";
+        private string token = "0a91945b241bcaefa7ebbbb8";
         //var tracker;
         public ActivityTracker(){
             tracker = new MixpanelTracker(token);

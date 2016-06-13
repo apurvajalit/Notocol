@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Home</h2>
+
+<script>
+    chrome.runtime.sendMessage("bcdabflpgoedlefkdiaedmeokndnfafa", {
+        "type": "OpenPDF",
+        "link": "" + "file:///C:/Users/apurva.jalit/Downloads/uP2201 updated.pdf"
+    });
+
+</script>

@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Model;
 using System.Data.Entity;
+using Model.Extended;
+using System.Data.SqlClient;
+using System.Data;
+using Repository.Search;
 
 namespace Repository
 {
@@ -79,6 +83,7 @@ namespace Repository
             {
                 DisposeContext();
             }
+            new ElasticSearchTest().AddUser(user);
             return returnValue;
         }
 
@@ -336,6 +341,77 @@ namespace Repository
             {
                 throw;
             }
+        }
+
+        public UserProfileInfo GetBasicProfileInfo(string userName)
+        {
+            UserProfileInfo info = new UserProfileInfo();
+            try
+            {
+                SqlConnection conn = new SqlConnection(GetDataContext().Database.Connection.ConnectionString);
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand("GetUserProfileData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                SqlParameter outputIdParam = new SqlParameter("@userID", SqlDbType.BigInt)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                SqlParameter outputNameParam = new SqlParameter("@name", SqlDbType.VarChar, 500)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                SqlParameter followerParam = new SqlParameter("@followers", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                SqlParameter followsParam = new SqlParameter("@follows", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                SqlParameter sourceUser = new SqlParameter("@sourceUser", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                SqlParameter noteCount = new SqlParameter("@noteCount", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                cmd.Parameters.AddWithValue("@username", userName);
+                cmd.Parameters.Add(outputIdParam);
+                cmd.Parameters.Add(outputNameParam);
+                cmd.Parameters.Add(followerParam);
+                cmd.Parameters.Add(followsParam);
+                cmd.Parameters.Add(sourceUser);
+                cmd.Parameters.Add(noteCount);
+
+                cmd.ExecuteNonQuery();
+
+                info.ID = outputIdParam.Value != null ? Convert.ToInt64(outputIdParam.Value) : 0;
+                if (info.ID != 0)
+                {
+                    info.name = outputNameParam.Value != null ? outputNameParam.Value.ToString() : default(string);
+                    info.followers = followerParam.Value != null ? Convert.ToInt32(followerParam.Value) : 0;
+                    info.follows = followsParam.Value != null ? Convert.ToInt32(followsParam.Value) : 0;
+
+                    info.numberOfPages = sourceUser.Value != null ? Convert.ToInt32(sourceUser.Value) : 0;
+
+                    info.numberOfNotes = noteCount.Value != null ? Convert.ToInt32(noteCount.Value) : 0;
+                }
+                
+            }
+            catch
+            {
+                throw;
+            }
+            return info;
         }
     }
 }

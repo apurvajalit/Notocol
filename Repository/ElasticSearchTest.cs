@@ -760,25 +760,6 @@ namespace Repository.Search
             var response = Client.Index<ESUser>(esuser);
         }
 
-        internal IList<string> GetUserSuggestions(string userQuery)
-        {
-            var result = Client.Search<ESUser>(s => s
-                                    .SuggestCompletion("suggest_user", c => c
-                                        .Text(userQuery)
-                                        .OnField("user_suggest")
-                                        ));
-
-
-
-            if (result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0)
-            {
-                return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
-                        select options.Text).ToList();
-            }
-
-            //Assert.IsTrue(json.JsonEquals(expected), json);
-            return null;
-        }
 
         public void AddKeyPhrase(string keyPhrase)
         {
@@ -855,6 +836,26 @@ namespace Repository.Search
                         .Params(p => p.Add("followee", followee)));
         }
 
-        
+
+
+        public IList<string> GetUserSuggestions(string query)
+        {
+            var result = Client.Search<ESUser>(s => s
+                                    .SuggestCompletion("suggest_user", c => c
+                                        .Text(query)
+                                        .OnField("user_suggest")
+                                        ));
+
+
+
+            if (result.Suggest.Values.FirstOrDefault()[0].Options.Count() > 0)
+            {
+                return (from options in result.Suggest.Values.FirstOrDefault()[0].Options
+                        select options.Text).ToList();
+            }
+
+            //Assert.IsTrue(json.JsonEquals(expected), json);
+            return null;
+        }
     }
 }

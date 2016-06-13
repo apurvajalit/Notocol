@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using Repository.Search;
 using Model.Extended.Extension;
+using Model.Extended;
 
 namespace Business
 {
@@ -81,15 +82,15 @@ namespace Business
             
         }
 
-        public IList<SourceTagData> GetTagNames(string tagQuery)
+        public IList<SuggestData> GetTagNames(string tagQuery)
         {
-            IList<SourceTagData> tags = new List<SourceTagData>();
+            IList<SuggestData> tags = new List<SuggestData>();
             IList<string> tagNames =  new TagRepository().GetTagNames(tagQuery);
             if (tagNames != null)
             {
                 foreach (var tag in tagNames)
                 {
-                    tags.Add(new SourceTagData() { text = tag });
+                    tags.Add(new SuggestData() { text = tag, type = 2 });
                 }
             }
             return tags;

@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+}
+<html>
+<head>
+    <title>AngularTest</title>
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/notocol/notocolApp.js"></script>
+</head>
+<body ng-app="notocolApp">
+    <script>
+        notocolApp.run(function($rootScope) {
+            $rootScope.userInfo = {
+                'id': @Session["userID"],
+                'name' : '@Session["userName"]'
+            }
+        });
+    </script>
+
+    <div ng-controller="HomeController">
+        <page-tile-grid pages="pageList" user="userInfo" num-col="4" delete-source="deleteSource(sourceUserID)"></page-tile-grid>
+    </div>
+</body>
+</html>

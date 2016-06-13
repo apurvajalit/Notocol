@@ -1,0 +1,73 @@
+﻿@using Model.Extended
+@model SourceInfoWithUserNotes
+
+@{
+    ViewBag.Title = "SourceNotes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h4 class="modal-title"><a href="@Model.source.url" target="_blank">@Model.source.title</a></h4>
+@if (Model.sourceUser != null)
+{
+    <img src="@Model.sourceUser.thumbnailImageUrl" />
+    <p>@Model.sourceUser.thumbnailText</p>
+    var userNotes = Model.userNotes;
+    //string pattern = @"!\[Image Description\]\((?<link>.*)\)";
+    //string replacement = "<img src=\"${link}\">";
+    if (userNotes.Count > 0)
+    {
+        foreach (var userNote in userNotes)
+        {
+            string currentUserName = userNote.Key.userName;
+            string noteText = null;
+            string annotatedText = null;
+            foreach (var note in userNote.Value)
+            {
+                if (note.QuotedText != null && note.QuotedText.Length > 0)
+                {
+                    annotatedText = "\"" + note.QuotedText + "\"";
+                }
+                <div class="single-note-box">
+                    @if (annotatedText != null)
+                    {
+                        <p class="text-primary">
+                            <em>@Html.Raw(annotatedText)</em>
+                        </p>
+                    }
+                    <p class="text-info"><small>@note.NoteText</small></p>
+                    <div id="pageTags">
+                        <ul class="list-inline">
+                            @{if (note.tags != null)
+                            {
+                                int i = 0;
+                                for (; i < note.tags.Length; i++)
+                                {
+                                    var tagName = "\"" + note.tags[i] + "\"";
+                                    <li>
+                                        <a href="#" onclick="AddTagToTagInput(@tagName)">
+                                            <span class="label label-default"> @note.tags[i]</span>
+                                        </a>
+                                    </li>
+                                }
+                            }}
+                        </ul>
+                    </div>
+
+
+                    @if (currentUserName != (string)Session["username"])
+                    {
+                        <p class="text-primary" style="float:right;">
+                            <i> -@currentUserName on @note.updated</i>
+                        </p>
+                    }
+                </div>
+            }
+        }
+    }
+    else
+    {
+        <p class="text-warning"><em>No notes for this page</em></p>
+    }
+}
+

@@ -1,0 +1,75 @@
+﻿@using Repository.Search
+@model IList<ESSource>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<div class="row">
+    <div class="col-sm-12">
+        <form id="search" method="post" class="form-horizontal">
+            <input type="text" class="text-primary" id="searchQuery" />
+            <button type="submit" class="btn-primary" value="Submit" id="submitButton"></button>
+        </form>
+
+    </div>
+
+</div>
+
+@if (Model != null)
+{
+    foreach (var source in Model)
+    {
+        string tags = (source.tags != null) ? source.tags.ToString() : "No tags found";
+        string hTexts = "";
+        if (source.hTexts != null)
+        {
+            foreach (var htext in source.hTexts)
+            {
+                hTexts += ", " + htext.htext;
+            }
+        }
+        else
+        {
+            hTexts = "No htext found";
+        }
+        
+        <div class="row">
+            @if (source.tnImage != null) { 
+                <div class="col-sm-2"><img src= @source.tnImage></div>
+            }
+            else
+            {
+                <div class="col-sm-2"></div>
+            }
+            <div class="col-sm-2"><a href=@source.link> @source.title </a></div>
+            <div class="col-sm-2"><p>@tags</p></div>
+            <div class="col-sm-2"><p>@Html.Raw(source.tnText)</p></div>
+            <div class="col-sm-2">@hTexts</div>
+            
+        </div>
+    }    
+    
+}
+
+@section scripts{
+    <script>
+
+        $(document).ready(function() {
+            $('#submitButton').click(function(){
+                console.log("Sending query "+ $('#searchQuery').text);
+                $.ajax({
+                    type: "POST",
+                    url: "Index", 
+                    data: $('#searchQuery').text
+                    
+                });
+
+            });
+
+            
+        });
+    </script>
+}

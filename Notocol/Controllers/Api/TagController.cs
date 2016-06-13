@@ -5,6 +5,7 @@ using System;
 using Model.Extended.Extension;
 using Business;
 using Notocol.Models;
+using Model.Extended;
 
 namespace Notocol.Controllers.Api
 {
@@ -12,10 +13,10 @@ namespace Notocol.Controllers.Api
     {
 
         [HttpGet]
-        public IList<SourceTagData> Tags(string tagQuery = "")
+        public IList<SuggestData> Tags(string tagQuery = "")
         {
             TagHelper tagHelper = new TagHelper();
-            IList<SourceTagData> searchTags = tagHelper.GetTagNames(tagQuery);
+            IList<SuggestData> searchTags = tagHelper.GetTagNames(tagQuery);
             return searchTags;
         }
 

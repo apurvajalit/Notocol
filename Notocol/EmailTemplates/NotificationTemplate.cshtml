@@ -1,0 +1,102 @@
+﻿@model Model.Extended.NotificationEmail
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Notocol Digest</title>
+
+    <style>
+        #P_1 {
+            box-sizing: border-box;
+            color: rgb(49, 112, 143);
+            height: 20px;
+            width: 1349px;
+            perspective-origin: 674.5px 10px;
+            transform-origin: 674.5px 10px;
+            border: 0px none rgb(49, 112, 143);
+            font: normal normal normal normal 14px / 20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0px 0px 10px;
+            outline: rgb(49, 112, 143) none 0px;
+        }
+        /*#P_1*/
+
+        .notification-div {
+            box-sizing: border-box;
+            color: rgb(51, 122, 183);
+            height: 20px;
+            width: 1349px;
+            perspective-origin: 674.5px 10px;
+            transform-origin: 674.5px 10px;
+            border: 0px none rgb(51, 122, 183);
+            font: normal normal normal normal 14px / 20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            outline: rgb(51, 122, 183) none 0px;
+        }
+        /*#DIV_1*/
+        a {
+            text-decoration: none;
+        }
+
+        .user-notification-username {
+            box-sizing: border-box;
+            color: rgb(51, 122, 183);
+            font-stretch: expanded;
+            border: 0px none rgb(51, 122, 183);
+            font: normal normal bold expanded 14px / 20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            outline: rgb(51, 122, 183) none 0px;
+        }
+        /*#SPAN_2*/
+
+        .user-notification-title {
+            box-sizing: border-box;
+            color: rgb(51, 122, 183);
+            border: 0px none rgb(51, 122, 183);
+            font: italic normal bold normal 14px / 20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            outline: rgb(51, 122, 183) none 0px;
+        }
+
+        .user-notification-tag {
+            background: lightgray;
+            margin: 1px;
+            padding: 1px;
+            border-radius: 2px;
+            color: black;
+            padding-right: 6px;
+            padding-left: 6px;
+        }
+
+        .user-notification-note {
+            font-style: italic;
+        }
+    </style>
+
+</head>
+<body>
+    <div>
+        <h4>Hello @Model.userName, </h4>
+    </div>
+
+    <a href="https://notocol.tenet.res.in:8443" target="_blank">
+        <p id="P_1">
+            Check out some interesting updates on Notocol
+        </p>
+        <div>
+            @{
+                foreach (var note in @Model.notes)
+                {
+                    <div class="notification-div">@Raw(note)</div>
+
+
+                }
+            }
+
+        </div>
+    </a>
+    <p style="color: #777;">Click <a href="#" target="_blank" style="color:gray; text-decoration:underline">here</a> to unsubscribe</p>
+
+</body>
+</html>

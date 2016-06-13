@@ -13,9 +13,9 @@
     </div>
 </div>
 <div class="card-users">
-    <a href="#" ng-repeat="user in page.publicUserNames">{{user|capitalizeFirst}}</a>
+    <a ng-repeat="user in page.publicUserNames" ng-click="GotoUser(user)">{{user|capitalizeFirst}}</a>
 </div>
 
 <div class="card-tags">
-    <a href="#" ng-repeat="tag in page.tags">{{tag}}</a>
+    <a href="#" ng-repeat="tag in page.tags" ng-click="tagClickHandler({tag:tag})">{{tag}}</a>
 </div>

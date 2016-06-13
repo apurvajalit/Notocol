@@ -1,0 +1,27 @@
+﻿
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>Iframe check</title>
+    <style type="text/css">
+        body {
+            overflow: hidden;
+        }
+    </style>
+    <script async defer src="//hypothes.is/embed.js"></script>
+</head>
+<body>
+
+    <div>How are you dear!!!</div>
+    <div id="widget_canvas"></div>
+    @*<-- better move the following to the bottom of the page -->*@
+        <script type="text/javascript">
+            document.write(unescape('%3Cscript src="https://en.wikipedia.org/wiki/OpenID type="text/javascript"%3E%3C/script%3E'));
+        </script>
+
+</body>
+</html>
+

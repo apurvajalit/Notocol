@@ -1,6 +1,8 @@
 ﻿using Model;
 using Model.Extended;
+using Model.Extended.Extension;
 using Repository;
+using Repository.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,7 @@ namespace Business
             user.ModifiedAt = DateTime.Now;
 
             long retVal = userRepository.AddUser(ref user);
+            
             addedUser = user;
             return retVal;
 
@@ -96,6 +99,26 @@ namespace Business
         internal List<long> GetAllFollowers(long userID)
         {
             return new FollowerRepository().GetAllFollowers(userID);
+        }
+
+        public UserProfileInfo GetUserProfileInfo(string username)
+        {
+            return new UserRepository().GetBasicProfileInfo(username);
+        }
+
+        public IList<SuggestData> GetUserNameSuggestions(string query)
+        {
+            IList<string> userNames = new List<string>();
+            ElasticSearchTest es = new ElasticSearchTest();
+            userNames = es.GetUserSuggestions(query);
+            IList<SuggestData> res = new List<SuggestData>();
+
+            if (userNames == null) return res;
+            foreach (var user in userNames)
+            {
+                res.Add(new SuggestData { text = user, type = 1 });
+            }
+            return res;
         }
     }
 }

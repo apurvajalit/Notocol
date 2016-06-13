@@ -185,6 +185,7 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <Property Name="Address" Type="varchar" MaxLength="200" />
           <Property Name="Name" Type="varchar" MaxLength="50" />
           <Property Name="Photo" Type="nvarchar" MaxLength="2083" />
+          <Property Name="UnsubscribeNotification" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="UserTagUsage">
           <Key>
@@ -404,6 +405,20 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
         <Function Name="GetTags" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="userID" Type="bigint" Mode="In" />
           <Parameter Name="strToSearch" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="GetUserProfileData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="username" Type="varchar(max)" Mode="In" />
+          <Parameter Name="userID" Type="bigint" Mode="InOut" />
+          <Parameter Name="name" Type="varchar(max)" Mode="InOut" />
+          <Parameter Name="followers" Type="int" Mode="InOut" />
+          <Parameter Name="follows" Type="int" Mode="InOut" />
+          <Parameter Name="sourceUser" Type="int" Mode="InOut" />
+          <Parameter Name="noteCount" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="GetUserProfileSourcePages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="bigint" Mode="In" />
+          <Parameter Name="offset" Type="int" Mode="In" />
+          <Parameter Name="size" Type="int" Mode="In" />
         </Function>
         <Function Name="GetUsersForTags" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="MarkNotificationAsRead" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -710,6 +725,20 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <Parameter Name="notificationID" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="GetUsersForTags" />
+          <FunctionImport Name="GetUserProfileData">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="userID" Mode="InOut" Type="Int64" />
+            <Parameter Name="name" Mode="InOut" Type="String" />
+            <Parameter Name="followers" Mode="InOut" Type="Int32" />
+            <Parameter Name="follows" Mode="InOut" Type="Int32" />
+            <Parameter Name="sourceUser" Mode="InOut" Type="Int32" />
+            <Parameter Name="noteCount" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetUserProfileSourcePages" ReturnType="Collection(NotColModel.GetUserProfileSourcePages_Result1)">
+            <Parameter Name="userID" Mode="In" Type="Int64" />
+            <Parameter Name="offset" Mode="In" Type="Int32" />
+            <Parameter Name="size" Mode="In" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="GetTags_Result">
           <Property Type="Int64" Name="ChildId" Nullable="true" />
@@ -868,6 +897,7 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <NavigationProperty Name="Follows1" Relationship="NotColModel.FK_Follower_Follower" FromRole="User" ToRole="Follow" />
           <NavigationProperty Name="Notifications" Relationship="NotColModel.FK_Notification_SecUser" FromRole="User" ToRole="Notification" />
           <NavigationProperty Name="Notifications1" Relationship="NotColModel.FK_Notification_User" FromRole="User" ToRole="Notification" />
+          <Property Name="UnsubscribeNotification" Type="Boolean" Nullable="false" />
           </EntityType>
         <EntityType Name="UserTagUsage">
           <Key>
@@ -1180,6 +1210,34 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetUserProfileSourcePages_Result">
+          <Property Type="Int64" Name="sourceID" Nullable="true" />
+          <Property Type="Int64" Name="sourceUserID" Nullable="false" />
+          <Property Type="Int64" Name="annotationID" Nullable="true" />
+          <Property Type="String" Name="faviconURL" Nullable="true" MaxLength="2083" />
+          <Property Type="String" Name="title" Nullable="true" MaxLength="1024" />
+          <Property Type="String" Name="thumbnailImageUrl" Nullable="true" />
+          <Property Type="String" Name="thumbnailText" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
+          <Property Type="String" Name="tag" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Text" Nullable="true" />
+          <Property Type="String" Name="Target" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetUserProfileSourcePages_Result1">
+          <Property Type="Int64" Name="sourceID" Nullable="true" />
+          <Property Type="Int64" Name="sourceUserID" Nullable="false" />
+          <Property Type="Int64" Name="annotationID" Nullable="true" />
+          <Property Type="String" Name="faviconURL" Nullable="true" MaxLength="2083" />
+          <Property Type="String" Name="title" Nullable="true" MaxLength="1024" />
+          <Property Type="String" Name="thumbnailImageUrl" Nullable="true" />
+          <Property Type="String" Name="thumbnailText" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Summary" Nullable="true" MaxLength="2000" />
+          <Property Type="String" Name="tag" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Text" Nullable="true" />
+          <Property Type="String" Name="Target" Nullable="true" />
+          <Property Type="String" Name="Permissions" Nullable="true" />
+          <Property Type="String" Name="url" Nullable="true" MaxLength="2083" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1337,6 +1395,7 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="NotColModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="UnsubscribeNotification" ColumnName="UnsubscribeNotification" />
                 <ScalarProperty Name="Photo" ColumnName="Photo" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
@@ -1456,6 +1515,26 @@ warning 6002: The table/view 'demo.notocol.com.dbo.NotificationTemp' does not ha
           <FunctionImportMapping FunctionImportName="MarkNotificationAsRead" FunctionName="NotColModel.Store.MarkNotificationAsRead" />
           <FunctionImportMapping FunctionImportName="MarkNotificationAsUnread" FunctionName="NotColModel.Store.MarkNotificationAsUnread" />
           <FunctionImportMapping FunctionImportName="GetUsersForTags" FunctionName="NotColModel.Store.GetUsersForTags" />
+          <FunctionImportMapping FunctionImportName="GetUserProfileData" FunctionName="NotColModel.Store.GetUserProfileData" />
+          <FunctionImportMapping FunctionImportName="GetUserProfileSourcePages" FunctionName="NotColModel.Store.GetUserProfileSourcePages">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="NotColModel.GetUserProfileSourcePages_Result1">
+                <ScalarProperty Name="sourceID" ColumnName="sourceID" />
+                <ScalarProperty Name="sourceUserID" ColumnName="sourceUserID" />
+                <ScalarProperty Name="annotationID" ColumnName="annotationID" />
+                <ScalarProperty Name="faviconURL" ColumnName="faviconURL" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="thumbnailImageUrl" ColumnName="thumbnailImageUrl" />
+                <ScalarProperty Name="thumbnailText" ColumnName="thumbnailText" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
+                <ScalarProperty Name="tag" ColumnName="tag" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="Target" ColumnName="Target" />
+                <ScalarProperty Name="Permissions" ColumnName="Permissions" />
+                <ScalarProperty Name="url" ColumnName="url" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

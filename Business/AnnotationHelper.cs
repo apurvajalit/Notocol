@@ -86,6 +86,15 @@ namespace Business
 
         }
 
+        public bool IsAnnotationPrivate(string permissions)
+        {
+
+            return (Array.IndexOf(
+                JsonConvert.DeserializeObject<Permissions>(permissions).read,
+                "group:__world__") < 0);
+
+        }
+
         public SourceUser GetSourceUserFromAnnotation(Annotation annotation){
             string sourceLink = null, sourceURI = null;
             var document = JObject.Parse(annotation.Document);
@@ -262,23 +271,30 @@ namespace Business
             return false;
         }
 
+        public string GetNoteQuote(string targetString)
+        {
+            Target[] target = JsonConvert.DeserializeObject<Target[]>(targetString);
+            if (target != null)
+            {
+                foreach (Selector selector in target[0].selector)
+                {
+                    if (selector.type == "TextQuoteSelector")
+                    {
+                        return selector.exact;
+                        
+                    }
+                }
+            }
+            return null;
+        }
         public NoteData GetNoteData(Annotation annotation)
         {
             NoteData note = new NoteData();
             note.NoteText = annotation.Text;
             AnnotationHelper annotationHelper = new AnnotationHelper();
             ExtensionAnnotationData extAnnData = annotationHelper.AnnotationToExtensionAnnotation(annotation);
-            if (extAnnData.target != null)
-            {
-                foreach (Selector selector in extAnnData.target[0].selector)
-                {
-                    if (selector.type == "TextQuoteSelector")
-                    {
-                        note.QuotedText = selector.exact;
-                        break;
-                    }
-                }
-            }
+            note.QuotedText = GetNoteQuote(annotation.Target);
+
             //note.pageURL = annotation.Uri;
             dynamic data = JObject.Parse(annotation.Document);
             //note.pageTitle = data.title;

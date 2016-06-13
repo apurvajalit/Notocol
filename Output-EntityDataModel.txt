@@ -1,0 +1,6 @@
+﻿Generated model file: NotCol.edmx.
+Loading metadata from the database took 00:00:09.1176603.
+Generating the model took 00:00:15.9428690.
+Generated model file: NotCol.edmx.
+Loading metadata from the database took 00:00:06.5378925.
+Generating the model took 00:00:09.9223581.

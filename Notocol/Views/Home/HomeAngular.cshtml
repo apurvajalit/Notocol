@@ -1,0 +1,168 @@
+﻿@{
+
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css{
+    <link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/notocol-home.css" rel="stylesheet" type="text/css" />
+    <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
+}
+
+@section ngScripts{
+    @*<script src="~/Scripts/notocol/HomeController.js" type="text/javascript"></script>*@
+}
+
+<div ng-controller="HomeController">
+    <div id="searchBar" class="row top-buffer">
+        <div class="col-sm-12">
+            <div class="col-sm-12 text-center">
+                <form class="form-inline" role="form" id="searchParamters" style="min-width:100%">
+                    <input type="text" class="form-control" id="keyword" placeholder="Enter keywords for search" ng-model="filter.query" ng-change="RefreshPageList">
+
+                    <label id="tag-tree" @*style="position: relative; top: -30px; left: -73px;"*@>under</label>
+
+                    <input type="text" id="filterTag" data-provide="typeahead" placeholder="Enter tags to filter">
+                    @*<button class="btn btn-default" id="searchForPages">Search</button>*@
+                </form>
+                <br />
+                
+            </div>
+        </div>
+    </div>
+    <hr size="2" />
+
+    <div class="row" id="tabs">
+        <div class="col-sm-12">
+            <ul class="nav nav-tabs">
+                <li class="active" data-toggle="tab" value=0><a href="#">My Notes</a></li>
+                <li data-toggle="tab" value=1><a href="#">Others</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="dashboard-data">
+        <div class="row top-buffer">
+            <div class="col-sm-12">
+                <button type="button" class="btn btn-default" style="float:right" id="refreshPages"><span class="glyphicon glyphicon-refresh" ng-click="RefreshPageList"></span></button>
+            </div>
+        </div>
+        <br />
+        <div class="row top-buffer" style="min-height: 100vh">
+            <div class="col-sm-12 min-content-height ">
+                <div id="pages" class="container table-container"></div>
+                <page-tile-grid pages="pageList" userinfo="userInfo" max_col="4" page_delete_func="DeleteSource"></page-tile-grid>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/boostrap3-typeahead.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/bootstrap-tagsinput.js" type="text/javascript"></script>
+
+    <script>
+
+    var getAllTagNamesUrl = "/Tag/GetAllTags";
+    var searchTagString= "";
+    var sourceListUrl = "/Source/SourceItems";
+
+    var tabSelected = 0;
+
+    @*function GetPages() {
+        var keywordsEntered = $('#keyword').val();
+        var tagsFilter = $('#filterTag').val();
+
+
+        var userID = '@Session["userID"]';
+            
+        }*@
+
+        //function UpdateTagNameSource(){
+        //    //$.get(urlToUse, function(tagData){
+        //    //    alert("Tag data fetched!");
+        //    var autocomplete = $('#filterTag').typeahead();
+        //    autocomplete.data('typeahead').source = function (query, process) {
+        //        return $.get(getAllTagNamesUrl+'?q=' + query);
+        //    }
+        //}
+
+        function AddTagToTagInput(value){
+            //var element = {};
+            //element.Name = value;
+            $('#filterTag').tagsinput('add', {'text': value});
+        };
+
+        $(function(){
+
+            @*var prefilledTags = '@(ViewBag.TagFilter)';*@
+
+            $('#filterTag').tagsinput({
+                itemValue: 'text',
+                itemText: 'text',
+                typeahead: {
+
+                    source: function (query, process) {
+                        return $.get("/api/Tag/Tags?tagQuery="+ query);
+                    },
+                    minLength: 2,
+                    displayKey: 'text',
+                    //source: tagData,
+                    afterSelect: function (val) {
+                        this.$element.val("");
+                    },
+                    displayText:function(a) {
+                        return a
+                    },
+                    autoSelect: true,
+                }
+            });
+
+            //if(prefilledTags){
+            //    $.each(prefilledTags.split(','), function(index, value) {
+            //        AddTagToTagInput(value);
+            //    });
+
+            //}
+        //GetPages();
+        $('[data-toggle="tab"]').click(function(e) {
+            var $this = $(this);
+            tabSelected = $this.attr('value');
+            GetPages();
+            //UpdateTagNameSource();
+            $this.tab('show');
+
+            return false;
+        });
+
+        //$("#refreshPages").on("click", function () {
+        //    GetPages();
+        //});
+
+        //$("#searchForPages").on("click", function () {
+        //    GetPages();
+        //});
+
+        //$("#filterTag").on("change", GetPages);
+        //$('#keyword').on("keyup", GetPages);
+
+    });
+
+
+
+    </script>
+
+    <script>
+        if (@ViewBag.RefreshExtension ) {
+            // The ID of the extension we want to talk to.
+            var editorExtensionId = "namhfjepbaaecpmpgehfppgnhhgaflne";
+
+            // Make a simple request:
+            chrome.runtime.sendMessage(editorExtensionId, { reloadExtension: "true" },
+              function (response) {
+              });
+        }
+    </script>
+
+}    

@@ -617,5 +617,26 @@ namespace Repository
             }
             return ret;
         }
+
+        public List<GetUserProfileSourcePages_Result1> GetProfileSourceData(long userID, int offset, int size)
+        {
+            List<GetUserProfileSourcePages_Result1> data = null; 
+            
+            try
+            {
+                using (GetDataContext())
+                {
+                    data = context.GetUserProfileSourcePages(userID, offset, size).ToList();
+                    
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            
+            
+            return data;
+        }
     }
 }

@@ -137,7 +137,7 @@ namespace Repository
                 throw;
             }
         }
-        public List<Notification> GetUserNotifications(long userID)
+        public List<Notification> GetUserNotifications(long userID, bool onlyUnread)
         {
             List<Notification> notifications = null;
 
@@ -148,7 +148,7 @@ namespace Repository
                     notifications = (from n in context.Notifications
                                     .Include("User")
                                     .Include("Source")
-                                     where n.Receiver == userID
+                                     where n.Receiver == userID && (!onlyUnread || n.ReadStatus == false)
                                      orderby n.Created descending
                                      select n).ToList();
                 }
