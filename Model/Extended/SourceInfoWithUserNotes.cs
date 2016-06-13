@@ -38,7 +38,7 @@ namespace Model.Extended
         public SourceUser sourceUser { get; set; }
         public Source source { get; set; }
         
-        public Dictionary<UserKey, List<NoteData>> userNotes { get; set; }
+        public Dictionary<long, List<NoteData>> userNotes { get; set; }
 
         public List<SourceTagData> tags { get; set; }
     }

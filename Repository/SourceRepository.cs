@@ -492,10 +492,10 @@ namespace Repository
 
 
 
-        public Dictionary<UserKey, NoteData> GetSourceSummaries(long sourceID, long currentUserID)
+        public Dictionary<long, NoteData> GetSourceSummaries(long sourceID, long currentUserID)
         {
             List<SourceUser> list = null;
-            Dictionary<UserKey, NoteData> userSummaries = new Dictionary<UserKey, NoteData>();
+            Dictionary<long, NoteData> userSummaries = new Dictionary<long, NoteData>();
             try
             {
                 using (GetDataContext())
@@ -518,11 +518,12 @@ namespace Repository
             {
                 if (su.Summary != null && su.Summary.Length > 0)
                 {   
-                    userSummaries.Add(new UserKey(su.UserID, su.User.Username), new NoteData
+                    userSummaries.Add(su.UserID, new NoteData
                       {
                         id = 0,
                         NoteText = su.Summary,
-                        updated = (DateTime)su.ModifiedAt
+                        updated = (DateTime)su.ModifiedAt,
+                        username = su.User.Username
                 });
                 }
             }

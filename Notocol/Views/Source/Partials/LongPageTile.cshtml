@@ -1,0 +1,24 @@
+﻿<div class="box-single">
+    <a href="" class="plus" ng-click="openPageDetails({page:page})">+</a>
+    <div ng-if="page.thumbnailImageUrl != null && page.thumbnailImageUrl.length > 0" class="left-single" style="background-image:url('{{page.thumbnailImageUrl}}');" ng-click="openPageDetails({page:page})"></div>
+    <div ng-class="page.thumbnailImageUrl != null && page.thumbnailImageUrl.length > 0 ? 'right-single' : 'right-single-fleft'">
+        <div class="right-single-header">
+            <a href="#" ng-click="openPageDetails({page:page})"><h1>{{page.title}}</h1></a>
+            <a href="#" ng-click="openPageDetails({page:page})" class="domainname">{{page.url|domain}}</a>
+            <span>
+                <img src="~/Content/images/icon-member.png" width="12" height="12"> 
+                <a href="" ng-repeat="u in page.users" ng-click="$event.preventDefault();userClickHandler({user:u})">{{ u }}{{$last ? '' : ', '}}</a>
+            </span>
+            <span>
+                <img src="~/Content/images/icon-tag-small.png" width="12" height="12" ng-if="page.tags.length > 0">
+                <a href="" ng-repeat="t in page.tags" ng-click="$event.preventDefault();tagClickHandler({tag:t})">{{ t }}{{$last ? '' : ', '}}</a>
+
+            </span>
+        </div>
+        <div ng-click="openPageDetails({page:page})" style="cursor:pointer" ng-repeat="note in page.notes | orderBy:'text.length' : true| limitTo:3">
+            <p ng-if="note.quote.length > 0">{{note.quote|truncateStringWithEllipsis:325}}</p>
+            <p ng-if="note.text.length > 0">{{note.text|truncateStringWithEllipsis:325}}</p>
+        </div>
+        <p ng-click="openPageDetails({page:page})" style="cursor:pointer" ng-if="page.notes.length <= 0">{{page.thumbnailText|truncateStringWithEllipsis:400}}</p>
+    </div>
+</div>

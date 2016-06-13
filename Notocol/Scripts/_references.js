@@ -39,3 +39,4 @@
 /// <reference path="jquery.fancybox-buttons.js" />
 /// <reference path="common/fancybox.js" />
 /// <reference path="jquery.sumoselect.js" />
+/// <reference path="user/profilecontroller.js" />
